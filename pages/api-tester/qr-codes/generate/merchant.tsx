@@ -29,7 +29,7 @@ const Merchant = () => {
         },
         {
             label: 'Currency Code',
-            name: 'currencyCode',
+            name: 'merchantCategoryCode',
             type: 'select',
             options: currencyOptions,
             required: true,
