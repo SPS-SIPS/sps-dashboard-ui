@@ -21,7 +21,7 @@ const Merchant = () => {
         {label: 'Merchant ID', name: 'merchantId', type: 'text', required: true, placeholder: 'Enter Merchant ID'},
         {
             label: 'Merchant Category',
-            name: 'mcc',
+            name: 'merchantCategoryCode',
             type: 'select',
             options: mccOptions,
             required: true,
@@ -29,7 +29,7 @@ const Merchant = () => {
         },
         {
             label: 'Currency Code',
-            name: 'merchantCategoryCode',
+            name: 'currencyCode',
             type: 'select',
             options: currencyOptions,
             required: true,
@@ -46,7 +46,7 @@ const Merchant = () => {
             label: 'Merchant City',
             name: 'merchantCity',
             type: 'text',
-            required: false,
+            required: true,
             placeholder: 'Enter Merchant City'
         },
         {label: 'Postal Code', name: 'postalCode', type: 'text', required: false, placeholder: 'Enter Postal Code'},

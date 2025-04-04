@@ -5,10 +5,6 @@ import styles from '../styles/Home.module.css';
 import Link from "next/link";
 
 const DashboardHome = () => {
-    const navigate = (path: string) => {
-        window.location.hash = path;
-    };
-
     return (
         <div className={styles.container}>
             {/* Header Section */}
@@ -81,7 +77,7 @@ const DashboardHome = () => {
 
             {/* Configuration Section */}
             <section className={styles.configSection}>
-                <div className={styles.card} onClick={() => navigate('/endpoints')}>
+                <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <FaPlug className={styles.cardIcon}/>
                         <h2>Endpoint Configurations</h2>
@@ -96,7 +92,7 @@ const DashboardHome = () => {
                     </Link>
                 </div>
 
-                <div className={styles.card} onClick={() => navigate('/docs')}>
+                <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <FaFileAlt className={styles.cardIcon}/>
                         <h2>Documentation Hub</h2>
