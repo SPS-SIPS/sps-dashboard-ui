@@ -40,11 +40,7 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             icon: <FaFileAlt className={styles.icon}/>,
 
             items: [
-                {
-                    title: 'Getting Started',
-                    path: '/docs/getting-started',
-                    icon: <FiChevronRight className={styles.icon}/>
-                },
+                {title: 'Getting Started', path: '/docs/getting-started', icon: <FiChevronRight className={styles.icon}/>},
                 {title: 'API Reference', path: '/docs/api-reference', icon: <FiChevronRight className={styles.icon}/>},
             ],
         },
