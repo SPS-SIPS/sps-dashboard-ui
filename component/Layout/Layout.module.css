@@ -1,0 +1,37 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.contentContainer {
+    display: flex;
+    flex: 1;
+}
+
+.sidebarContainer {
+    --sidebar-width: 280px;
+    width: var(--sidebar-width);
+    background-color: var(--color-background);
+    border-right: 3px solid var(--color-border);
+}
+
+.mainContent {
+    flex: 1;
+    padding: var(--spacing-xl);
+}
+
+.footerContainer {
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .sidebarContainer {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: var(--z-index-modal);
+        min-height: 100vh;
+        height: 100%;
+    }
+}
