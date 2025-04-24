@@ -7,14 +7,14 @@ import {makeApiRequest} from "../../utils/apiService";
 import Input from "../../component/common/Input/Input";
 import RequestFormWrapper from "../../component/RequestFormWrapper/RequestFormWrapper";
 import {useAuthentication} from "../../auth/AuthProvider";
-
+import { baseURL } from "../../constants";
 type ApiConfigState = {
     apiUrl: string;
     urlError: string;
 };
 
 const initialApiState: ApiConfigState = {
-    apiUrl: "http://localhost:8080/api/v1/Gateway/Verify",
+    apiUrl: `${baseURL}/api/v1/Gateway/Verify`,
     urlError: "",
 };
 interface StatusProps {

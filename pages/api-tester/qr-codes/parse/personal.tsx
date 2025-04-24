@@ -2,14 +2,14 @@ import React from 'react';
 import {useAuthentication} from "../../../../auth/AuthProvider";
 import {QRParser} from "../../../../component/QRParser/QRParser";
 import {makeApiRequest} from "../../../../utils/apiService";
-
+import { baseURL } from "../../../../constants";
 
  const PersonalQRParser: React.FC = () => {
     const { authToken } = useAuthentication();
 
     const handleParse = async (qrCode: string) => {
         const response = await makeApiRequest({
-            url: `http://localhost:8080/api/v1/somqr/ParsePersonQR?code=${encodeURIComponent(qrCode)}`,
+            url: `${baseURL}/api/v1/somqr/ParsePersonQR?code=${encodeURIComponent(qrCode)}`,
             method: 'GET',
             token: authToken!,
         });

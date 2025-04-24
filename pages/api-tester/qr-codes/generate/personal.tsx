@@ -1,5 +1,6 @@
 import QRForm from "../../../../component/QRForm/QRForm";
 import {currencyOptions} from "../../../../data/currencyOptions";
+import { baseURL } from "../../../../constants";
 
 const Personal = () => {
     const personalInitialData = {
@@ -54,7 +55,7 @@ const Personal = () => {
             <QRForm
                 title="Personal Payment QR Generator"
                 subtitle="Fill in payment details to generate a personal QR code"
-                apiEndpoint="http://localhost:8080/api/v1/SomQR/GeneratePersonQR"
+                apiEndpoint={`${baseURL}/api/v1/SomQR/GeneratePersonQR`}
                 initialData={personalInitialData}
                 formFields={personalFormFields}
             />

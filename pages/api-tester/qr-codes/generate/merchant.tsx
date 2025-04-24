@@ -1,6 +1,7 @@
 import QRForm from "../../../../component/QRForm/QRForm";
 import {currencyOptions} from "../../../../data/currencyOptions";
 import {mccOptions} from "../../../../data/mccOptions";
+import { baseURL } from "../../../../constants";
 
 const Merchant = () => {
     const merchantInitialData = {
@@ -64,7 +65,7 @@ const Merchant = () => {
           <QRForm
               title="Merchant QR Code Generator"
               subtitle="Fill in merchant details to generate a payment QR code"
-              apiEndpoint="http://localhost:8080/api/v1/SomQR/GenerateMerchantQR"
+              apiEndpoint={`${baseURL}/api/v1/SomQR/GenerateMerchantQR`}
               initialData={merchantInitialData}
               formFields={merchantFormFields}
           />

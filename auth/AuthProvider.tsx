@@ -1,6 +1,6 @@
 import React, {createContext, useState, useContext, ReactNode, useEffect} from 'react';
 import BubbleLoading from "../component/Loading/BubbleLoading/BubbleLoading";
-
+import {apiAuth} from "../constants";
 interface AuthContextType {
     authToken: string | null;
     setAuthToken: (token: string | null) => void;
@@ -33,7 +33,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
                 //     withCredentials: true
                 // });
                 if (isMounted) {
-                    const newAccessToken = "mock_api_key_12345:mock_api_secret_67890";
+                    const newAccessToken = apiAuth;
                     setAuthToken(newAccessToken);
                 }
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
