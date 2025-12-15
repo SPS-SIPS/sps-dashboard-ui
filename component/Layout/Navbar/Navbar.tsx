@@ -30,7 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile }) => {
                 <Link href="/" passHref>
                     <div className={styles.logoContainer}>
                         <Image
-                            src="/images/logo-sps-01.svg"
+                            src="/images/logo-footer-01.svg"
                             alt="SPS Logo"
                             width={120}
                             height={40}

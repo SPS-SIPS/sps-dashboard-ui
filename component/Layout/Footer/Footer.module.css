@@ -1,13 +1,12 @@
 .footer {
-    background-color: var(--color-background-secondary);
-    color: var(--color-text-secondary);
+    background-color: var(--footer-bg);
+    color: var(--color-text-light);
     padding: var(--spacing-xxl) 0;
-    border-top: 1px solid var(--color-border);
 }
 
 .footerContent {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1.5fr 2.5fr;
     gap: var(--spacing-xxl);
     max-width: var(--breakpoint-desktop);
     margin: 0 auto;
@@ -17,19 +16,17 @@
 .brandSection {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-lg);
 }
 
 .logo {
-    font-size: var(--font-size-xxl);
-    font-weight: 700;
-    color: var(--color-primary);
     cursor: pointer;
 }
 
 .tagline {
     font-size: var(--font-size-sm);
-    color: var(--color-text-tertiary);
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: var(--spacing-md);
 }
 
 .socialLinks {
@@ -39,11 +36,18 @@
 }
 
 .socialLinks a {
-    color: var(--color-text-secondary);
-    transition: var(--transition-fast);
+    color: var(--color-white);
+    transition: var(--transition-default);
+}
+
+.socialIcon {
+    width: 24px;
+    height: 24px;
+    display: block;
 }
 
 .socialLinks a:hover {
+
     color: var(--color-primary);
 }
 
@@ -54,9 +58,10 @@
 }
 
 .linkColumn h4 {
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-md);
-    color: var(--color-text-primary);
+    color: var(--color-white);
+    font-weight: 600;
 }
 
 .linkColumn ul {
@@ -68,46 +73,108 @@
     gap: var(--spacing-sm);
 }
 
-.linkColumn a {
-    color: var(--color-text-secondary);
-    text-decoration: none;
+.linkColumn li {
     font-size: var(--font-size-sm);
-    transition: var(--transition-fast);
+}
+
+.linkColumn a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    font-size: var(--font-size-base);
+    transition: var(--transition-default);
 }
 
 .linkColumn a:hover {
     color: var(--color-primary);
+    text-decoration: underline;
 }
+
+.contactList li {
+    display: flex;
+    align-items: flex-start;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: var(--font-size-base);
+}
+
+.contactIcon {
+    width: 18px;
+    height: 18px;
+    fill: var(--color-primary);
+    margin-right: var(--spacing-xs);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.contactList a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    transition: var(--transition-default);
+}
+
+.contactList a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
 
 .footerBottom {
     align-items: center;
     text-align: center;
     margin-top: var(--spacing-xxl);
     padding-top: var(--spacing-lg);
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     max-width: var(--breakpoint-desktop);
     margin-left: auto;
     margin-right: auto;
     padding-left: var(--spacing-xl);
     padding-right: var(--spacing-xl);
     font-size: var(--font-size-sm);
-    color: var(--color-text-tertiary);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 1024px) {
+    .linkColumns {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
     .footerContent {
         grid-template-columns: 1fr;
         gap: var(--spacing-xl);
+        padding: 0 var(--spacing-lg);
+    }
+
+    .brandSection {
+        text-align: center;
+        align-items: center;
+    }
+
+    .socialLinks {
+        justify-content: center;
     }
 
     .linkColumns {
         grid-template-columns: 1fr;
         gap: var(--spacing-lg);
+        text-align: center;
+    }
+
+    .linkColumn h4 {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .linkColumn ul {
+        align-items: center;
+    }
+
+    .contactList {
+        align-items: center;
     }
 
     .footerBottom {
-        flex-direction: column;
-        gap: var(--spacing-md);
-        text-align: center;
+        margin-top: var(--spacing-xl);
+        padding-left: var(--spacing-lg);
+        padding-right: var(--spacing-lg);
     }
 }
