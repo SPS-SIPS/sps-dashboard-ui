@@ -1,17 +1,21 @@
 import axios from "axios";
 
-export function extractErrorMessage(error: unknown): string {
+export function extractErrorMessage(
+    error: unknown,
+    defaultMessage: string = "An unexpected error occurred."
+): string {
     if (axios.isAxiosError(error)) {
-        const message =
+        return (
             error.response?.data?.message ||
             error.response?.statusText ||
-            error.message;
-        return message || "An unknown Axios error occurred.";
+            error.message ||
+            defaultMessage
+        );
     }
 
     if (error instanceof Error) {
-        return error.message;
+        return error.message || defaultMessage;
     }
 
-    return "An unexpected error occurred.";
+    return defaultMessage;
 }
