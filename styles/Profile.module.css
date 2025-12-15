@@ -4,7 +4,6 @@
     gap: var(--spacing-lg);
     padding: var(--spacing-sm);
     background-color: var(--color-background-secondary);
-    box-shadow: var(--shadow-md);
 }
 
 .backgroundBox {
@@ -16,11 +15,27 @@
     height: 250px;
     background: linear-gradient(
             135deg,
-            var(--color-primary-dark),
-            var(--color-primary)
+            var(--navbar-bg),
+            var(--color-nav-dark-bg)
     );
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     position: relative;
+}
+
+/* SPS Watermark */
+.backgroundBox::after {
+    content: "SPS";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 15rem;
+    font-weight: 800;
+    font-family: sans-serif;
+    color: rgba(255, 255, 255, 0.05);
+    z-index: 1;
+    pointer-events: none;
+    letter-spacing: 1rem;
 }
 
 .initialsCircle {
