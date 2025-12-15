@@ -1,6 +1,7 @@
 .formContainer {
-    padding:var(--spacing-lg) var(--spacing-xxl);
+    padding: var(--spacing-xxl);
     background: var(--color-background);
+    min-height: 100%;
 }
 
 .header {
