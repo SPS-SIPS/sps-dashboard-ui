@@ -43,6 +43,9 @@ img {
 
 :root {
     /* Color Scheme */
+    --navbar-bg: #0F172A;
+    --footer-bg: #171717;
+    --color-nav-dark-bg: #1f2731;
     --color-primary: #73b344;
     --color-primary-hover: #5d9930;
     --color-primary-light: #e8f3e1;
