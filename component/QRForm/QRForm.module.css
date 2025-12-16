@@ -1,96 +1,116 @@
 .container {
-    background: var(--color-background);
-    max-width: var(--breakpoint-tablet);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xl);
-    margin: 0 auto;
-    padding: var(--spacing-xl);
+    max-width: 700px;
+    margin: var(--spacing-xxl) auto;
 }
 
 .formContainer {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-md);
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl);
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
 }
 
 .formHeader {
     text-align: center;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: var(--spacing-xl);
-    width: 100%;
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--color-primary-light);
+    margin-bottom: var(--spacing-md);
 }
 
 .title {
-    color: var(--color-text-primary);
-    font-size: var(--font-size-xxl);
-    font-weight: 600;
-    letter-spacing: -0.5px;
+    color: var(--color-primary-dark);
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-xs);
 }
 
 .subtitle {
     color: var(--color-text-secondary);
-    font-size: var(--font-size-lg);
-    line-height: 1.5;
-    max-width: 800px;
-    margin: 0 auto;
-    opacity: 0.9;
+    font-size: var(--font-size-base);
 }
 
 .apiEndpoint {
-    margin-top: var(--spacing-xl);
-    width: 100%;
-    max-width: 800px;
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm);
+    border: 1px dashed var(--color-border-dark);
+    border-radius: var(--radius-md);
+    background-color: var(--color-background-tertiary);
 }
 
 .inputWrapper {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-    width: 100%;
-    max-width: 800px;
+    margin-bottom: var(--spacing-sm);
 }
 
 .submitButton {
-    margin-top: var(--spacing-md);
     padding: var(--spacing-md) var(--spacing-xl);
-    width: 100%;
-    max-width: 800px;
-    transition: background-color var(--transition-fast);
+    font-size: var(--font-size-md);
+    font-weight: bold;
+    letter-spacing: var(--letter-spacing-wide);
+    color: var(--color-text-on-primary);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color var(--transition-default), transform var(--transition-fast), box-shadow var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+}
+
+.submitButton:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.submitButton:disabled {
+    background-color: var(--color-background-disabled);
+    color: var(--color-text-secondary);
+    cursor: not-allowed;
+    box-shadow: none;
 }
 
 .responseContainer {
-    margin-top: var(--spacing-xl);
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid var(--color-border);
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    padding: var(--spacing-xl);
+    background-color: var(--color-background-accent);
+    border: 1px solid var(--color-border-hover);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
 }
 
 .loadingContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: var(--spacing-md);
-    margin: var(--spacing-xxl) 0;
-    color: var(--color-text-secondary);
 }
 
 .loadingText {
-    font-size: var(--font-size-lg);
+    color: var(--color-pending);
+    font-size: var(--font-size-base);
     font-weight: 500;
 }
+
 .errorMessage {
-    color: var(--color-error);
-    background-color: var(--color-error-background);
-    border: 1px solid var(--color-error-border);
     padding: var(--spacing-md);
+    background-color: var(--color-error-background);
+    color: var(--color-error-label);
+    border: 1px solid var(--color-error-border);
+    border-left: 5px solid var(--color-error);
     border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-lg);
     font-size: var(--font-size-base);
+    text-align: center;
+    width: 100%;
+    box-shadow: var(--shadow-sm);
 }
 
 .qrSection {
@@ -98,39 +118,43 @@
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-md);
-    margin-top: var(--spacing-lg);
+    text-align: center;
+    width: 100%;
 }
 
 .qrTitle {
-    color: var(--color-text-primary);
+    color: var(--color-primary-dark);
     font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
 }
 
 .qrCodeWrapper {
-    background-color: var(--color-background);
-    padding: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background-color: var(--color-white);
+    border: 5px solid var(--color-primary);
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    display: inline-block;
 }
 
 .qrData {
-    background-color: var(--color-background);
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    width: 100%;
-    max-width: 600px;
-    overflow-x: auto;
-    font-family: monospace;
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border);
     margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background-color: var(--color-background-tertiary);
+    border: 1px solid var(--color-border-dark);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    max-width: 100%;
+    text-align: left;
 }
 
 .qrData pre {
     margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
     white-space: pre-wrap;
-    word-wrap: break-word;
     word-break: break-all;
 }

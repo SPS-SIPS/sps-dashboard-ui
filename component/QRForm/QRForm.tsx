@@ -1,10 +1,10 @@
 import styles from "./QRForm.module.css";
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Input from "../common/Input/Input";
 import ActionButton from "../common/ActionButton/ActionButton";
 import QRCodeGenerator from "../QRCodeGenerator/QRCodeGenerator";
 import SelectInput from "../common/SelectInput/SelectInput";
-import { useApiRequest } from "../../utils/apiService";
+import {useApiRequest} from "../../utils/apiService";
 import SpinLoading from "../Loading/SpinLoading/SpinLoading";
 
 interface FormField {
@@ -12,7 +12,8 @@ interface FormField {
     name: string;
     type: string;
     required: boolean;
-    placeholder: string;
+    maxLength?: number;
+    placeholder?: string;
     options?: { value: string; label: string }[];
 }
 
@@ -35,11 +36,13 @@ const QRForm: React.FC<QRFormProps> = ({
     const [error, setError] = useState<string>("");
     const [apiEndpoint, setApiEndpoint] = useState<string>(defaultApiEndpoint);
     const [formData, setFormData] = useState<Record<string, unknown>>(initialData);
-    const { makeApiRequest, loading } = useApiRequest();
+    const {makeApiRequest, loading} = useApiRequest();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setFormData((prev) => {
+            return {...prev, [name]: value};
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -47,12 +50,19 @@ const QRForm: React.FC<QRFormProps> = ({
         setError("");
         setResponseData("");
 
+        const payload = {...formData};
+
+        if (payload.type === "1") {
+            delete payload.amount;
+        }
+
+        console.log(payload);
+
         const result = await makeApiRequest({
             url: apiEndpoint,
             method: "post",
-            data: formData
+            data: payload,
         });
-
 
         if (result.success) {
             try {
@@ -70,6 +80,7 @@ const QRForm: React.FC<QRFormProps> = ({
             setError(result.error || "Failed to generate QR code");
         }
     };
+
 
     return (
         <div className={styles.container}>
@@ -89,31 +100,38 @@ const QRForm: React.FC<QRFormProps> = ({
                         placeholder="https://your-api-server.com/api/v1/endpoint"
                     />
                 </div>
-                
-                {formFields.map((field) => (
-                    <div key={field.name} className={styles.inputWrapper}>
-                        {field.type === 'select' ? (
-                            <SelectInput
-                                label={field.label}
-                                name={field.name}
-                                value={String(formData[field.name] || "")}
-                                onChange={handleInputChange}
-                                required={field.required}
-                                options={field.options || []}
-                            />
-                        ) : (
-                            <Input
-                                label={field.label}
-                                name={field.name}
-                                type={field.type}
-                                value={String(formData[field.name] || "")}
-                                onChange={handleInputChange}
-                                required={field.required}
-                                placeholder={field.placeholder}
-                            />
-                        )}
-                    </div>
-                ))}
+
+                {formFields
+                    .filter((field) => {
+                        return !(field.name === "amount" && formData.type === "1");
+                    })
+                    .map((field) => (
+                        <div key={field.name} className={styles.inputWrapper}>
+                            {field.type === "select" ? (
+                                <SelectInput
+                                    label={field.label}
+                                    name={field.name}
+                                    value={String(formData[field.name] || "")}
+                                    onChange={handleInputChange}
+                                    required={field.required}
+                                    options={field.options || []}
+                                    disabled={field.name === "method"}
+                                />
+                            ) : (
+                                <Input
+                                    label={field.label}
+                                    name={field.name}
+                                    type={field.type}
+                                    value={String(formData[field.name] || "")}
+                                    onChange={handleInputChange}
+                                    required={field.required}
+                                    placeholder={field.placeholder}
+                                    maxLength={field.maxLength || 300}
+                                />
+                            )}
+                        </div>
+                    ))}
+
                 <ActionButton
                     type="submit"
                     className={styles.submitButton}
@@ -127,7 +145,7 @@ const QRForm: React.FC<QRFormProps> = ({
             <div className={styles.responseContainer}>
                 {loading && (
                     <div className={styles.loadingContainer}>
-                        <SpinLoading />
+                        <SpinLoading/>
                         <p className={styles.loadingText}>Processing request...</p>
                     </div>
                 )}
@@ -138,7 +156,7 @@ const QRForm: React.FC<QRFormProps> = ({
                     <div className={styles.qrSection}>
                         <h3 className={styles.qrTitle}>Generated QR Code</h3>
                         <div className={styles.qrCodeWrapper}>
-                            <QRCodeGenerator data={responseData} />
+                            <QRCodeGenerator data={responseData}/>
                         </div>
                         <div className={styles.qrData}>
                             <pre>{responseData}</pre>

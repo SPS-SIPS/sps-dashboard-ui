@@ -1,8 +1,8 @@
 import React from 'react';
-import {QRParser} from "../../../../component/QRParser/QRParser";
-import {useApiRequest} from "../../../../utils/apiService";
-import {baseURL} from "../../../../constants/constants";
-import RoleGuard from "../../../../auth/RoleGuard";
+import {QRParser} from "../../../component/QRParser/QRParser";
+import {useApiRequest} from "../../../utils/apiService";
+import {baseURL} from "../../../constants/constants";
+import RoleGuard from "../../../auth/RoleGuard";
 
 const PersonalQRParser: React.FC = () => {
     const {makeApiRequest} = useApiRequest();
@@ -17,11 +17,13 @@ const PersonalQRParser: React.FC = () => {
     return (
         <RoleGuard allowedRoles={['som_qr']}>
             <QRParser
-                title="Personal QR Code Parser"
-                subtitle="Parse personal payment QR codes to view transaction details"
+                title="Scan Personal SOMQR"
+                subtitle="Use this tool to scan and view details from your personal SOMQR code."
+                // @ts-ignore: ignore TS2322 type error
                 onParse={handleParse}
                 qrType={'personal'}
             />
+
         </RoleGuard>
     );
 };

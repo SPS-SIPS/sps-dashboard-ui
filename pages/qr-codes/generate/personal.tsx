@@ -1,7 +1,7 @@
-import QRForm from "../../../../component/QRForm/QRForm";
-import {currencyOptions} from "../../../../data/currencyOptions";
-import { baseURL } from "../../../../constants/constants";
-import RoleGuard from "../../../../auth/RoleGuard";
+import QRForm from "../../../component/QRForm/QRForm";
+import {currencyOptions} from "../../../data/currencyOptions";
+import { baseURL } from "../../../constants/constants";
+import RoleGuard from "../../../auth/RoleGuard";
 
 const Personal = () => {
     const personalInitialData = {
@@ -53,13 +53,13 @@ const Personal = () => {
 
     return (
             <RoleGuard allowedRoles={['som_qr']}>
-            <QRForm
-                title="Personal Payment QR Generator"
-                subtitle="Fill in payment details to generate a personal QR code"
-                apiEndpoint={`${baseURL}/api/v1/SomQR/GeneratePersonQR`}
-                initialData={personalInitialData}
-                formFields={personalFormFields}
-            />
+                <QRForm
+                    title="SOMQR Personal Payment QR Generator"
+                    subtitle="Generate an EMV-compliant personal QR code under the Central Bank of Somalia SOMQR standard"
+                    apiEndpoint={`${baseURL}/api/v1/SomQR/GeneratePersonQR`}
+                    initialData={personalInitialData}
+                    formFields={personalFormFields}
+                />
             </RoleGuard>
     )
 }

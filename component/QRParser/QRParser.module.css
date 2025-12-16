@@ -1,193 +1,743 @@
 .container {
-    padding: var(--spacing-xl);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    margin: var(--spacing-lg) auto;
-    max-width: var(--breakpoint-tablet);
     width: 100%;
+    max-width: 950px;
+    margin: var(--spacing-xxl) auto;
+    background: var(--color-background);
+    border-radius: var(--radius-sm);
+    /*box-shadow: var(--shadow-lg);*/
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--color-border);
+}
+
+/* --- Header --- */
+.header {
+    background: linear-gradient(135deg, var(--navbar-bg), var(--color-nav-dark-bg));
+    color: var(--color-text-on-primary);
+    padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative background gradient (3D/light effect) */
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent 50%);
+    pointer-events: none;
+}
+
+.headerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    z-index: var(--z-index-base);
+}
+
+.titleSection {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.titleIcon {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    background: var(--color-background);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
 }
 
 .title {
-    color: var(--color-text-primary);
-    font-size: var(--font-size-xl);
-    margin-bottom: var(--spacing-sm);
-    text-align: center;
+    font-size: var(--font-size-xxl);
+    font-weight: 800;
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--color-text-light);
 }
 
 .subtitle {
+    font-size: var(--font-size-base);
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    max-width: 500px;
+    line-height: 1.5;
+}
+
+.typeBadge {
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: 20px;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    border: 2px solid;
+    /* Colors are set via inline style in React based on dynamic type/prop */
+}
+
+/* --- Content --- */
+.content {
+    padding: var(--spacing-xl);
+}
+
+/* --- Tab Container --- */
+.tabContainer {
+    background: var(--color-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: var(--spacing-xl);
+    border: 1px solid var(--color-border);
+}
+
+.tabButtons {
+    display: flex;
+    background: var(--color-background-secondary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.tabButton {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    background: none;
+    border: none;
     color: var(--color-text-secondary);
     font-size: var(--font-size-base);
-    margin-bottom: var(--spacing-xl);
-    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
 }
 
-.inputSection {
-    display: flex;
-    gap: var(--spacing-xl);
-    margin-bottom: var(--spacing-lg);
+.tabButton:hover {
+    background: var(--color-background-tertiary);
+    color: var(--color-primary);
 }
 
+.tabButton.active {
+    color: var(--color-primary);
+    background: var(--color-background);
+}
+
+.tabButton.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--color-primary);
+    border-radius: 3px 3px 0 0;
+}
+
+.tabIcon {
+    font-size: 1.2rem;
+}
+
+.tabContent {
+    padding: var(--spacing-xl);
+    background: var(--color-background);
+}
+
+/* --- Text Input Styles --- */
 .inputGroup {
-    flex: 1;
+    animation: fadeIn var(--transition-normal);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.labelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
 }
 
 .label {
-    display: block;
-    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-base);
+    font-weight: 600;
     color: var(--color-text-label);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.labelInfo {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.charCounter {
     font-size: var(--font-size-sm);
-    font-weight: 500;
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    background: var(--color-background-secondary);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+}
+
+.detectedType {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid;
+    /* Colors are set via inline style in React based on dynamic type */
+}
+
+.textareaContainer {
+    position: relative;
+    margin-bottom: var(--spacing-md);
 }
 
 .textarea {
     width: 100%;
     padding: var(--spacing-md);
-    border: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    background: var(--color-background-secondary);
+    border: 2px solid var(--color-border);
     border-radius: var(--radius-md);
-    font-family: monospace;
     resize: vertical;
+    transition: all var(--transition-fast);
     min-height: 120px;
-    font-size: var(--font-size-sm);
-    transition: border-color var(--transition-fast);
-
-    &:focus {
-        outline: none;
-        border-color: var(--color-primary);
-        box-shadow: var(--shadow-focus);
-    }
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.uploadSection {
-    flex: 1;
+.textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light), inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.textarea::placeholder {
+    color: var(--color-placeholder);
+    font-style: italic;
+}
+
+.textareaActions {
+    position: absolute;
+    right: var(--spacing-sm);
+    top: var(--spacing-sm);
     display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-xs);
+    background: var(--color-white); /* Use white for action container */
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    opacity: 0.9;
+}
+
+.clearButton,
+.expandButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.clearButton:hover,
+.expandButton:hover {
+    background: var(--color-primary);
+    color: var(--color-text-on-primary);
+    border-color: var(--color-primary);
+}
+
+.clearButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.formatHint {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-primary-dark);
+    padding: var(--spacing-sm);
+    /* Using primary-light for a light accent background */
+    background: var(--color-primary-light);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--color-primary);
+}
+
+.hintIcon {
+    color: var(--color-primary);
+    font-size: 1.1rem;
+}
+
+/* --- Upload Area Styles --- */
+.uploadContainer {
+    animation: fadeIn var(--transition-normal);
+}
+
+.uploadArea {
+    border: 3px dashed var(--color-primary-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xxl);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    background: var(--color-background);
+    position: relative;
+}
+
+.uploadArea:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .fileInput {
     display: none;
 }
 
-.uploadButton {
-    background-color: var(--color-primary);
-    color: var(--color-text-on-primary);
-    width: 100%;
+.uploadContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
 
-    &:hover {
-        background-color: var(--color-primary-hover);
-    }
+.uploadIcon {
+    font-size: 3.5rem;
+    color: var(--color-primary);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary-light);
+    border: 1px solid var(--color-primary);
+    border-radius: 50%;
+}
 
-    &:disabled {
-        background-color: var(--color-background-disabled);
+.uploadText {
+    max-width: 400px;
+}
+
+.uploadTitle {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.uploadSubtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.uploadInfo {
+    font-size: var(--font-size-sm);
+    color: var(--color-placeholder);
+    margin: 0;
+}
+
+.uploadLoading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 
-.qrPreview {
+/* --- Preview Section --- */
+.previewSection {
+    padding: var(--spacing-md);
+    background: var(--color-background-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.previewHeader {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px dashed var(--color-border-dark);
+}
+
+.previewTitle {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text-label);
+    margin: 0;
+}
+
+.imageWrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.qrImage {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    border: 4px solid var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal);
+}
+
+.qrImage:hover {
+    transform: scale(1.02);
+}
+
+.imageTypeBadge {
+    position: absolute;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-sm);
+    /* Colors are set via inline style in React based on dynamic type */
+}
+
+.removeButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: var(--color-error-background);
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.removeButton:hover {
+    background: var(--color-error-hover);
+    color: var(--color-text-on-primary);
+}
+
+/* --- Action Section --- */
+.actionSection {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+    justify-content: flex-end;
+}
+
+.parseButton {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    padding: var(--spacing-md) var(--spacing-xxl);
+    min-width: 250px;
+}
+
+.clearAllButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: none;
+    border: 1px solid var(--color-error-background);
+    color: var(--color-error);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.clearAllButton:hover {
+    background: var(--color-error-background);
+}
+
+/* --- Results Section --- */
+.resultSection {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--color-success);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-success-background);
+    box-shadow: var(--shadow-md);
+    animation: fadeIn var(--transition-normal);
+}
+
+.resultHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px dashed var(--color-success);
+}
+
+.resultTitleSection {
+    display: flex;
     align-items: center;
     gap: var(--spacing-sm);
 }
 
-.qrImage {
-    max-width: 200px;
-    max-height: 200px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-xs);
-    background: var(--color-background);
+.successIcon {
+    color: var(--color-success);
+    font-size: 1.5rem;
 }
 
-.removeButton {
+.resultTitle {
+    font-size: var(--font-size-lg);
+    /* Using a dark color for text on the light success background */
+    color: var(--color-text-primary);
+    font-weight: 700;
+    margin: 0;
+}
+
+.resultTypeBadge {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    /* Colors are set via inline style in React based on dynamic type */
+}
+
+.resultActions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.copyResultButton,
+.downloadButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    border: none;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.copyResultButton {
+    background: var(--color-primary);
+    color: var(--color-text-on-primary);
+}
+
+.copyResultButton:hover {
+    background: var(--color-primary-hover);
+}
+
+.downloadButton {
+    background: var(--color-background);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+}
+
+.downloadButton:hover {
+    background: var(--color-background-tertiary);
+}
+
+.resultData pre {
+    background-color: var(--navbar-bg);
+    color: var(--color-text-light);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    white-space: pre-wrap;
+    word-break: break-all;
+    border: 1px solid var(--color-border-dark);
+}
+
+/* --- Error Display (Inline Alert) --- */
+.errorContainer {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md);
+    /* Using error background color */
+    background-color: var(--color-error-background);
+    border: 1px solid var(--color-error);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xl);
+    gap: var(--spacing-md);
+    animation: slideIn var(--transition-normal);
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.errorIcon {
+    color: var(--color-error);
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.errorContent {
+    flex-grow: 1;
+}
+
+.errorTitle {
+    display: block;
+    font-size: var(--font-size-base);
+    color: var(--color-error-dark);
+    font-weight: 700;
+}
+
+.errorMessage {
+    font-size: var(--font-size-sm);
+    color: var(--color-error-dark);
+    margin: 0;
+}
+
+.dismissError {
     background: none;
     border: none;
     color: var(--color-error);
     cursor: pointer;
-    font-size: var(--font-size-sm);
-    padding: var(--spacing-xs) var(--spacing-sm);
-
-    &:hover {
-        text-decoration: underline;
-    }
+    font-size: 1.2rem;
+    padding: var(--spacing-xs);
+    border-radius: 50%;
+    transition: background-color var(--transition-fast);
 }
 
-.parseButton {
-    width: 100%;
-    background-color: var(--color-primary);
-    color: var(--color-text-on-primary);
-    margin-bottom: var(--spacing-lg);
-
-    &:hover:not(:disabled) {
-        background-color: var(--color-primary-hover);
-    }
-}
-
-.error {
-    color: var(--color-error);
+.dismissError:hover {
     background-color: var(--color-error-background);
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-error-border);
-    margin-bottom: var(--spacing-lg);
-    font-size: var(--font-size-sm);
-}
-
-.resultSection {
-    margin-top: var(--spacing-xl);
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--spacing-lg);
-}
-
-.resultTitle {
-    color: var(--color-text-primary);
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-md);
-    text-align: center;
-}
-
-.resultData {
-    background-color: var(--color-background);
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    overflow-x: auto;
-    font-size: var(--font-size-sm);
-
-
-}
-.resultData .pre {
-    margin: 0;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    line-height: 1.5;
 }
 
 @media (max-width: 768px) {
     .container {
-        padding: var(--spacing-md);
-        margin: var(--spacing-md);
-        border-radius: var(--radius-md);
+        margin: var(--spacing-lg) auto;
     }
-
-    .inputSection {
+    .header {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+    .content {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+    .headerContent {
         flex-direction: column;
-        gap: var(--spacing-md);
+        align-items: center;
+        text-align: center;
     }
-
+    .titleSection {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
+    }
     .title {
-        font-size: var(--font-size-lg);
+        font-size: var(--font-size-xl);
+    }
+    .titleIcon {
+        width: 48px;
+        height: 48px;
+        font-size: 2rem;
+    }
+    .typeBadge {
+        margin-top: var(--spacing-md);
     }
 
-    .subtitle {
-        font-size: var(--font-size-sm);
+    .tabButtons {
+        flex-direction: column;
     }
 
-    .qrImage {
-        max-width: 150px;
-        max-height: 150px;
+    .tabButton {
+        padding: var(--spacing-md);
     }
 
-    .resultTitle {
-        font-size: var(--font-size-md);
+    .tabContent {
+        padding: var(--spacing-md);
+    }
+
+    .labelRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+
+    .labelInfo {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .textareaActions {
+        display: none;
+    }
+
+    .uploadArea {
+        padding: var(--spacing-lg);
+    }
+
+    .actionSection {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-lg);
+    }
+
+    .parseButton, .clearAllButton {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .resultHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    .resultActions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .copyResultButton, .downloadButton {
+        flex-grow: 1;
+        justify-content: center;
     }
 }

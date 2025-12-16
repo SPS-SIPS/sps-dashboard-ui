@@ -1,8 +1,8 @@
 import React from 'react';
-import {QRParser} from "../../../../component/QRParser/QRParser";
-import { baseURL } from "../../../../constants/constants";
-import RoleGuard from "../../../../auth/RoleGuard";
-import {useApiRequest} from "../../../../utils/apiService";
+import {QRParser} from "../../../component/QRParser/QRParser";
+import { baseURL } from "../../../constants/constants";
+import RoleGuard from "../../../auth/RoleGuard";
+import {useApiRequest} from "../../../utils/apiService";
 
 const MerchantQRParser: React.FC = () => {
     const { makeApiRequest } = useApiRequest();
@@ -18,8 +18,9 @@ const MerchantQRParser: React.FC = () => {
     return (
         <RoleGuard allowedRoles={['som_qr']}>
             <QRParser
-                title="Merchant QR Code Parser"
-                subtitle="Parse merchant QR codes to view transaction details"
+                title="Scan Merchant SOMQR"
+                subtitle="Use this tool to scan and view details from your merchant SOMQR code."
+                // @ts-ignore: ignore TS2322 type error
                 onParse={handleParse}
                 qrType={'merchant'}
             />

@@ -9,10 +9,11 @@ import {
 } from 'react-icons/fi';
 
 import styles from './Sidebar.module.css'
-import {FaCogs, FaEye, FaFileAlt, FaPlusCircle, FaQrcode, FaRocket, FaTools} from "react-icons/fa";
+import {FaCogs, FaEye, FaFileAlt, FaFileCode, FaPlusCircle, FaQrcode, FaRocket, FaTools} from "react-icons/fa";
 import {useAuthentication} from "../../../auth/AuthProvider";
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
 import {FaCodeCompare} from "react-icons/fa6";
+import {LuScanBarcode} from "react-icons/lu";
 
 interface NavItem {
     title: string;
@@ -225,48 +226,48 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                         },
                     ],
                 },
+            ],
+        },
+        {
+            title: 'SOMQR',
+            path: '/qr-codes',
+            icon: <FaQrcode className={styles.icon}/>,
+            roles: ['som_qr'],
+            items: [
                 {
-                    title: 'QR Code',
-                    path: '/api-tester/qr-codes',
-                    icon: <FaQrcode className={styles.icon}/>,
-                    roles: ['som_qr'],
+                    title: 'Generate SOMQR',
+                    path: '/qr-codes/generate',
+                    icon: <FaPlusCircle className={styles.icon}/>,
                     items: [
                         {
-                            title: 'Generate QR Codes',
-                            path: '/api-tester/qr-codes/generate',
-                            icon: <FaPlusCircle className={styles.icon}/>,
-                            items: [
-                                {
-                                    title: 'Merchant QR',
-                                    path: '/api-tester/qr-codes/generate/merchant',
-                                    icon: <FiChevronRight className={styles.icon}/>
-                                },
-                                {
-                                    title: 'Person QR',
-                                    path: '/api-tester/qr-codes/generate/personal',
-                                    icon: <FiChevronRight className={styles.icon}/>
-                                }
-                            ],
+                            title: 'Merchant QR',
+                            path: '/qr-codes/generate/merchant',
+                            icon: <FiChevronRight className={styles.icon}/>
                         },
                         {
-                            title: 'Parse QR Codes',
-                            path: '/api-tester/qr-codes/parse',
-                            icon: <FaEye className={styles.icon}/>,
-                            items: [
-                                {
-                                    title: 'Merchant QR',
-                                    path: '/api-tester/qr-codes/parse/merchant',
-                                    icon: <FiChevronRight className={styles.icon}/>
-                                },
-                                {
-                                    title: 'Person QR',
-                                    path: '/api-tester/qr-codes/parse/personal',
-                                    icon: <FiChevronRight className={styles.icon}/>
-                                }
-                            ],
+                            title: 'Person QR',
+                            path: '/qr-codes/generate/personal',
+                            icon: <FiChevronRight className={styles.icon}/>
                         }
                     ],
                 },
+                {
+                    title: 'Scan SOMQR',
+                    path: '/qr-codes/parse',
+                    icon: <LuScanBarcode className={styles.icon}/>,
+                    items: [
+                        {
+                            title: 'Merchant QR',
+                            path: '/qr-codes/parse/merchant',
+                            icon: <FiChevronRight className={styles.icon}/>
+                        },
+                        {
+                            title: 'Person QR',
+                            path: '/qr-codes/parse/personal',
+                            icon: <FiChevronRight className={styles.icon}/>
+                        }
+                    ],
+                }
             ],
         },
         {
