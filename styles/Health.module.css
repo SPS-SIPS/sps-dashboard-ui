@@ -1,0 +1,145 @@
+.healthPage {
+    max-width: var(--breakpoint-desktop);
+    margin: var(--spacing-xxl) auto;
+    padding: var(--spacing-xl);
+    animation: fadeIn var(--transition-slow);
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: var(--spacing-xxl);
+    background: linear-gradient(135deg, var(--navbar-bg), var(--color-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.status {
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    text-align: center;
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-xxl);
+    font-weight: bold;
+    /*box-shadow: var(--shadow-lg);*/
+    border: 2px solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ok {
+    background: linear-gradient(135deg, #f0fdf4 0%, var(--color-success-background) 100%);
+    color: var(--color-success);
+    border-color: var(--color-success);
+}
+
+.degraded {
+    background: linear-gradient(135deg, #fffbeb 0%, var(--color-warning-background) 100%);
+    color: #b45309;
+    border-color: var(--color-warning);
+}
+
+.error {
+    background: linear-gradient(135deg, #fef2f2 0%, var(--color-error-background) 100%);
+    color: var(--color-error-dark);
+    border-color: var(--color-error);
+}
+
+.components {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--spacing-xl);
+}
+
+.componentCard {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    position: relative;
+    transition: all var(--transition-normal);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.componentCard::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: var(--color-primary);
+}
+
+.componentCard:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary-light);
+}
+
+.componentCard h3 {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-primary);
+    margin-top: 0;
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.componentCard p {
+    margin: var(--spacing-md) 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-background-accent);
+    padding-bottom: var(--spacing-xs);
+}
+
+.componentCard p:last-of-type {
+    border-bottom: none;
+}
+
+/* Technical Data Styling */
+.componentCard p::after {
+    content: attr(data-value);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.errorMessage {
+    background-color: var(--color-error-background);
+    color: var(--color-error-dark) !important;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: 0.75rem !important;
+    margin-top: var(--spacing-md) !important;
+    border-left: 3px solid var(--color-error);
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .healthPage {
+        padding: var(--spacing-md);
+    }
+    .components {
+        grid-template-columns: 1fr;
+    }
+}
