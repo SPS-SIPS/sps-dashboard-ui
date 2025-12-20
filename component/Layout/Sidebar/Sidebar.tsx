@@ -5,11 +5,19 @@ import {
     FiHome,
     FiChevronRight,
     FiChevronDown,
-    FiX, FiCreditCard,
+    FiX, FiCreditCard, FiActivity,
 } from 'react-icons/fi';
 
 import styles from './Sidebar.module.css'
-import {FaCogs, FaEye, FaFileAlt, FaFileCode, FaPlusCircle, FaQrcode, FaRocket, FaTools} from "react-icons/fa";
+import {
+    FaCogs, FaEnvelopeOpenText,
+    FaFileAlt,
+    FaLock,
+    FaPlusCircle,
+    FaQrcode,
+    FaRocket,
+    FaTools
+} from "react-icons/fa";
 import {useAuthentication} from "../../../auth/AuthProvider";
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
 import {FaCodeCompare} from "react-icons/fa6";
@@ -39,41 +47,41 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             title: 'Dashboard',
             path: '/',
             icon: <FiHome className={styles.icon}/>,
-            roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway']
+            roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway',"Admin","recon"]
         },
         {
             title: 'Documentation',
             path: '/docs',
             icon: <FaFileAlt className={styles.icon}/>,
-            roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway'],
+            roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway',"Admin","recon"],
             items: [
                 {
                     title: 'Getting Started',
                     path: '/docs/getting-started',
                     icon: <FiChevronRight className={styles.icon}/>,
-                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway']
+                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway',"Admin","recon"],
                 },
                 {
                     title: 'Certificate Generation & Validation',
                     path: '/docs/pki',
                     icon: <FiChevronRight className={styles.icon}/>,
-                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway']
+                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway',"Admin","recon"],
                 },
                 {
                     title: 'Data Protection Key Security Guide',
                     path: '/docs/data-protection-keys',
                     icon: <FiChevronRight className={styles.icon}/>,
-                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway']
+                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway',"Admin","recon"],
                 },
                 {
                     title: 'Test Cases & Security Test Scenarios',
                     path: '/docs/test-cases',
                     icon: <FiChevronRight className={styles.icon}/>,
-                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway']
+                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway',"Admin","recon"],
                 }, {
                     title: 'Test Scripts',
                     path: '/docs/TestScripts/',
-                    icon: <FaCodeCompare  className={styles.icon}/>,
+                    icon: <FaCodeCompare className={styles.icon}/>,
                     items: [
                         {
                             title: 'Overview',
@@ -88,37 +96,37 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                         {
                             title: 'Automated Testing',
                             path: '/docs/testScripts/automated-testing',
-                            icon: <FiChevronRight className={styles.icon} />,
+                            icon: <FiChevronRight className={styles.icon}/>,
                         },
                         {
                             title: 'JSON Payloads',
                             path: '/docs/testScripts/JSON-payloads',
-                            icon: <FiChevronRight className={styles.icon} />,
+                            icon: <FiChevronRight className={styles.icon}/>,
                         },
                         {
                             title: 'Payload Update',
                             path: '/docs/testScripts/payload-update',
-                            icon: <FiChevronRight className={styles.icon} />,
+                            icon: <FiChevronRight className={styles.icon}/>,
                         },
                         {
                             title: 'Quick Reference',
                             path: '/docs/testScripts/quick-reference',
-                            icon: <FiChevronRight className={styles.icon} />,
+                            icon: <FiChevronRight className={styles.icon}/>,
                         },
                         {
                             title: 'Test Runner Guide',
                             path: '/docs/testScripts/test-runner-guide',
-                            icon: <FiChevronRight className={styles.icon} />,
+                            icon: <FiChevronRight className={styles.icon}/>,
                         },
                         {
                             title: 'Test Scenarios',
                             path: '/docs/testScripts/test-scenarios',
-                            icon: <FiChevronRight className={styles.icon} />,
+                            icon: <FiChevronRight className={styles.icon}/>,
                         },
                         {
                             title: 'Troubleshooting',
                             path: '/docs/testScripts/troubleshooting',
-                            icon: <FiChevronRight className={styles.icon} />,
+                            icon: <FiChevronRight className={styles.icon}/>,
                         },
                     ],
                 },
@@ -173,59 +181,56 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             ],
         },
         {
-            title: 'Transactions',
-            path: '/transactions',
-            icon: <FiCreditCard className={styles.icon}/>,
-            roles: ['transactions', 'iso_messages'],
+            title: 'Secret Management',
+            path: '/admin/secrets',
+            icon: <FaLock className={styles.icon}/>,
+            roles: ['Admin'],
             items: [
                 {
-                    title: 'Transaction List',
-                    path: '/transactions/list',
+                    title: 'Encrypt / Decrypt Secret',
+                    path: '/admin/secrets/single',
                     icon: <FiChevronRight className={styles.icon}/>,
-                    roles: ['transactions'],
                 },
                 {
-                    title: 'ISO Messages',
-                    path: '/transactions/iso-messages',
+                    title: 'Encrypt / Decrypt All Secrets',
+                    path: '/admin/secrets/all',
                     icon: <FiChevronRight className={styles.icon}/>,
-                    roles: ['iso_messages'],
+                },
+                {
+                    title: 'View Secret',
+                    path: '/admin/secrets/get',
+                    icon: <FiChevronRight className={styles.icon}/>,
                 },
             ],
         },
         {
-            title: 'API Tester',
+            title: 'Transactions',
+            path: '/transactions',
+            icon: <FiCreditCard className={styles.icon}/>,
+            roles: ['transactions']
+        },
+        {
+            title: 'ISO Messages',
+            path: '/iso-messages',
+            icon: <FaEnvelopeOpenText className={styles.icon}/>,
+            roles: ['iso_messages']
+        },
+        {
+            title: 'Transaction APIs',
             path: '/api-tester',
             icon: <FaRocket className={styles.icon}/>,
-            roles: ['som_qr', 'gateway'],
+            roles: ['gateway'],
             items: [
                 {
-                    title: 'Transaction Endpoints',
-                    path: '/api-testing/transactions',
-                    icon: <FiCreditCard className={styles.icon}/>,
-                    roles: ['gateway'],
-                    items: [
-                        {
-                            title: 'Verify API',
-                            path: '/api-tester/verify',
-                            icon: <FiChevronRight className={styles.icon}/>
-                        },
-                        {
-                            title: 'Payment API',
-                            path: '/api-tester/payment',
-                            icon: <FiChevronRight className={styles.icon}/>
-                        },
-                        {
-                            title: 'Status API',
-                            path: '/api-tester/status',
-                            icon: <FiChevronRight className={styles.icon}/>
-                        },
-                        {
-                            title: 'Return API',
-                            path: '/api-tester/return',
-                            icon: <FiChevronRight className={styles.icon}/>
-                        },
-                    ],
+                    title: 'Verify Receiver',
+                    path: '/api-tester/verify',
+                    icon: <FiChevronRight className={styles.icon}/>
                 },
+                {
+                    title: 'Send Payment',
+                    path: '/api-tester/payment',
+                    icon: <FiChevronRight className={styles.icon}/>
+                }
             ],
         },
         {
@@ -276,6 +281,12 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             icon: <FaTools className={styles.icon}/>,
             roles: ['gateway'],
         },
+        {
+            title: 'System Health',
+            path: '/health',
+            icon: <FiActivity className={styles.icon}/>,
+            roles: ['gateway', 'admin'],
+        }
     ];
 
     const toggleExpand = (title: string) => {
@@ -287,7 +298,7 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
     };
 
     const handleItemClick = (path: string) => {
-        router.replace(path);
+        void router.replace(path);
         if (isMobile) onClose();
     };
 
