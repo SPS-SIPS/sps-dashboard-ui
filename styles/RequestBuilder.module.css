@@ -86,7 +86,13 @@
     overflow-y: auto;
 }
 
-.loading,
+.loading{
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    align-items: center;
+    justify-content: center;
+}
 .error,
 .noEndpoints {
     text-align: center;
