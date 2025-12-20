@@ -38,6 +38,7 @@ export const useTransactions = (initialQuery: TransactionQuery = { page: 0, page
                 paramsSerializer: { indexes: null }
             });
 
+            console.log(response);
             setTransactions(response.data);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch transactions');
@@ -48,7 +49,8 @@ export const useTransactions = (initialQuery: TransactionQuery = { page: 0, page
 
     // Fetch when query changes
     useEffect(() => {
-        fetchTransactions();
+        console.log(query);
+        void fetchTransactions();
     }, [query]);
 
     const updateQuery = (newQuery: Partial<TransactionQuery>) => {

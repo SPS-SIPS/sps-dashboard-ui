@@ -35,7 +35,7 @@ export const useISOMessages = (initialQuery: MessageQuery = { page: 0, pageSize:
 
     // Fetch when query changes
     useEffect(() => {
-        fetchMessages();
+        void fetchMessages();
     }, [query]);
 
     const updateQuery = (newQuery: Partial<MessageQuery>) => {

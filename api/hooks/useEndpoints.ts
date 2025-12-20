@@ -37,7 +37,7 @@ const useEndpoints = () => {
             }
         };
 
-        fetchEndpoints();
+        void fetchEndpoints();
     }, []);
 
     return { endpoints, loading, error };
