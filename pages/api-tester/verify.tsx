@@ -80,7 +80,7 @@ const VerificationRequestPage: React.FC = () => {
             ...verificationResponseFields,
             ...verificationRequestFields
         });
-        router.push({
+        void router.push({
             pathname: '/api-tester/payment',
             query: {
                 data: JSON.stringify(internalData),
