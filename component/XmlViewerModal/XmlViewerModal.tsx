@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ActionButton from "../common/ActionButton/ActionButton";
 import styles from './XmlViewerModal.module.css';
-import {AiOutlineClose} from "react-icons/ai";
+import { AiOutlineClose } from "react-icons/ai";
 
 interface XmlViewerModalProps {
     content: string;
@@ -9,9 +9,18 @@ interface XmlViewerModalProps {
     onClose: () => void;
 }
 
-const XmlViewerModal: React.FC<XmlViewerModalProps> = ({content, title, onClose}) => {
+const XmlViewerModal: React.FC<XmlViewerModalProps> = ({ content, title, onClose }) => {
+    const [copied, setCopied] = useState(false);
+
     const handleCopy = () => {
-        navigator.clipboard.writeText(content);
+        navigator.clipboard.writeText(content)
+            .then(() => {
+                setCopied(true); // show "Copied!" message
+                setTimeout(() => setCopied(false), 2000);
+            })
+            .catch((err) => {
+                console.error("Failed to copy:", err);
+            });
     };
 
     return (
@@ -24,8 +33,9 @@ const XmlViewerModal: React.FC<XmlViewerModalProps> = ({content, title, onClose}
                             onClick={handleCopy}
                             className={styles.copyButton}
                         >
-                            Copy XML
+                            Copy Message
                         </ActionButton>
+                        {copied && <span className={styles.copiedText}>Copied!</span>}
                         <button
                             onClick={onClose}
                             className={styles.closeButton}
@@ -35,8 +45,8 @@ const XmlViewerModal: React.FC<XmlViewerModalProps> = ({content, title, onClose}
                     </div>
                 </div>
                 <pre className={styles.xmlPreview}>
-        {content}
-        </pre>
+                    {content}
+                </pre>
             </div>
         </div>
     );
