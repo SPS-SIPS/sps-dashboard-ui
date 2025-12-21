@@ -61,6 +61,8 @@ const EMPTY_FILTERS = {
     ToDate: ''
 };
 
+const VISIBLE_COLUMNS_KEY = 'transactions_visible_columns';
+
 const TransactionsList = () => {
     const {
         transactions,
@@ -72,9 +74,12 @@ const TransactionsList = () => {
     } = useTransactions();
 
     const [showColumnSettings, setShowColumnSettings] = useState(false);
-    const [visibleColumns, setVisibleColumns] = useState<string[]>([
-        'txId', 'type', 'amount'
-    ]);
+
+    const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
+        const stored = localStorage.getItem(VISIBLE_COLUMNS_KEY);
+        return stored ? JSON.parse(stored) : ['txId', 'type', 'amount'];
+    });
+
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
     const [filters, setFilters] = useState({
         ISOMessageId: '',
@@ -127,12 +132,20 @@ const TransactionsList = () => {
     };
 
     const toggleColumnVisibility = (columnId: string) => {
-        setVisibleColumns(prev =>
-            prev.includes(columnId)
+        setVisibleColumns(prev => {
+            const updated = prev.includes(columnId)
                 ? prev.filter(id => id !== columnId)
-                : [...prev, columnId]
-        );
+                : [...prev, columnId];
+
+            localStorage.setItem(
+                VISIBLE_COLUMNS_KEY,
+                JSON.stringify(updated)
+            );
+
+            return updated;
+        });
     };
+
 
     const getStatusClass = (status: TransactionType) => {
         switch (status) {
