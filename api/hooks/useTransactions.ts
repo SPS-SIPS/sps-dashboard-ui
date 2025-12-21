@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import useAxiosPrivate from "./useAxiosPrivate";
-import { Transaction, TransactionQuery } from "../../types/types";
+import {Transaction, TransactionQuery} from "../../types/types";
 
-export const useTransactions = (initialQuery: TransactionQuery = { page: 0, pageSize: 10 }) => {
+export const useTransactions = (initialQuery: TransactionQuery = {page: 0, pageSize: 10}) => {
     const axiosPrivate = useAxiosPrivate();
     const [query, setQuery] = useState<TransactionQuery>(initialQuery);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -15,17 +15,17 @@ export const useTransactions = (initialQuery: TransactionQuery = { page: 0, page
 
         try {
             const params = {
-              page: query.page,
-              pageSize: query.pageSize,
-              Status: query.Status?.toString(),
-              TransactionId: query.TransactionId,
-              EndToEndId: query.EndToEndId,
-              LocalInstrument: query.LocalInstrument,
-              CategoryPurpose: query.CategoryPurpose,
-              DebtorAccount: query.DebtorAccount,
-              CreditorAccount: query.CreditorAccount,
-              fromDate: query.FromDate,
-              toDate: query.ToDate,
+                page: query.page,
+                pageSize: query.pageSize,
+                Status: query.Status?.toString(),
+                TransactionId: query.TransactionId,
+                EndToEndId: query.EndToEndId,
+                LocalInstrument: query.LocalInstrument,
+                CategoryPurpose: query.CategoryPurpose,
+                DebtorAccount: query.DebtorAccount,
+                CreditorAccount: query.CreditorAccount,
+                fromDate: query.FromDate,
+                toDate: query.ToDate,
             };
 
             if (query.ISOMessageId) {
@@ -35,10 +35,8 @@ export const useTransactions = (initialQuery: TransactionQuery = { page: 0, page
 
             const response = await axiosPrivate.get<Transaction[]>('/api/v1/Transactions/transactions', {
                 params,
-                paramsSerializer: { indexes: null }
+                paramsSerializer: {indexes: null}
             });
-
-            console.log(response);
             setTransactions(response.data);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch transactions');
@@ -49,12 +47,11 @@ export const useTransactions = (initialQuery: TransactionQuery = { page: 0, page
 
     // Fetch when query changes
     useEffect(() => {
-        console.log(query);
         void fetchTransactions();
     }, [query]);
 
     const updateQuery = (newQuery: Partial<TransactionQuery>) => {
-        setQuery(prev => ({ ...prev, ...newQuery }));
+        setQuery(prev => ({...prev, ...newQuery}));
     };
 
     return {
