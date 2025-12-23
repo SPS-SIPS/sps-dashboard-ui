@@ -23,10 +23,13 @@ export default function SystemHealthIndicator() {
       }
     };
 
+
    void loadHealth();
   }, []);
 
   useEffect(() => {
+
+
     if (!menuOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {

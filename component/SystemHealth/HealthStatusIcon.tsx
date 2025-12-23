@@ -1,5 +1,3 @@
-// components/SystemHealth/HealthStatusIcon.tsx
-import React from 'react';
 
 type Status = 'ok' | 'degraded' | 'error';
 
