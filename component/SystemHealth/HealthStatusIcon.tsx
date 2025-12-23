@@ -1,12 +1,11 @@
-// components/SystemHealth/HealthStatusIcon.tsx
-import React from 'react';
 
-type Status = 'UP' | 'DEGRADED' | 'DOWN';
+
+type Status = 'ok' | 'degraded' | 'error';
 
 const statusColorMap: Record<Status, string> = {
-  UP: 'bg-emerald-500',
-  DEGRADED: 'bg-amber-500',
-  DOWN: 'bg-red-500',
+  ok: 'bg-emerald-500',
+  degraded: 'bg-amber-500',
+  error: 'bg-red-500',
 };
 
 export const HealthStatusIcon = ({ status }: { status: Status }) => (
