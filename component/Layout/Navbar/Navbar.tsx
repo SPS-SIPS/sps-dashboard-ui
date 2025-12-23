@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './Navbar.module.css';
 import Image from 'next/image';
 import { AvatarDropdown } from "./AvatarDropdown/AvatarDropdown";
 import Link from "next/link";
 import { FiMenu } from 'react-icons/fi';
 import {useAuthentication} from "../../../auth/AuthProvider";
+import SystemHealthIndicator from '../../SystemHealth/SystemHealthIndicator';
 
 interface NavbarProps {
     onMenuToggle: () => void;
@@ -13,6 +14,18 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile }) => {
     const { userName } = useAuthentication();
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setMenuOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
     return (
         <header className={styles.navbar}>
             <div className={styles.leftSection}>
@@ -41,8 +54,12 @@ export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile }) => {
                 </Link>
             </div>
 
-            <div className={styles.rightSection}>
+            <div className={`${styles.rightSection} relative flex items-center gap-4`}>
+                
+               <SystemHealthIndicator />
                 <AvatarDropdown firstName={userName!} />
+
+               
             </div>
         </header>
     );
