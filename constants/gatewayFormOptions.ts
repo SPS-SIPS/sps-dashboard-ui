@@ -9,7 +9,7 @@ export const paymentMethods = [
   { value: "p2p", label: "P2P - (Person to Person)" },
   { value: "b2m", label: "B2M - (Person to Merchant)" },
   { value: "p2g", label: "P2G - (Person to Government)" },
-  { value: "g2p", label: "G2P - (Governemt to Person)" },
+  { value: "g2p", label: "G2P - (Government to Person)" },
 ];
 
 export const bicOptions = [
