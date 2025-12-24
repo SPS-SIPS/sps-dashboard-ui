@@ -285,7 +285,6 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             title: 'System Health',
             path: '/health',
             icon: <FiActivity className={styles.icon}/>,
-            roles: ['gateway', 'admin'],
         }
     ];
 

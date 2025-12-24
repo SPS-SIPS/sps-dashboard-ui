@@ -5,7 +5,6 @@
     padding: var(--spacing-xl);
     margin: var(--spacing-lg) 0;
     border-radius: var(--radius-xl);
-    /*box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);*/
 }
 
 .header {
@@ -40,7 +39,6 @@
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-lg);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 6px rgba(115, 179, 68, 0.2);
     display: flex;
     align-items: center;
     gap: var(--spacing-xs);
@@ -297,6 +295,8 @@
 
 .tableHeader {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    position: sticky;
+    top: 0;
 }
 
 .tableHeader th {
@@ -348,6 +348,7 @@
     border-right: none;
 }
 
+/* Status badge styling */
 .statusBadge {
     display: inline-flex;
     align-items: center;
@@ -360,6 +361,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Color-coded status badges */
 .success {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
@@ -380,26 +382,48 @@
     color: white;
 }
 
+/* XML View Button */
 .xmlButton {
     background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
     color: white;
     border: none;
     padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     font-weight: 600;
     font-size: var(--font-size-sm);
     cursor: pointer;
     transition: all var(--transition-fast);
     box-shadow: 0 2px 4px rgba(139, 92, 246, 0.2);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .xmlButton:hover {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
-    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+/* Action buttons */
+.iconButton {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.iconButton:hover {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(115, 179, 68, 0.2);
 }
 
 .paginationContainer {
@@ -410,7 +434,6 @@
     padding: var(--spacing-lg);
     background: white;
     border-radius: var(--radius-lg);
-    /*box-shadow: var(--shadow-sm);*/
 }
 
 .paginationButton {
@@ -457,30 +480,13 @@
     border: 2px dashed var(--color-primary);
 }
 
-/* Add some specific styling for message type display */
-.messageTypeBadge {
-    display: inline-block;
-    padding: var(--spacing-xs) var(--spacing-md);
-    border-radius: var(--radius-md);
-    font-weight: 500;
-    background: var(--color-background-tertiary);
-    color: var(--color-text-primary);
-}
-
-/* Custom styling for date column */
-.dateCell {
-    color: var(--color-text-secondary);
-    font-family: var(--font-mono);
-    font-size: var(--font-size-sm);
-    white-space: nowrap;
-}
 .loadingOverlay {
-    position: fixed; /* covers whole viewport */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,0.6); /* semi-transparent */
+    background: rgba(255, 255, 255, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -488,7 +494,7 @@
 }
 
 .spinner {
-    border: 4px solid rgba(0,0,0,0.1);
+    border: 4px solid rgba(0, 0, 0, 0.1);
     border-left-color: var(--color-primary);
     border-radius: 50%;
     width: 50px;
@@ -499,6 +505,25 @@
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* Styling for message type text */
+.messageTypeCell {
+    font-weight: 600;
+    color: var(--color-text-label);
+}
+
+/* Date cell styling */
+.dateCell {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+/* Actions column header styling */
+.actionsHeader {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: var(--spacing-md);
@@ -560,27 +585,9 @@
         width: 100%;
         padding: var(--spacing-sm);
     }
-}
 
-/* Add specific styling for ISO Message types */
-.isoTypeIndicator {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-md);
-    font-weight: 500;
-    font-size: var(--font-size-sm);
-    background: rgba(115, 179, 68, 0.1);
-    color: var(--color-primary-dark);
-    border: 1px solid rgba(115, 179, 68, 0.2);
-}
-
-/* Styling for empty states */
-.emptyState {
-    text-align: center;
-    padding: var(--spacing-xl);
-    color: var(--color-text-secondary);
-    background: linear-gradient(135deg, rgba(248, 250, 252, 0.5) 0%, rgba(226, 232, 240, 0.5) 100%);
-    border-radius: var(--radius-lg);
-    border: 2px dashed var(--color-border);
+    .iconButton {
+        width: 100%;
+        justify-content: center;
+    }
 }

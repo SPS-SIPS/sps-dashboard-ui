@@ -18,7 +18,7 @@ const RoleGuard: React.FC<RoleGuardProps> = ({ allowedRoles, children }) => {
                 roles.includes(role)
             );
             if (!hasRequiredRole) {
-                router.replace('/unauthorized');
+                void router.replace('/unauthorized');
             }
         }
     }, [isAuthenticated, isLoading, roles, allowedRoles, router]);

@@ -14,7 +14,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile }) => {
     const { userName } = useAuthentication();
-    const [menuOpen, setMenuOpen] = useState(false);
+    const [, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -58,7 +58,6 @@ export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile }) => {
                 
                <SystemHealthIndicator />
                 <AvatarDropdown firstName={userName!} />
-
                
             </div>
         </header>

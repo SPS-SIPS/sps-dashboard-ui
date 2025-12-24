@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiSettings, FiX, FiCheck } from 'react-icons/fi';
+import {FiSettings, FiX, FiCheck, FiEye} from 'react-icons/fi';
 
 import {useISOMessages} from "../api/hooks/useISOMessages";
 import {
@@ -17,6 +17,7 @@ import styles from '../styles/ISOMessagesList.module.css';
 import RoleGuard from "../auth/RoleGuard";
 import XmlViewerModal from "../component/XmlViewerModal/XmlViewerModal";
 import AlertModal from "../component/common/AlertModal/AlertModal";
+import {useAuthentication} from "../auth/AuthProvider";
 
 const allColumns = [
     { id: 'msgId', label: 'Message ID' },
@@ -52,6 +53,8 @@ const PAGE_SIZE_OPTIONS = [
     { value: '100', label: '100 / page' }
 ];
 
+const VISIBLE_COLUMNS_KEY = 'iso_messages_visible_columns';
+
 const ISOMessagesList = () => {
     const {
         messages,
@@ -66,17 +69,39 @@ const ISOMessagesList = () => {
 
     const [showColumnSettings, setShowColumnSettings] = useState(false);
     const [selectedXml, setSelectedXml] = useState<{ content: string; title: string } | null>(null);
-    const [visibleColumns, setVisibleColumns] = useState<string[]>([
-         'messageType', 'status', 'msgDefIdr', 'request', 'response', 'reason'
-    ]);
+
+    const DEFAULT_VISIBLE_COLUMNS = [
+        'messageType',
+        'status',
+        'msgDefIdr',
+        'request',
+        'response',
+        'reason'
+    ];
+
+    const { roles } = useAuthentication();
+    const showDetailsColumn = roles.includes('transactions');
+
+    const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
+        const stored = localStorage.getItem(VISIBLE_COLUMNS_KEY);
+        return stored ? JSON.parse(stored) : DEFAULT_VISIBLE_COLUMNS;
+    });
 
     const toggleColumnVisibility = (columnId: string) => {
-        setVisibleColumns(prev =>
-            prev.includes(columnId)
+        setVisibleColumns(prev => {
+            const updated = prev.includes(columnId)
                 ? prev.filter(id => id !== columnId)
-                : [...prev, columnId]
-        );
+                : [...prev, columnId];
+
+            localStorage.setItem(
+                VISIBLE_COLUMNS_KEY,
+                JSON.stringify(updated)
+            );
+
+            return updated;
+        });
     };
+
     const [filters, setFilters] = useState({
         msgId: '',
         bizMsgIdr: '',
@@ -131,7 +156,7 @@ const ISOMessagesList = () => {
             case TransactionStatus.Pending: return styles.warning;
             case TransactionStatus.ReadyForReturn: return styles.error;
             case TransactionStatus.CheckStatus: return styles.info;
-            default: return '';
+            default: return status;
         }
     };
 
@@ -333,14 +358,17 @@ const ISOMessagesList = () => {
                     <>
                         <div className={styles.tableWrapper}>
                             <table className={styles.table}>
+
                                 <thead className={styles.tableHeader}>
                                 <tr>
                                     {visibleColumns.map(columnId => {
                                         const column = allColumns.find(c => c.id === columnId);
                                         return column ? <th key={columnId}>{column.label}</th> : null;
                                     })}
+                                    {showDetailsColumn && <th>Actions</th>}
                                 </tr>
                                 </thead>
+
                                 <tbody>
                                 {messages.map((message) => (
                                     <tr key={message.id} className={styles.tableRow}>
@@ -349,9 +377,29 @@ const ISOMessagesList = () => {
                                                 {renderCellContent(message, columnId)}
                                             </td>
                                         ))}
+
+                                        {showDetailsColumn ? (
+                                            <td>
+                                                {message.txId ? (
+                                                    <button
+                                                        className={styles.iconButton}
+                                                        type="button"
+                                                        onClick={() => {
+                                                          console.log("test")
+                                                        }}
+                                                    >
+                                                        <FiEye /> Details
+                                                    </button>
+                                                ) : (
+                                                    <span>-</span>
+                                                )}
+                                            </td>
+                                        ) : null}
                                     </tr>
                                 ))}
+
                                 </tbody>
+
                             </table>
                         </div>
 
