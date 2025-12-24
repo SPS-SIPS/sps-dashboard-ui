@@ -25,7 +25,27 @@ export default function SystemHealthIndicator() {
 
         void loadHealth();
     }, []);
-    console.log('System Health:', health);
+
+     useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node)
+      ) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
+
+
     if (loading) {
         return (
             <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -40,26 +60,14 @@ export default function SystemHealthIndicator() {
             <button
                 onClick={() => setMenuOpen(prev => !prev)}
                 className="inline-flex items-center gap-2 px-3 py-1.5 text-white
-        rounded-md text-sm font-medium shadow-sm hover:bg-gray-50 hover:text-gray-900 
+        rounded-md text-sm ring-2 font-medium shadow-sm hover:bg-gray-50 hover:text-gray-900 
         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 
-        bg-gray-800"
+        bg-gray-800 hover:cursor-pointer "
             >
-                <HealthStatusIcon status={health.status.toUpperCase()}/>
+                <HealthStatusIcon status={health.status.toLowerCase()}/>
                 <span>{health.status.toUpperCase()}</span>
 
-        {/* <svg
-          className={`w-4 h-4 transition-transform ${
-            menuOpen ? 'rotate-180' : ''
-          }`}
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fillRule="evenodd"
-            d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-            clipRule="evenodd"
-          />
-        </svg> */}
+       
       </button>
 
             {menuOpen && (
