@@ -23,7 +23,6 @@ import { useApiRequest } from "../utils/apiService";
 import { baseURL } from "../constants/constants";
 import TransactionStatusModal from "../component/TransactionModel/TransactionStatus";
 
-
 const allColumns = [
   { id: "txId", label: "Transaction ID" },
   { id: "type", label: "Transaction type" },
@@ -83,8 +82,10 @@ const TransactionsList = () => {
   );
   const [statusError, setStatusError] = useState<APIError | null>(null);
   const [statusLoading, setStatusLoading] = useState(false);
-   const [apiUrl, setApiUrl] = useState<string>(`${baseURL}/api/v1/Gateway/Status`);
-  const {makeApiRequest} = useApiRequest();
+  const [apiUrl, setApiUrl] = useState<string>(
+    `${baseURL}/api/v1/Gateway/Status`
+  );
+  const { makeApiRequest } = useApiRequest();
 
   const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
     const stored = localStorage.getItem(VISIBLE_COLUMNS_KEY);
@@ -128,40 +129,39 @@ const TransactionsList = () => {
     setStatusError(null);
     setStatusLoading(true);
     try {
-        const result = await makeApiRequest({
-            url: apiUrl,
-            method: "post",
-            data: {
-                EndToEnd: transaction.endToEndId,
-                TxId: transaction.txId,
-                ToBIC: transaction.creditorAgentBIC
-            }
-        });
-       
-        if (result.success) {
-            setStatusResponse({
-                data: result.data,
-                status: result.status,
-                success: true
-            });
-        } else {
-            setStatusError({
-                message: "Status request failed",
-                details: result.error,
-                statusCode: result.status
-            });
-        }
-    } catch (err) {
-        setStatusError({
-            message: "Unexpected error",
-            details: (err as Error).message,
-            statusCode: 500
-        });
-    } finally {
-        setStatusLoading(false);
-    }
-};
+      const result = await makeApiRequest({
+        url: apiUrl,
+        method: "post",
+        data: {
+          EndToEnd: transaction.endToEndId,
+          TxId: transaction.txId,
+          ToBIC: transaction.creditorAgentBIC,
+        },
+      });
 
+      if (result.success) {
+        setStatusResponse({
+          data: result.data,
+          status: result.status,
+          success: true,
+        });
+      } else {
+        setStatusError({
+          message: "Status request failed",
+          details: result.error,
+          statusCode: result.status,
+        });
+      }
+    } catch (err) {
+      setStatusError({
+        message: "Unexpected error",
+        details: (err as Error).message,
+        statusCode: 500,
+      });
+    } finally {
+      setStatusLoading(false);
+    }
+  };
 
   const handlePageSizeChange = (value: string) => {
     setQuery({
@@ -235,7 +235,6 @@ const TransactionsList = () => {
       case "actions":
         return (
           <div className={styles.actionsCell}>
-            {/* Details – always visible */}
             <button
               className={styles.iconButton}
               title="Details"
@@ -243,8 +242,6 @@ const TransactionsList = () => {
             >
               <TiInfo /> Details
             </button>
-
-            {/* Status – only for TransactionType 1 or 2 */}
             {(transaction.type === 1 || transaction.type === 2) && (
               <button
                 className={styles.iconButton}
@@ -254,28 +251,6 @@ const TransactionsList = () => {
                 <SiStatuspage /> Status
               </button>
             )}
-
-            {/* Return – only for TransactionType 1 */}
-            {transaction.type === 1 && (
-              <button
-                className={styles.iconButton}
-                title="Return"
-                onClick={() => console.log("Return", transaction.id)}
-              >
-                <GiReturnArrow /> Return
-              </button>
-            )}
-
-            {/* Retry – only for TransactionType 3 */}
-            {transaction.type === 3 && (
-              <button
-                className={styles.iconButton}
-                title="Retry"
-                onClick={() => console.log("Retry", transaction.id)}
-              >
-                <FaRepeat /> Retry
-              </button>
-            )}
           </div>
         );
 
@@ -283,7 +258,6 @@ const TransactionsList = () => {
         return transaction[columnId as keyof Transaction] || "-";
     }
   };
-
   return (
     <RoleGuard allowedRoles={["transactions"]}>
       <div className={styles.container}>
@@ -460,9 +434,7 @@ const TransactionsList = () => {
           <>
             <div className={styles.tableWrapper}>
               <table className={styles.table}>
-                <thead
-                  className={styles.tableHeader}
-                >
+                <thead className={styles.tableHeader}>
                   <tr>
                     {visibleColumns.map((columnId) => {
                       const column = allColumns.find((c) => c.id === columnId);
@@ -520,13 +492,12 @@ const TransactionsList = () => {
           onClose={() => setSelectedTransaction(null)}
         />
         <TransactionStatusModal
-    open={statusModalOpen}
-    loading={statusLoading}
-    response={statusResponse}
-    error={statusError}
-    onClose={() => setStatusModalOpen(false)}
-/>
-
+          open={statusModalOpen}
+          loading={statusLoading}
+          response={statusResponse}
+          error={statusError}
+          onClose={() => setStatusModalOpen(false)}
+        />
 
         {loading && query.page > 0 && (
           <div className={styles.loadingOverlay}>

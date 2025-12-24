@@ -48,7 +48,7 @@ const transactionSections = [
     {
         title: 'Overview',
         fields: [
-            { label: 'Transaction ID', value: (t: Transaction) => t.id },
+            { label: 'ID', value: (t: Transaction) => t.id },
             { label: 'Type', value: (t: Transaction) => getTransactionTypeLabel(t.type) },
             { label: 'Amount', value: (t: Transaction) => `${t.amount ?? '-'} ${t.currency ?? ''}` },
             { label: 'ISO Message ID', value: (t: Transaction) => t.isoMessageId },

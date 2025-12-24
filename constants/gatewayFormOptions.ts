@@ -5,6 +5,13 @@ export const verificationMethods = [
   { value: "IBAN", label: "IBAN" },
 ];
 
+export const paymentMethods = [
+  { value: "p2p", label: "P2P - (Peer to Peer)" },
+  { value: "b2m", label: "B2M - (Person to Merchant)" },
+  { value: "p2g", label: "P2G - (Person to Government)" },
+  { value: "g2p", label: "G2P - (Governemt to Person)" },
+];
+
 export const bicOptions = [
   { value: "MYBASOS0", label: "MyBank Limited" },
   { value: "IDMNSOS0", label: "IDMAN COMMUNITY BANK" },
