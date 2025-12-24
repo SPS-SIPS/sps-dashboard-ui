@@ -23,6 +23,32 @@ const XmlViewerModal: React.FC<XmlViewerModalProps> = ({ content, title, onClose
             });
     };
 
+    const formatXml = (xmlString: string) => {
+        const PADDING = '  '; // 2-space indentation
+        const reg = /(>)(<)(\/*)/g;
+        let formatted = '';
+        let pad = 0;
+
+        xmlString = xmlString.replace(reg, '$1\r\n$2$3');
+        xmlString.split('\r\n').forEach((node) => {
+            let indent = 0;
+            if (node.match(/.+<\/\w[^>]*>$/)) {
+                indent = 0;
+            } else if (node.match(/^<\/\w/)) {
+                if (pad !== 0) pad -= 1;
+            } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+                indent = 1;
+            } else {
+                indent = 0;
+            }
+
+            formatted += PADDING.repeat(pad) + node + '\r\n';
+            pad += indent;
+        });
+
+        return formatted.trim();
+    };
+
     return (
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
@@ -45,7 +71,7 @@ const XmlViewerModal: React.FC<XmlViewerModalProps> = ({ content, title, onClose
                     </div>
                 </div>
                 <pre className={styles.xmlPreview}>
-                    {content}
+                    {formatXml(content)}
                 </pre>
             </div>
         </div>

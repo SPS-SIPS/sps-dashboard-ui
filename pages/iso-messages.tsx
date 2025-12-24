@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {FiSettings, FiX, FiCheck, FiEye} from 'react-icons/fi';
 
 import {useISOMessages} from "../api/hooks/useISOMessages";
@@ -18,22 +18,23 @@ import RoleGuard from "../auth/RoleGuard";
 import XmlViewerModal from "../component/XmlViewerModal/XmlViewerModal";
 import AlertModal from "../component/common/AlertModal/AlertModal";
 import {useAuthentication} from "../auth/AuthProvider";
+import VerificationRequest from "../component/IsoMessageDetails/VerificationRequest";
 
 const allColumns = [
-    { id: 'msgId', label: 'Message ID' },
-    { id: 'messageType', label: 'Type' },
-    { id: 'status', label: 'Status' },
-    { id: 'date', label: 'Date' },
-    { id: 'fromBIC', label: 'From BIC' },
-    { id: 'toBIC', label: 'To BIC' },
-    { id: 'txId', label: 'Transaction ID' },
-    { id: 'endToEndId', label: 'End To End ID' },
-    { id: 'bizMsgIdr', label: 'Business Msg ID' },
-    { id: 'msgDefIdr', label: 'Msg Definition ID' },
-    { id: 'reason', label: 'Reason' },
-    { id: 'additionalInfo', label: 'Additional Info' },
-    { id: 'request', label: 'Request' },
-    { id: 'response', label: 'Response' },
+    {id: 'msgId', label: 'Message ID'},
+    {id: 'messageType', label: 'Type'},
+    {id: 'status', label: 'Status'},
+    {id: 'date', label: 'Date'},
+    {id: 'fromBIC', label: 'From BIC'},
+    {id: 'toBIC', label: 'To BIC'},
+    {id: 'txId', label: 'Transaction ID'},
+    {id: 'endToEndId', label: 'End To End ID'},
+    {id: 'bizMsgIdr', label: 'Business Msg ID'},
+    {id: 'msgDefIdr', label: 'Msg Definition ID'},
+    {id: 'reason', label: 'Reason'},
+    {id: 'additionalInfo', label: 'Additional Info'},
+    {id: 'request', label: 'Request'},
+    {id: 'response', label: 'Response'},
 ];
 
 const EMPTY_FILTERS = {
@@ -47,15 +48,26 @@ const EMPTY_FILTERS = {
 };
 
 const PAGE_SIZE_OPTIONS = [
-    { value: '10', label: '10 / page' },
-    { value: '25', label: '25 / page' },
-    { value: '50', label: '50 / page' },
-    { value: '100', label: '100 / page' }
+    {value: '10', label: '10 / page'},
+    {value: '25', label: '25 / page'},
+    {value: '50', label: '50 / page'},
+    {value: '100', label: '100 / page'}
 ];
 
 const VISIBLE_COLUMNS_KEY = 'iso_messages_visible_columns';
 
+
 const ISOMessagesList = () => {
+    const [selectedMessage, setSelectedMessage] = useState<ISOMessage | null>(null);
+
+    const handleShowDetails = (message: ISOMessage) => {
+        setSelectedMessage(message);
+    };
+
+    const handleCloseDetails = () => {
+        setSelectedMessage(null);
+    };
+
     const {
         messages,
         loading,
@@ -79,7 +91,7 @@ const ISOMessagesList = () => {
         'reason'
     ];
 
-    const { roles } = useAuthentication();
+    const {roles} = useAuthentication();
     const showDetailsColumn = roles.includes('transactions');
 
     const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
@@ -135,7 +147,7 @@ const ISOMessagesList = () => {
     };
 
     const handleFilterChange = (field: keyof typeof filters, value: string) => {
-        const newFilters = { ...filters, [field]: value };
+        const newFilters = {...filters, [field]: value};
         setFilters(newFilters);
         setQuery({
             ...newFilters,
@@ -150,18 +162,24 @@ const ISOMessagesList = () => {
     };
 
     const getStatusClass = (status: TransactionStatus) => {
-        switch(status) {
-            case TransactionStatus.Success: return styles.success;
-            case TransactionStatus.Failed: return styles.error;
-            case TransactionStatus.Pending: return styles.warning;
-            case TransactionStatus.ReadyForReturn: return styles.error;
-            case TransactionStatus.CheckStatus: return styles.info;
-            default: return status;
+        switch (status) {
+            case TransactionStatus.Success:
+                return styles.success;
+            case TransactionStatus.Failed:
+                return styles.error;
+            case TransactionStatus.Pending:
+                return styles.warning;
+            case TransactionStatus.ReadyForReturn:
+                return styles.error;
+            case TransactionStatus.CheckStatus:
+                return styles.info;
+            default:
+                return status;
         }
     };
 
     const renderCellContent = (message: ISOMessage, columnId: string) => {
-        switch(columnId) {
+        switch (columnId) {
             case 'messageType':
                 return getISOMessageTypeText(message.messageType);
             case 'status':
@@ -207,244 +225,250 @@ const ISOMessagesList = () => {
 
     return (
         <RoleGuard allowedRoles={['iso_messages']}>
-            <div className={styles.container}>
-                <div className={styles.header}>
-                    <h2 className={styles.title}>ISO Messages</h2>
-                    <button
-                        onClick={() => setShowColumnSettings(!showColumnSettings)}
-                        className={styles.settingsButton}
-                    >
-                        <FiSettings />
-                    </button>
-                </div>
-
-                {error && (
-                    <div className={styles.errorMessage}>
-                        {error}
-                    </div>
-                )}
-
-                <div className={styles.searchContainer}>
-                    {/* First Line - Search Inputs Only */}
-                    <div className={styles.searchInputRow}>
-                        <SearchInput
-                            value={filters.msgId}
-                            onChange={(e) => handleFilterChange('msgId', e.target.value)}
-                            placeholder="Message ID"
-                        />
-                        <SearchInput
-                            value={filters.bizMsgIdr}
-                            onChange={(e) => handleFilterChange('bizMsgIdr', e.target.value)}
-                            placeholder="Business Msg ID"
-                        />
-                        <SearchInput
-                            value={filters.msgDefIdr}
-                            onChange={(e) => handleFilterChange('msgDefIdr', e.target.value)}
-                            placeholder="Msg Definition ID"
-                        />
+            {!selectedMessage ? (
+                <div className={styles.container}>
+                    <div className={styles.header}>
+                        <h2 className={styles.title}>ISO Messages</h2>
+                        <button
+                            onClick={() => setShowColumnSettings(!showColumnSettings)}
+                            className={styles.settingsButton}
+                        >
+                            <FiSettings/>
+                        </button>
                     </div>
 
-                    {/* Second Line - Selects, Dates, and Button */}
-                    <div className={styles.filterControlsRow}>
-                        <div className={styles.selectGroup}>
-                            <SelectInput
-                                label=""
-                                value={filters.status}
-                                onChange={(e) => handleFilterChange('status', e.target.value)}
-                                options={[
-                                    { value: '', label: 'All Statuses' },
-                                    ...Object.entries(TransactionStatus)
-                                        .filter(([key]) => isNaN(Number(key)))
-                                        .map(([key, value]) => ({
-                                            value: String(value),
-                                            label: key
-                                        }))
-                                ]}
-                                placeholder="-- Select a Status --"
+                    {error && (
+                        <div className={styles.errorMessage}>
+                            {error}
+                        </div>
+                    )}
+
+                    <div className={styles.searchContainer}>
+                        {/* First Line - Search Inputs Only */}
+                        <div className={styles.searchInputRow}>
+                            <SearchInput
+                                value={filters.msgId}
+                                onChange={(e) => handleFilterChange('msgId', e.target.value)}
+                                placeholder="Message ID"
                             />
-                            <SelectInput
-                                label=""
-                                value={filters.type}
-                                onChange={(e) => handleFilterChange('type', e.target.value)}
-                                options={[
-                                    { value: '', label: 'All Types' },
-                                    ...Object.entries(ISOMessageType)
-                                        .filter(([key]) => isNaN(Number(key)))
-                                        .map(([key, value]) => ({
-                                            value: String(value),
-                                            label: key
-                                        }))
-                                ]}
-                                placeholder="-- Select a Type --"
+                            <SearchInput
+                                value={filters.bizMsgIdr}
+                                onChange={(e) => handleFilterChange('bizMsgIdr', e.target.value)}
+                                placeholder="Business Msg ID"
+                            />
+                            <SearchInput
+                                value={filters.msgDefIdr}
+                                onChange={(e) => handleFilterChange('msgDefIdr', e.target.value)}
+                                placeholder="Msg Definition ID"
                             />
                         </div>
 
-                        <div className={styles.dateGroup}>
-                            <div className={styles.dateInput}>
-                                <label>From:</label>
-                                <input
-                                    type="date"
-                                    value={filters.fromDate}
-                                    onChange={(e) => handleFilterChange('fromDate', e.target.value)}
-                                />
-                            </div>
-                            <div className={styles.dateInput}>
-                                <label>To:</label>
-                                <input
-                                    type="date"
-                                    value={filters.toDate}
-                                    onChange={(e) => handleFilterChange('toDate', e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className={styles.tableControls}>
-                            <div className={styles.pageSizeControl}>
+                        {/* Second Line - Selects, Dates, and Button */}
+                        <div className={styles.filterControlsRow}>
+                            <div className={styles.selectGroup}>
                                 <SelectInput
                                     label=""
-                                    value={String(query.pageSize)}
-                                    onChange={(e) => handlePageSizeChange(e.target.value)}
-                                    options={PAGE_SIZE_OPTIONS}
-                                    placeholder="Page size"
+                                    value={filters.status}
+                                    onChange={(e) => handleFilterChange('status', e.target.value)}
+                                    options={[
+                                        {value: '', label: 'All Statuses'},
+                                        ...Object.entries(TransactionStatus)
+                                            .filter(([key]) => isNaN(Number(key)))
+                                            .map(([key, value]) => ({
+                                                value: String(value),
+                                                label: key
+                                            }))
+                                    ]}
+                                    placeholder="-- Select a Status --"
+                                />
+                                <SelectInput
+                                    label=""
+                                    value={filters.type}
+                                    onChange={(e) => handleFilterChange('type', e.target.value)}
+                                    options={[
+                                        {value: '', label: 'All Types'},
+                                        ...Object.entries(ISOMessageType)
+                                            .filter(([key]) => isNaN(Number(key)))
+                                            .map(([key, value]) => ({
+                                                value: String(value),
+                                                label: key
+                                            }))
+                                    ]}
+                                    placeholder="-- Select a Type --"
                                 />
                             </div>
-                            <div className={styles.actionButtons}>
-                                <ActionButton
-                                    onClick={clearFilters}
-                                    disabled={loading}
-                                    type="button"
-                                    className={styles.clearButton}
-                                >
-                                    Clear
-                                </ActionButton>
 
-                                <ActionButton
-                                    onClick={refetch}
-                                    disabled={loading}
-                                    type="button"
-                                    className={styles.refreshButton}
-                                >
-                                    Refresh
-                                </ActionButton>
+                            <div className={styles.dateGroup}>
+                                <div className={styles.dateInput}>
+                                    <label>From:</label>
+                                    <input
+                                        type="date"
+                                        value={filters.fromDate}
+                                        onChange={(e) => handleFilterChange('fromDate', e.target.value)}
+                                    />
+                                </div>
+                                <div className={styles.dateInput}>
+                                    <label>To:</label>
+                                    <input
+                                        type="date"
+                                        value={filters.toDate}
+                                        onChange={(e) => handleFilterChange('toDate', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={styles.tableControls}>
+                                <div className={styles.pageSizeControl}>
+                                    <SelectInput
+                                        label=""
+                                        value={String(query.pageSize)}
+                                        onChange={(e) => handlePageSizeChange(e.target.value)}
+                                        options={PAGE_SIZE_OPTIONS}
+                                        placeholder="Page size"
+                                    />
+                                </div>
+                                <div className={styles.actionButtons}>
+                                    <ActionButton
+                                        onClick={clearFilters}
+                                        disabled={loading}
+                                        type="button"
+                                        className={styles.clearButton}
+                                    >
+                                        Clear
+                                    </ActionButton>
+
+                                    <ActionButton
+                                        onClick={refetch}
+                                        disabled={loading}
+                                        type="button"
+                                        className={styles.refreshButton}
+                                    >
+                                        Refresh
+                                    </ActionButton>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {showColumnSettings && (
-                    <div className={styles.columnSettings}>
-                        <h3>Visible Columns</h3>
-                        <div className={styles.columnOptions}>
-                            {allColumns.map(column => (
-                                <label key={column.id} className={styles.columnOption}>
-                                    <span>{column.label}</span>
-                                    <button
-                                        onClick={() => toggleColumnVisibility(column.id)}
-                                        className={`${styles.toggleButton} ${
-                                            visibleColumns.includes(column.id) ? styles.active : ''
-                                        }`}
-                                    >
-                                        {visibleColumns.includes(column.id) ? <FiCheck /> : <FiX />}
-                                    </button>
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {loading && query.page === 0 ? (
-                    <div className={styles.loadingMessage}>Loading messages...</div>
-                ) : (
-                    <>
-                        <div className={styles.tableWrapper}>
-                            <table className={styles.table}>
-
-                                <thead className={styles.tableHeader}>
-                                <tr>
-                                    {visibleColumns.map(columnId => {
-                                        const column = allColumns.find(c => c.id === columnId);
-                                        return column ? <th key={columnId}>{column.label}</th> : null;
-                                    })}
-                                    {showDetailsColumn && <th>Actions</th>}
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                {messages.map((message) => (
-                                    <tr key={message.id} className={styles.tableRow}>
-                                        {visibleColumns.map(columnId => (
-                                            <td key={`${message.id}-${columnId}`}>
-                                                {renderCellContent(message, columnId)}
-                                            </td>
-                                        ))}
-
-                                        {showDetailsColumn ? (
-                                            <td>
-                                                {message.txId ? (
-                                                    <button
-                                                        className={styles.iconButton}
-                                                        type="button"
-                                                        onClick={() => {
-                                                          console.log("test")
-                                                        }}
-                                                    >
-                                                        <FiEye /> Details
-                                                    </button>
-                                                ) : (
-                                                    <span>-</span>
-                                                )}
-                                            </td>
-                                        ) : null}
-                                    </tr>
+                    {showColumnSettings && (
+                        <div className={styles.columnSettings}>
+                            <h3>Visible Columns</h3>
+                            <div className={styles.columnOptions}>
+                                {allColumns.map(column => (
+                                    <label key={column.id} className={styles.columnOption}>
+                                        <span>{column.label}</span>
+                                        <button
+                                            onClick={() => toggleColumnVisibility(column.id)}
+                                            className={`${styles.toggleButton} ${
+                                                visibleColumns.includes(column.id) ? styles.active : ''
+                                            }`}
+                                        >
+                                            {visibleColumns.includes(column.id) ? <FiCheck/> : <FiX/>}
+                                        </button>
+                                    </label>
                                 ))}
-
-                                </tbody>
-
-                            </table>
+                            </div>
                         </div>
+                    )}
 
-                        <div className={styles.paginationContainer}>
-                            <button
-                                onClick={() => setQuery({ page: query.page - 1 })}
-                                disabled={query.page === 0 || loading}
-                                className={styles.paginationButton}
-                            >
-                                Previous
-                            </button>
-                            <span>Page {query.page + 1}</span>
-                            <button
-                                onClick={() => setQuery({ page: query.page + 1 })}
-                                disabled={messages.length < query.pageSize || loading}
-                                className={styles.paginationButton}
-                            >
-                                Next
-                            </button>
+                    {loading && query.page === 0 ? (
+                        <div className={styles.loadingMessage}>Loading messages...</div>
+                    ) : (
+                        <>
+                            <div className={styles.tableWrapper}>
+                                <table className={styles.table}>
+
+                                    <thead className={styles.tableHeader}>
+                                    <tr>
+                                        {visibleColumns.map(columnId => {
+                                            const column = allColumns.find(c => c.id === columnId);
+                                            return column ? <th key={columnId}>{column.label}</th> : null;
+                                        })}
+                                        {showDetailsColumn && <th>Actions</th>}
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    {messages.map((message) => (
+                                        <tr key={message.id} className={styles.tableRow}>
+                                            {visibleColumns.map(columnId => (
+                                                <td key={`${message.id}-${columnId}`}>
+                                                    {renderCellContent(message, columnId)}
+                                                </td>
+                                            ))}
+
+                                            {showDetailsColumn ? (
+                                                <td>
+                                                    {message.txId ? (
+                                                        <button
+                                                            className={styles.iconButton}
+                                                            type="button"
+                                                            onClick={() => handleShowDetails(message)}
+                                                        >
+                                                            <FiEye/> Details
+                                                        </button>
+                                                    ) : (
+                                                        <span>-</span>
+                                                    )}
+                                                </td>
+                                            ) : null}
+                                        </tr>
+                                    ))}
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+
+                            <div className={styles.paginationContainer}>
+                                <button
+                                    onClick={() => setQuery({page: query.page - 1})}
+                                    disabled={query.page === 0 || loading}
+                                    className={styles.paginationButton}
+                                >
+                                    Previous
+                                </button>
+                                <span>Page {query.page + 1}</span>
+                                <button
+                                    onClick={() => setQuery({page: query.page + 1})}
+                                    disabled={messages.length < query.pageSize || loading}
+                                    className={styles.paginationButton}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </>
+                    )}
+                    {loading && query.page > 0 && (
+                        <div className={styles.loadingOverlay}>
+                            <div className={styles.spinner}></div>
                         </div>
-                    </>
-                )}
-                {loading && query.page > 0 &&  (
-                    <div className={styles.loadingOverlay}>
-                        <div className={styles.spinner}></div>
-                    </div>
-                )}
+                    )}
 
-                {selectedXml && (
-                    <XmlViewerModal
-                        content={selectedXml.content}
-                        title={selectedXml.title}
-                        onClose={() => setSelectedXml(null)}
-                    />
-                )}
-                {alertModal && (
-                    <AlertModal
-                        title={alertModal.title}
-                        message={alertModal.message}
-                        error={alertModal.error}
-                        onConfirm={() => setAlertModal(null)}
-                        onClose={() => setAlertModal(null)}
-                    />
-                )}
-            </div>
+                    {selectedXml && (
+                        <XmlViewerModal
+                            content={selectedXml.content}
+                            title={selectedXml.title}
+                            onClose={() => setSelectedXml(null)}
+                        />
+                    )}
+                    {alertModal && (
+                        <AlertModal
+                            title={alertModal.title}
+                            message={alertModal.message}
+                            error={alertModal.error}
+                            onConfirm={() => setAlertModal(null)}
+                            onClose={() => setAlertModal(null)}
+                        />
+                    )}
+                </div>
+            ) : selectedMessage.messageType === ISOMessageType.VerificationRequest && (
+                <VerificationRequest
+                    isoMessage={selectedMessage}
+                    onClose={handleCloseDetails}
+                />
+            )}
+
         </RoleGuard>
     );
 };

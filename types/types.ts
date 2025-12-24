@@ -66,6 +66,8 @@ export interface ISOMessage {
     date: string;
     fromBIC: string;
     toBIC: string;
+    request: string;
+    response: string;
 }
 
 export enum TransactionStatus {
