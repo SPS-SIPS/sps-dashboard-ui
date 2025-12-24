@@ -290,6 +290,12 @@
 .statusIndicator[data-status="ok"] {
     background: var(--color-success);
 }
+.statusIndicator[data-status="degraded"] {
+    background: var(--color-degraded);
+}
+.statusIndicator[data-status="error"] {
+    background: var(--color-error);
+}
 
 .featureList li a {
     display: flex;

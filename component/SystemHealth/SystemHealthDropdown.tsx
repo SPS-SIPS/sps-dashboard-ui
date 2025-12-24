@@ -24,7 +24,6 @@ export default function SystemHealthDropdown({ health }: any) {
           </span>
         </div>
       </div>
-
       <div className="max-h-96 overflow-y-auto divide-y  ">
         {health.components.map((component: any) => (
           <div
@@ -41,7 +40,6 @@ export default function SystemHealthDropdown({ health }: any) {
               </span>
               <HealthStatusIcon status={component.status.toLowerCase()} />
             </div>
-
             <div className="mt-1 text-xs text-gray-600 space-y-0.5 ">
               <p>Endpoint: {component.endpointStatus}</p>
               <p>HTTP: {component.httpResult}</p>
@@ -49,9 +47,8 @@ export default function SystemHealthDropdown({ health }: any) {
                 Checked: {new Date(component.lastChecked).toLocaleTimeString()}
               </p>
             </div>
-
             {component.errorMessage && (
-              <p className="mt-2 text-xs text-red-600">
+              <p className="mt-2 text-xs text-red-600 bg-red-100 font-bold  ">
                 {component.errorMessage}
               </p>
             )}
