@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import useSystemHealth from '../../api/hooks/useSystemHealth';
 import { HealthStatusIcon } from './HealthStatusIcon';
@@ -26,24 +25,24 @@ export default function SystemHealthIndicator() {
         void loadHealth();
     }, []);
 
-     useEffect(() => {
-    if (!menuOpen) return;
+    useEffect(() => {
+        if (!menuOpen) return;
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node)
-      ) {
-        setMenuOpen(false);
-      }
-    };
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                menuRef.current &&
+                !menuRef.current.contains(event.target as Node)
+            ) {
+                setMenuOpen(false);
+            }
+        };
 
-    document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [menuOpen]);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [menuOpen]);
 
 
     if (loading) {
@@ -60,15 +59,16 @@ export default function SystemHealthIndicator() {
             <button
                 onClick={() => setMenuOpen(prev => !prev)}
                 className="inline-flex items-center gap-2 px-3 py-1.5 text-white
-        rounded-md text-sm ring-2 font-medium shadow-sm hover:bg-gray-50 hover:text-gray-900 
+        rounded-md text-sm font-medium shadow-sm hover:bg-gray-50 hover:cursor-pointer hover:text-gray-900
+        ring-2
         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 
-        bg-gray-800 hover:cursor-pointer "
+        bg-gray-800"
             >
-                <HealthStatusIcon status={health.status.toLowerCase()}/>
+                <HealthStatusIcon status={health.status}/>
                 <span>{health.status.toUpperCase()}</span>
 
-       
-      </button>
+
+            </button>
 
             {menuOpen && (
                 <SystemHealthDropdown health={health}/>

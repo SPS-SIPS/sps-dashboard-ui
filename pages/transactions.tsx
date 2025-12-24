@@ -16,8 +16,6 @@ import ActionButton from "../component/common/ActionButton/ActionButton";
 import RoleGuard from "../auth/RoleGuard";
 import { SiStatuspage } from "react-icons/si";
 import { TiInfo } from "react-icons/ti";
-import { GiReturnArrow } from "react-icons/gi";
-import { FaRepeat } from "react-icons/fa6";
 import TransactionDetailsModal from "../component/TransactionDetailsModal/TransactionDetailsModal";
 import { useApiRequest } from "../utils/apiService";
 import { baseURL } from "../constants/constants";
@@ -71,19 +69,19 @@ const VISIBLE_COLUMNS_KEY = "transactions_visible_columns";
 
 const TransactionsList = () => {
   const { transactions, loading, error, query, setQuery, refetch } =
-    useTransactions();
+      useTransactions();
 
   const [showColumnSettings, setShowColumnSettings] = useState(false);
 
   // Status API
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [statusResponse, setStatusResponse] = useState<APIResponse | null>(
-    null
+      null
   );
   const [statusError, setStatusError] = useState<APIError | null>(null);
   const [statusLoading, setStatusLoading] = useState(false);
-  const [apiUrl, setApiUrl] = useState<string>(
-    `${baseURL}/api/v1/Gateway/Status`
+  const [apiUrl] = useState<string>(
+      `${baseURL}/api/v1/Gateway/Status`
   );
   const { makeApiRequest } = useApiRequest();
 
@@ -93,7 +91,7 @@ const TransactionsList = () => {
   });
 
   const [selectedTransaction, setSelectedTransaction] =
-    useState<Transaction | null>(null);
+      useState<Transaction | null>(null);
   const [filters, setFilters] = useState({
     ISOMessageId: "",
     TransactionId: "",
@@ -114,11 +112,11 @@ const TransactionsList = () => {
       ...newFilters,
       page: 0,
       ISOMessageId: newFilters.ISOMessageId
-        ? Number(newFilters.ISOMessageId)
-        : undefined,
+          ? Number(newFilters.ISOMessageId)
+          : undefined,
       Status: newFilters.Status
-        ? (newFilters.Status as unknown as TransactionStatus)
-        : undefined,
+          ? (newFilters.Status as unknown as TransactionStatus)
+          : undefined,
     });
   };
 
@@ -192,8 +190,8 @@ const TransactionsList = () => {
   const toggleColumnVisibility = (columnId: string) => {
     setVisibleColumns((prev) => {
       const updated = prev.includes(columnId)
-        ? prev.filter((id) => id !== columnId)
-        : [...prev, columnId];
+          ? prev.filter((id) => id !== columnId)
+          : [...prev, columnId];
 
       localStorage.setItem(VISIBLE_COLUMNS_KEY, JSON.stringify(updated));
 
@@ -220,38 +218,38 @@ const TransactionsList = () => {
     switch (columnId) {
       case "amount":
         return transaction.amount
-          ? `${transaction.amount} ${transaction.currency || ""}`
-          : "-";
+            ? `${transaction.amount} ${transaction.currency || ""}`
+            : "-";
       case "type":
         return (
-          <span
-            className={`${styles.statusBadge} ${getStatusClass(
-              transaction.type
-            )}`}
-          >
+            <span
+                className={`${styles.statusBadge} ${getStatusClass(
+                    transaction.type
+                )}`}
+            >
             {getTransactionStatusType(transaction.type)}
           </span>
         );
       case "actions":
         return (
-          <div className={styles.actionsCell}>
-            <button
-              className={styles.iconButton}
-              title="Details"
-              onClick={() => setSelectedTransaction(transaction)}
-            >
-              <TiInfo /> Details
-            </button>
-            {(transaction.type === 1 || transaction.type === 2) && (
+            <div className={styles.actionsCell}>
               <button
-                className={styles.iconButton}
-                title="Status"
-                onClick={() => handleStatusClick(transaction)}
+                  className={styles.iconButton}
+                  title="Details"
+                  onClick={() => setSelectedTransaction(transaction)}
               >
-                <SiStatuspage /> Status
+                <TiInfo /> Details
               </button>
-            )}
-          </div>
+              {(transaction.type === 1 || transaction.type === 2) && (
+                  <button
+                      className={styles.iconButton}
+                      title="Status"
+                      onClick={() => handleStatusClick(transaction)}
+                  >
+                    <SiStatuspage /> Status
+                  </button>
+              )}
+            </div>
         );
 
       default:
@@ -259,253 +257,253 @@ const TransactionsList = () => {
     }
   };
   return (
-    <RoleGuard allowedRoles={["transactions"]}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>Transactions</h2>
-          <button
-            onClick={() => setShowColumnSettings(!showColumnSettings)}
-            className={styles.settingsButton}
-          >
-            <FiSettings />
-          </button>
-        </div>
-
-        {error && <div className={styles.errorMessage}>{error}</div>}
-
-        <div className={styles.searchContainer}>
-          <div className={styles.searchInputRow}>
-            <SearchInput
-              placeholder="Search by Transaction ID"
-              value={filters.TransactionId}
-              onChange={(e) =>
-                handleFilterChange("TransactionId", e.target.value)
-              }
-            />
-            <SearchInput
-              placeholder="Search by ISO Message ID"
-              value={filters.ISOMessageId}
-              onChange={(e) =>
-                handleFilterChange("ISOMessageId", e.target.value)
-              }
-            />
-            <SearchInput
-              placeholder="Search by End-to-End ID"
-              value={filters.EndToEndId}
-              onChange={(e) => handleFilterChange("EndToEndId", e.target.value)}
-            />
-            <SearchInput
-              placeholder="Search by Local Instrument"
-              value={filters.LocalInstrument}
-              onChange={(e) =>
-                handleFilterChange("LocalInstrument", e.target.value)
-              }
-            />
+      <RoleGuard allowedRoles={["transactions"]}>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>Transactions</h2>
+            <button
+                onClick={() => setShowColumnSettings(!showColumnSettings)}
+                className={styles.settingsButton}
+            >
+              <FiSettings />
+            </button>
           </div>
-          <div className={styles.searchInputRow}>
-            <SearchInput
-              placeholder="Search by Category Purpose"
-              value={filters.CategoryPurpose}
-              onChange={(e) =>
-                handleFilterChange("CategoryPurpose", e.target.value)
-              }
-            />
-            <SearchInput
-              placeholder="Search by Debtor Account"
-              value={filters.DebtorAccount}
-              onChange={(e) =>
-                handleFilterChange("DebtorAccount", e.target.value)
-              }
-            />
-            <SearchInput
-              placeholder="Search by Creditor Account"
-              value={filters.CreditorAccount}
-              onChange={(e) =>
-                handleFilterChange("CreditorAccount", e.target.value)
-              }
-            />
-          </div>
-          <div className={styles.filterControlsRow}>
-            <div className={styles.selectGroup}>
-              <SelectInput
-                label=""
-                value={filters.Status}
-                onChange={(e) => handleFilterChange("Status", e.target.value)}
-                options={[
-                  { value: "", label: "All Statuses" },
-                  ...Object.entries(TransactionStatus)
-                    .filter(([key]) => isNaN(Number(key)))
-                    .map(([key, value]) => ({
-                      value: String(value),
-                      label: key,
-                    })),
-                ]}
-                placeholder="-- Select a Status --"
+
+          {error && <div className={styles.errorMessage}>{error}</div>}
+
+          <div className={styles.searchContainer}>
+            <div className={styles.searchInputRow}>
+              <SearchInput
+                  placeholder="Search by Transaction ID"
+                  value={filters.TransactionId}
+                  onChange={(e) =>
+                      handleFilterChange("TransactionId", e.target.value)
+                  }
+              />
+              <SearchInput
+                  placeholder="Search by ISO Message ID"
+                  value={filters.ISOMessageId}
+                  onChange={(e) =>
+                      handleFilterChange("ISOMessageId", e.target.value)
+                  }
+              />
+              <SearchInput
+                  placeholder="Search by End-to-End ID"
+                  value={filters.EndToEndId}
+                  onChange={(e) => handleFilterChange("EndToEndId", e.target.value)}
+              />
+              <SearchInput
+                  placeholder="Search by Local Instrument"
+                  value={filters.LocalInstrument}
+                  onChange={(e) =>
+                      handleFilterChange("LocalInstrument", e.target.value)
+                  }
               />
             </div>
-
-            <div className={styles.dateGroup}>
-              <div className={styles.dateInput}>
-                <label>From:</label>
-                <input
-                  type="date"
-                  value={query.FromDate || ""}
+            <div className={styles.searchInputRow}>
+              <SearchInput
+                  placeholder="Search by Category Purpose"
+                  value={filters.CategoryPurpose}
                   onChange={(e) =>
-                    handleFilterChange("FromDate", e.target.value)
+                      handleFilterChange("CategoryPurpose", e.target.value)
                   }
-                  className={styles.datePicker}
-                />
-              </div>
-              <div className={styles.dateInput}>
-                <label>To:</label>
-                <input
-                  type="date"
-                  value={query.ToDate || ""}
-                  onChange={(e) => handleFilterChange("ToDate", e.target.value)}
-                  className={styles.datePicker}
-                />
-              </div>
+              />
+              <SearchInput
+                  placeholder="Search by Debtor Account"
+                  value={filters.DebtorAccount}
+                  onChange={(e) =>
+                      handleFilterChange("DebtorAccount", e.target.value)
+                  }
+              />
+              <SearchInput
+                  placeholder="Search by Creditor Account"
+                  value={filters.CreditorAccount}
+                  onChange={(e) =>
+                      handleFilterChange("CreditorAccount", e.target.value)
+                  }
+              />
             </div>
-
-            <div className={styles.tableControls}>
-              <div className={styles.pageSizeControl}>
+            <div className={styles.filterControlsRow}>
+              <div className={styles.selectGroup}>
                 <SelectInput
-                  label=""
-                  value={String(query.pageSize)}
-                  onChange={(e) => handlePageSizeChange(e.target.value)}
-                  options={PAGE_SIZE_OPTIONS}
-                  placeholder="Page size"
+                    label=""
+                    value={filters.Status}
+                    onChange={(e) => handleFilterChange("Status", e.target.value)}
+                    options={[
+                      { value: "", label: "All Statuses" },
+                      ...Object.entries(TransactionStatus)
+                          .filter(([key]) => isNaN(Number(key)))
+                          .map(([key, value]) => ({
+                            value: String(value),
+                            label: key,
+                          })),
+                    ]}
+                    placeholder="-- Select a Status --"
                 />
               </div>
 
-              <div className={styles.actionButtons}>
-                <ActionButton
-                  onClick={clearFilters}
-                  disabled={loading}
-                  type="button"
-                  className={styles.clearButton}
-                >
-                  Clear
-                </ActionButton>
+              <div className={styles.dateGroup}>
+                <div className={styles.dateInput}>
+                  <label>From:</label>
+                  <input
+                      type="date"
+                      value={query.FromDate || ""}
+                      onChange={(e) =>
+                          handleFilterChange("FromDate", e.target.value)
+                      }
+                      className={styles.datePicker}
+                  />
+                </div>
+                <div className={styles.dateInput}>
+                  <label>To:</label>
+                  <input
+                      type="date"
+                      value={query.ToDate || ""}
+                      onChange={(e) => handleFilterChange("ToDate", e.target.value)}
+                      className={styles.datePicker}
+                  />
+                </div>
+              </div>
 
-                <ActionButton
-                  onClick={refetch}
-                  disabled={loading}
-                  type="button"
-                  className={styles.refreshButton}
-                >
-                  Refresh
-                </ActionButton>
+              <div className={styles.tableControls}>
+                <div className={styles.pageSizeControl}>
+                  <SelectInput
+                      label=""
+                      value={String(query.pageSize)}
+                      onChange={(e) => handlePageSizeChange(e.target.value)}
+                      options={PAGE_SIZE_OPTIONS}
+                      placeholder="Page size"
+                  />
+                </div>
+
+                <div className={styles.actionButtons}>
+                  <ActionButton
+                      onClick={clearFilters}
+                      disabled={loading}
+                      type="button"
+                      className={styles.clearButton}
+                  >
+                    Clear
+                  </ActionButton>
+
+                  <ActionButton
+                      onClick={refetch}
+                      disabled={loading}
+                      type="button"
+                      className={styles.refreshButton}
+                  >
+                    Refresh
+                  </ActionButton>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {showColumnSettings && (
-          <div className={styles.columnSettings}>
-            <h3>Visible Columns</h3>
-            <div className={styles.columnOptions}>
-              {allColumns
-                .filter((column) => column.id !== "actions")
-                .map((column) => (
-                  <label key={column.id} className={styles.columnOption}>
-                    <span>{column.label}</span>
-                    <button
-                      onClick={() => toggleColumnVisibility(column.id)}
-                      className={`${styles.toggleButton} ${
-                        visibleColumns.includes(column.id) ? styles.active : ""
-                      }`}
-                    >
-                      {visibleColumns.includes(column.id) ? (
-                        <FiCheck />
-                      ) : (
-                        <FiX />
-                      )}
-                    </button>
-                  </label>
-                ))}
-            </div>
-          </div>
-        )}
-
-        {loading && query.page === 0 ? (
-          <div className={styles.loadingMessage}>Loading transactions...</div>
-        ) : (
-          <>
-            <div className={styles.tableWrapper}>
-              <table className={styles.table}>
-                <thead className={styles.tableHeader}>
-                  <tr>
-                    {visibleColumns.map((columnId) => {
-                      const column = allColumns.find((c) => c.id === columnId);
-                      return column ? (
-                        <th key={columnId}>{column.label}</th>
-                      ) : null;
-                    })}
-
-                    {/* Actions always last */}
-                    <th className={styles.actionsHeader}>Actions</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {transactions.map((transaction) => (
-                    <tr key={transaction.id} className={styles.tableRow}>
-                      {visibleColumns.map((columnId) => (
-                        <td key={`${transaction.id}-${columnId}`}>
-                          {renderCellContent(transaction, columnId)}
-                        </td>
+          {showColumnSettings && (
+              <div className={styles.columnSettings}>
+                <h3>Visible Columns</h3>
+                <div className={styles.columnOptions}>
+                  {allColumns
+                      .filter((column) => column.id !== "actions")
+                      .map((column) => (
+                          <label key={column.id} className={styles.columnOption}>
+                            <span>{column.label}</span>
+                            <button
+                                onClick={() => toggleColumnVisibility(column.id)}
+                                className={`${styles.toggleButton} ${
+                                    visibleColumns.includes(column.id) ? styles.active : ""
+                                }`}
+                            >
+                              {visibleColumns.includes(column.id) ? (
+                                  <FiCheck />
+                              ) : (
+                                  <FiX />
+                              )}
+                            </button>
+                          </label>
                       ))}
+                </div>
+              </div>
+          )}
+
+          {loading && query.page === 0 ? (
+              <div className={styles.loadingMessage}>Loading transactions...</div>
+          ) : (
+              <>
+                <div className={styles.tableWrapper}>
+                  <table className={styles.table}>
+                    <thead className={styles.tableHeader}>
+                    <tr>
+                      {visibleColumns.map((columnId) => {
+                        const column = allColumns.find((c) => c.id === columnId);
+                        return column ? (
+                            <th key={columnId}>{column.label}</th>
+                        ) : null;
+                      })}
 
                       {/* Actions always last */}
-                      <td className={styles.actionsCellSticky}>
-                        {renderCellContent(transaction, "actions")}
-                      </td>
+                      <th className={styles.actionsHeader}>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                    </thead>
 
-            <div className={styles.paginationContainer}>
-              <button
-                onClick={() => setQuery({ page: query.page - 1 })}
-                disabled={query.page === 0 || loading}
-                className={styles.paginationButton}
-              >
-                Previous
-              </button>
-              <span>Page {query.page + 1}</span>
-              <button
-                onClick={() => setQuery({ page: query.page + 1 })}
-                disabled={transactions.length < query.pageSize || loading}
-                className={styles.paginationButton}
-              >
-                Next
-              </button>
-            </div>
-          </>
-        )}
+                    <tbody>
+                    {transactions.map((transaction) => (
+                        <tr key={transaction.id} className={styles.tableRow}>
+                          {visibleColumns.map((columnId) => (
+                              <td key={`${transaction.id}-${columnId}`}>
+                                {renderCellContent(transaction, columnId)}
+                              </td>
+                          ))}
 
-        <TransactionDetailsModal
-          transaction={selectedTransaction}
-          onClose={() => setSelectedTransaction(null)}
-        />
-        <TransactionStatusModal
-          open={statusModalOpen}
-          loading={statusLoading}
-          response={statusResponse}
-          error={statusError}
-          onClose={() => setStatusModalOpen(false)}
-        />
+                          {/* Actions always last */}
+                          <td className={styles.actionsCellSticky}>
+                            {renderCellContent(transaction, "actions")}
+                          </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                  </table>
+                </div>
 
-        {loading && query.page > 0 && (
-          <div className={styles.loadingOverlay}>
-            <div className={styles.spinner}></div>
-          </div>
-        )}
-      </div>
-    </RoleGuard>
+                <div className={styles.paginationContainer}>
+                  <button
+                      onClick={() => setQuery({ page: query.page - 1 })}
+                      disabled={query.page === 0 || loading}
+                      className={styles.paginationButton}
+                  >
+                    Previous
+                  </button>
+                  <span>Page {query.page + 1}</span>
+                  <button
+                      onClick={() => setQuery({ page: query.page + 1 })}
+                      disabled={transactions.length < query.pageSize || loading}
+                      className={styles.paginationButton}
+                  >
+                    Next
+                  </button>
+                </div>
+              </>
+          )}
+
+          <TransactionDetailsModal
+              transaction={selectedTransaction}
+              onClose={() => setSelectedTransaction(null)}
+          />
+          <TransactionStatusModal
+              open={statusModalOpen}
+              loading={statusLoading}
+              response={statusResponse}
+              error={statusError}
+              onClose={() => setStatusModalOpen(false)}
+          />
+
+          {loading && query.page > 0 && (
+              <div className={styles.loadingOverlay}>
+                <div className={styles.spinner}></div>
+              </div>
+          )}
+        </div>
+      </RoleGuard>
   );
 };
 

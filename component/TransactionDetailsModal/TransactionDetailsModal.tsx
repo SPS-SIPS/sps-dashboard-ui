@@ -39,7 +39,7 @@ const getTransactionTypeClass = (type: TransactionType) => {
     }
 };
 
-const getBicLabel = (bic?: string) => {
+export const getBicLabel = (bic?: string) => {
     const option = bicOptions.find(o => o.value === bic);
     return option ? option.label : bic || '-';
 };
