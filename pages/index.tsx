@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { FiChevronRight } from "react-icons/fi";
 import useSystemHealth from "../api/hooks/useSystemHealth";
 import {
-    FaCheckCircle,
+  FaCheckCircle,
   FaCogs,
   FaExclamationTriangle,
   FaEye,
@@ -193,52 +193,63 @@ const DashboardHome = () => {
         </section>
 
         {/* System Status */}
-     <section className={styles.quickAccess}>
-  <div className="  bg-white rounded-3xl shadow-xl p-6">
-    <h2 className="text-3xl font-bold mb-6 text-gray-800">System Health</h2>
+        <section className={styles.quickAccess}>
+          <div className="  bg-white rounded-3xl shadow-xl p-6">
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">
+              System Health
+            </h2>
 
-    <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {health && !loading ? (
-        health.components.map((component: any, idx: number) => {
-          const statusColor =
-            component.status === "ok"
-              ? "green"
-              : component.status === "degraded"
-              ? "amber"
-              : "red";
-            const StatusIcon =
-                component.status === "ok" ? (<FaCheckCircle className={`text-green-500`}/>) :
-                component.status === "degraded" ? (<FaExclamationTriangle className={`text-amber-500`}/>) :
-                (<FaTimesCircle className={`text-red-500`}/>); 
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {health && !loading ? (
+                health.components.map((component: any, idx: number) => {
+                  const statusColor =
+                    component.status === "ok"
+                      ? "green"
+                      : component.status === "degraded"
+                      ? "amber"
+                      : "red";
+                  const StatusIcon =
+                    component.status === "ok" ? (
+                      <FaCheckCircle className={`text-green-500`} />
+                    ) : component.status === "degraded" ? (
+                      <FaExclamationTriangle className={`text-amber-500`} />
+                    ) : (
+                      <FaTimesCircle className={`text-red-500`} />
+                    );
 
-          return (
-            <div
-              key={idx}
-              className="relative p-5 rounded-2xl bg-white shadow-md hover:shadow-2xl transition cursor-pointer"
-            >
-              <div className={`absolute -top-2 -right-2 h-10 w-10 rounded-full bg-${statusColor}-400/30 blur-xl`} />
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  {StatusIcon}
-                  <h3 className="text-lg font-semibold text-gray-800">{component.name}</h3>
-                </div>
-                <span className={`h-3 w-3 rounded-full bg-${statusColor}-500`} />
-              </div>
-              <p className={`text-sm font-medium text-${statusColor}-700`}>
-                {component.status.toUpperCase()}
-              </p>
+                  return (
+                    <div
+                      key={idx}
+                      className="relative p-5 rounded-2xl bg-white shadow-md hover:shadow-2xl transition cursor-pointer"
+                    >
+                      <div
+                        className={`absolute -top-2 -right-2 h-10 w-10 rounded-full bg-${statusColor}-400/30 blur-xl`}
+                      />
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          {StatusIcon}
+                          <h3 className="text-lg font-semibold text-gray-800">
+                            {component.name}
+                          </h3>
+                        </div>
+                        <span
+                          className={`h-3 w-3 rounded-full bg-${statusColor}-500`}
+                        />
+                      </div>
+                      <p
+                        className={`text-sm font-medium text-${statusColor}-700`}
+                      >
+                        {component.status.toUpperCase()}
+                      </p>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-gray-500">Loading system health...</p>
+              )}
             </div>
-          );
-        })
-      ) : (
-        <p className="text-gray-500">Loading system health...</p>
-      )}
-    </div>
-  </div>
-</section>
-
-
-
+          </div>
+        </section>
       </div>
     </>
   );
