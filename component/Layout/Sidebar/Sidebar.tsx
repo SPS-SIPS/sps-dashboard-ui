@@ -216,7 +216,7 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             roles: ['iso_messages']
         },
         {
-            title: 'Transaction APIs',
+            title: 'API Tester',
             path: '/api-tester',
             icon: <FaRocket className={styles.icon}/>,
             roles: ['gateway'],
