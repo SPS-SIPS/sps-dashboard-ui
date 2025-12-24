@@ -36,7 +36,13 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({onSubmit, prefilledValue
                 mappings.forEach(({internalField, userField}) => {
                     if (prefilledValues && internalField in prefilledValues) {
                         initialValues[userField] = prefilledValues[internalField];
-                        disabledSet.add(userField);
+                        console.log(`Prefilling ${userField} with value: ${prefilledValues[internalField]}`);
+                        if (userField !== "lclInstrument" && userField !== "ctgPurp"
+                             && userField !== "agent"
+                             && userField !== "crIssuer"
+                            ) {
+  disabledSet.add(userField);
+}
                     }
                 });
 
@@ -87,6 +93,7 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({onSubmit, prefilledValue
                     </div>
                     <form onSubmit={handleSubmit} className={styles.requestForm}>
                         {fieldMappings.map(({internalField, userField, type}, index) => {
+                            
                             const isAccountType =
                                 internalField === "CreditorAccountType" ||
                                 internalField === "DebtorAccountType";

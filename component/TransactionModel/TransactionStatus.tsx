@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./TransactionStatus.module.css";
 import { APIError, APIResponse } from "../../types/types";
 import { AiOutlineClose } from "react-icons/ai";
+import ActionButton from "../common/ActionButton/ActionButton";
 
 interface Props {
   open: boolean;
@@ -28,6 +29,18 @@ const TransactionStatusModal: React.FC<Props> = ({
     { label: "Transaction ID", value: data?.transactionId },
     { label: "Transaction Status", value: data?.status },
   ];
+    const [copied, setCopied] = useState(false);
+  
+      const handleCopy = () => {
+          navigator.clipboard.writeText(response ? JSON.stringify(response.data, null, 2) : "")
+              .then(() => {
+                  setCopied(true); // show "Copied!" message
+                  setTimeout(() => setCopied(false), 2000);
+              })
+              .catch((err) => {
+                  console.error("Failed to copy:", err);
+              });
+      };
 
   return (
     <div className="fixed inset-0 z-9999 backdrop-blur-[6px] bg-[rgba(15_23_42/0.73)] flex items-center justify-center p-3">
@@ -45,6 +58,19 @@ const TransactionStatusModal: React.FC<Props> = ({
       >
         <div className="flex justify-between items-center">
           <h1 className=" text-xl font-bold mr-4">Transaction Status</h1>
+           <button
+                            onClick={handleCopy}
+                            className="px-3 py-1.5 bg-green-600 text-white 
+                            rounded-md text-sm font-medium shadow-sm
+                             hover:bg-green-700 focus:outline-none 
+                             focus:ring-2 focus:ring-offset-2 focus:ring-green-500
+                             -mr-4
+                             
+                             "
+                        >
+                            Copy Response
+                        </button>
+                        {copied && <span className={styles.copiedText}>Copied!</span>}
           <button
             onClick={onClose}
             className=" w-9 h-9

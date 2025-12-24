@@ -63,7 +63,8 @@ export default function SystemHealthIndicator() {
       <button
         onClick={() => setMenuOpen(prev => !prev)}
         className="inline-flex items-center gap-2 px-3 py-1.5 text-white 
-        rounded-md text-sm font-medium shadow-sm hover:bg-gray-50 hover:text-gray-900 
+        rounded-md text-sm font-medium shadow-sm hover:bg-gray-50 hover:cursor-pointer hover:text-gray-900 
+        ring-2
         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 
         bg-gray-800"
       >

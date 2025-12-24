@@ -63,12 +63,20 @@ export function mapToPrefilledValues(data: {
     Type: string;
     Name: string;
     Currency: string;
+    LocalInstrument: string;
+    CategoryPurpose: string;
+   CreditorIssuer: string;
 }) {
     return {
+        
         CreditorAgentBIC: data.ToBIC,
         CreditorAccount: data.Id,
         CreditorAccountType: data.Type,
         CreditorName: data.Name,
         Currency: data.Currency,
+        LocalInstrument: 'p2p',
+        CategoryPurpose: 'c2crt',
+        CreditorIssuer: 'c',
+        ToBIC: data.ToBIC
     };
 }

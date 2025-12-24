@@ -56,7 +56,6 @@ const PaymentPage = () => {
 
 
     const prefilledValues = internalData ? mapToPrefilledValues(internalData) : null;
-
     return (
         <RoleGuard allowedRoles={['gateway']}>
             <div className={sharedStyles.container}>
