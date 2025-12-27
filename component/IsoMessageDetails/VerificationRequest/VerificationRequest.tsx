@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import styles from "./VerificationRequest.module.css";
-import Breadcrumb from "../common/Breadcrumb/Breadcrumb";
-import {ISOMessage, getTransactionStatusText, TransactionStatus} from "../../types/types";
-import {getBicLabel} from "../TransactionDetailsModal/TransactionDetailsModal";
+import Breadcrumb from "../../common/Breadcrumb/Breadcrumb";
+import {ISOMessage, getTransactionStatusText, TransactionStatus} from "../../../types/types";
+import {getBicLabel} from "../../TransactionDetailsModal/TransactionDetailsModal";
 import {FiArrowRight, FiEye, FiX} from "react-icons/fi";
-import XmlViewerModal from "../XmlViewerModal/XmlViewerModal";
+import XmlViewerModal from "../../XmlViewerModal/XmlViewerModal";
 
 interface Props {
     isoMessage: ISOMessage;
@@ -17,7 +17,7 @@ const VerificationRequest: React.FC<Props> = ({isoMessage, onClose}) => {
     const breadcrumbs = [
         {label: "Home", link: "/"},
         {label: "ISO Messages", link: "/iso-messages"},
-        {label: "ISO 20022 Identification Verification", link: "/verification-requests"},
+        {label: "ISO 20022 Identification Verification", link: "/iso-messages"},
     ];
 
     const displayValue = (value?: string | number) => (value ? value : "-");
