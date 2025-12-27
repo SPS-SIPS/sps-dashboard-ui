@@ -9,7 +9,7 @@ interface Props {
     onClose: () => void;
 }
 
-const getTransactionTypeLabel = (type: TransactionType) => {
+export const getTransactionTypeLabel = (type: TransactionType) => {
     switch (type) {
         case TransactionType.Deposit:
             return 'Deposit';
