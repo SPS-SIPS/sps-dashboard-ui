@@ -1,8 +1,6 @@
 import useAxiosPrivate from "./useAxiosPrivate";
 
-/**
- * Query parameters you can pass to the API
- */
+
 export type StatusMessagesQuery = {
     relatedToISOMessageId?: number;
     msgId?: string;
@@ -16,9 +14,6 @@ export type StatusMessagesQuery = {
     pageSize?: number;
 };
 
-/**
- * Status message DTO returned by the API
- */
 export type StatusMessage = {
     id: number;
     messageType: string;
@@ -43,19 +38,15 @@ const BASE_URL = "/api/v1/StatusMessages";
 const useStatusMessages = () => {
     const axiosPrivate = useAxiosPrivate();
 
-    /**
-     * Get paged status (pacs.002) messages
-     */
     const getStatusMessages = async (
         query: StatusMessagesQuery
     ): Promise<StatusMessage[]> => {
         try {
-            const response = await axiosPrivate.get<StatusMessage[]>(
-                BASE_URL,
-                { params: query }
-            );
+            const response = await axiosPrivate.get<StatusMessage[]>(BASE_URL, {
+                params: query,
+            });
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
             throw error;
         }
     };

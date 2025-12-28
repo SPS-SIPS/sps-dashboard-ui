@@ -24,7 +24,6 @@ export const useISOMessages = (initialQuery: MessageQuery = { page: 0, pageSize:
                 params,
                 paramsSerializer: { indexes: null }
             });
-            console.log(response);
             setMessages(response.data);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch messages');

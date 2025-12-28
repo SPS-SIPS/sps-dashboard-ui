@@ -39,6 +39,7 @@ const allColumns = [
 ];
 
 const EMPTY_FILTERS = {
+    RelatedToISOMessageId: '',
     msgId: '',
     bizMsgIdr: '',
     msgDefIdr: '',
@@ -115,22 +116,15 @@ const ISOMessagesList = () => {
         });
     };
 
-    const [filters, setFilters] = useState({
-        msgId: '',
-        bizMsgIdr: '',
-        msgDefIdr: '',
-        status: '',
-        type: '',
-        fromDate: '',
-        toDate: ''
-    });
+    const [filters, setFilters] = useState<typeof EMPTY_FILTERS>({ ...EMPTY_FILTERS });
 
     const clearFilters = () => {
-        setFilters(EMPTY_FILTERS);
+        setFilters({ ...EMPTY_FILTERS });
         setQuery({
             page: 0,
             status: undefined,
             type: undefined,
+            RelatedToISOMessageId: undefined,
             msgId: undefined,
             bizMsgIdr: undefined,
             msgDefIdr: undefined,
@@ -148,12 +142,15 @@ const ISOMessagesList = () => {
     };
 
     const handleFilterChange = (field: keyof typeof filters, value: string) => {
-        const newFilters = {...filters, [field]: value};
+        const newFilters = { ...filters, [field]: value };
         setFilters(newFilters);
         setQuery({
             ...newFilters,
             status: newFilters.status ? newFilters.status as unknown as TransactionStatus : undefined,
             type: newFilters.type ? newFilters.type as unknown as ISOMessageType : undefined,
+            RelatedToISOMessageId: newFilters.RelatedToISOMessageId
+                ? Number(newFilters.RelatedToISOMessageId)
+                : undefined,
             page: 0
         });
     };
@@ -256,6 +253,15 @@ const ISOMessagesList = () => {
                                 value={filters.bizMsgIdr}
                                 onChange={(e) => handleFilterChange('bizMsgIdr', e.target.value)}
                                 placeholder="Business Msg ID"
+                            />
+
+                        </div>
+
+                        <div className={styles.searchInputRow}>
+                            <SearchInput
+                                value={filters.RelatedToISOMessageId}
+                                onChange={(e) => handleFilterChange('RelatedToISOMessageId', e.target.value)}
+                                placeholder="Related ISO Message ID"
                             />
                             <SearchInput
                                 value={filters.msgDefIdr}

@@ -1,8 +1,8 @@
-import {useState, useEffect} from 'react';
-import useAxiosPrivate from "./useAxiosPrivate";
-import {Transaction, TransactionQuery} from "../../types/types";
+import { useState, useEffect } from 'react';
+import useAxiosPrivate from './useAxiosPrivate';
+import { Transaction, TransactionQuery } from '../../types/types';
 
-export const useTransactions = (initialQuery: TransactionQuery = {page: 0, pageSize: 10}) => {
+export const useTransactions = (initialQuery: TransactionQuery = { page: 0, pageSize: 10 }) => {
     const axiosPrivate = useAxiosPrivate();
     const [query, setQuery] = useState<TransactionQuery>(initialQuery);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -14,29 +14,27 @@ export const useTransactions = (initialQuery: TransactionQuery = {page: 0, pageS
         setError(null);
 
         try {
-            const params = {
-                page: query.page,
-                pageSize: query.pageSize,
-                Status: query.Status?.toString(),
-                TransactionId: query.TransactionId,
-                EndToEndId: query.EndToEndId,
-                LocalInstrument: query.LocalInstrument,
-                CategoryPurpose: query.CategoryPurpose,
-                DebtorAccount: query.DebtorAccount,
-                CreditorAccount: query.CreditorAccount,
-                fromDate: query.FromDate,
-                toDate: query.ToDate,
+            const params: Record<string, string> = {
+                page: query.page.toString(),
+                pageSize: query.pageSize.toString(),
+                ...(query.Status !== undefined && { Status: query.Status.toString() }),
+                ...(query.TransactionId && { TransactionId: query.TransactionId }),
+                ...(query.EndToEndId && { EndToEndId: query.EndToEndId }),
+                ...(query.LocalInstrument && { LocalInstrument: query.LocalInstrument }),
+                ...(query.CategoryPurpose && { CategoryPurpose: query.CategoryPurpose }),
+                ...(query.DebtorAccount && { DebtorAccount: query.DebtorAccount }),
+                ...(query.CreditorAccount && { CreditorAccount: query.CreditorAccount }),
+                ...(query.FromDate && { FromDate: query.FromDate }),
+                ...(query.ToDate && { ToDate: query.ToDate }),
+                ...(query.ISOMessageId !== undefined && { ISOMessageId: query.ISOMessageId.toString() }),
+                ...(query.RelatedToISOMessageId !== undefined && { RelatedToISOMessageId: query.RelatedToISOMessageId.toString() })
             };
-
-            if (query.ISOMessageId) {
-                // @ts-ignore
-                params.ISOMessageId = query.ISOMessageId.toString();
-            }
 
             const response = await axiosPrivate.get<Transaction[]>('/api/v1/Transactions/transactions', {
                 params,
-                paramsSerializer: {indexes: null}
+                paramsSerializer: { indexes: null }
             });
+
             setTransactions(response.data);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch transactions');
@@ -45,13 +43,12 @@ export const useTransactions = (initialQuery: TransactionQuery = {page: 0, pageS
         }
     };
 
-    // Fetch when query changes
     useEffect(() => {
         void fetchTransactions();
     }, [query]);
 
     const updateQuery = (newQuery: Partial<TransactionQuery>) => {
-        setQuery(prev => ({...prev, ...newQuery}));
+        setQuery(prev => ({ ...prev, ...newQuery }));
     };
 
     return {

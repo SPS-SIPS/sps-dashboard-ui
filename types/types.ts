@@ -15,6 +15,7 @@ export interface TransactionQuery extends BaseQuery {
     Status?: TransactionStatus;
     FromDate?: string;
     ToDate?: string;
+    RelatedToISOMessageId?: number;
 }
 
 export interface MessageQuery extends BaseQuery {
@@ -25,6 +26,7 @@ export interface MessageQuery extends BaseQuery {
     type?: ISOMessageType;
     fromDate?: string;
     toDate?: string;
+    RelatedToISOMessageId?: number;
 }
 
 export interface Transaction {
