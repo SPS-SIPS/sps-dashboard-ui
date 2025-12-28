@@ -112,7 +112,7 @@ const VerificationRequest: React.FC<VerificationRequestProps> = ({onSubmit}) => 
                                             type={mapping.type}
                                             placeholder={`Enter ${mapping.userField}`}
                                             required={mapping.internalField !== "Code"}
-                                            autoComplete={mapping.userField.toLowerCase()}
+                                            autoComplete="on"
                                         />
                                     </div>
 
