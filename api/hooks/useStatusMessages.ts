@@ -38,7 +38,7 @@ export type StatusMessage = {
     response: string;
 };
 
-const BASE_URL = "/api/v1/StatusMessages/status-messages";
+const BASE_URL = "/api/v1/StatusMessages";
 
 const useStatusMessages = () => {
     const axiosPrivate = useAxiosPrivate();
