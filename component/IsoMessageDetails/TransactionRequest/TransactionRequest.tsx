@@ -41,13 +41,11 @@ const Field: React.FC<{
 
 
 const TransactionRequest: React.FC<Props> = ({txId, onClose}) => {
-    const { transactions, loading, error } = useTransactions({ page: 0, pageSize: 10, TransactionId: txId });
+    const {transactions, loading, error} = useTransactions({page: 0, pageSize: 100, TransactionId: txId});
     // Tabs with counts
     const tabs = [
-        {label: "Summary", count: null},
-        {label: "Status History", count: 1},
-        {label: "Verifications", count: 0},
-        {label: "Status Requests", count: 0},
+        {label: "Summary", count: transactions.length},
+        {label: "Status History", count: 0},
     ];
 
     const [activeTab, setActiveTab] = useState("Summary");
@@ -88,7 +86,7 @@ const TransactionRequest: React.FC<Props> = ({txId, onClose}) => {
             <h3 className={styles.pageTitle}>Transaction Details</h3>
 
             {loading &&
-                Array.from({ length: 3 }).map((_, index) => (
+                Array.from({length: 3}).map((_, index) => (
                     <div key={index} className={styles.transactionGrid}>
                         <div className={styles.loadingField}></div>
                         <div className={styles.loadingField}></div>
@@ -101,77 +99,81 @@ const TransactionRequest: React.FC<Props> = ({txId, onClose}) => {
                     </div>
                 ))}
 
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p style={{color: "red"}}>{error}</p>}
 
             {!loading && !error && transactions.map((transaction) => (
-            <>
-                <div key={transaction.id} className={styles.details}>
-                    {/* Header */}
-                    <div className={styles.detailsHeaderLeft}>
-                        <div className={styles.bics}>
-                            <span>{getBicLabel(transaction.fromBIC)}</span>
-                            <FiArrowRight className={styles.bicIcon}/>
-                            <span>{getBicLabel(transaction.creditorAgentBIC)}</span>
-                            <LuDot/>
-                            <span>
+                <>
+                    <div key={transaction.id} className={styles.details}>
+                        {/* Header */}
+                        <div className={styles.detailsHeaderLeft}>
+                            <div className={styles.bics}>
+                                <span>{getBicLabel(transaction.fromBIC)}</span>
+                                {transaction.creditorAgentBIC && transaction.creditorAgentBIC !== '-' && (
+                                    <>
+                                        <FiArrowRight className={styles.bicIcon}/>
+                                        <span>{getBicLabel(transaction.creditorAgentBIC)}</span>
+                                    </>
+                                )}
+                                <LuDot/>
+                                <span>
                                      {transaction.amount} {transaction.currency}
                                  </span>
+                            </div>
+                        </div>
+
+                        {/* Status */}
+                        <div
+                            className={`${styles.statusContainer} ${
+                                transaction.type === TransactionType.Deposit
+                                    ? styles.deposit
+                                    : transaction.type === TransactionType.Withdrawal
+                                        ? styles.withdrawal
+                                        : transaction.type === TransactionType.ReadyForReturn
+                                            ? styles.readyForReturn
+                                            : transaction.type === TransactionType.ReturnWithdrawal
+                                                ? styles.returnWithdrawal
+                                                : styles.unknown
+                            }`}
+                        >
+                            <p className={styles.statusText}>
+                                {getTransactionTypeLabel(transaction.type)}
+                            </p>
                         </div>
                     </div>
 
-                    {/* Status */}
-                    <div
-                        className={`${styles.statusContainer} ${
-                            transaction.type === TransactionType.Deposit
-                                ? styles.deposit
-                                : transaction.type === TransactionType.Withdrawal
-                                    ? styles.withdrawal
-                                    : transaction.type === TransactionType.ReadyForReturn
-                                        ? styles.readyForReturn
-                                        : transaction.type === TransactionType.ReturnWithdrawal
-                                            ? styles.returnWithdrawal
-                                            : styles.unknown
-                        }`}
-                    >
-                        <p className={styles.statusText}>
-                            {getTransactionTypeLabel(transaction.type)}
-                        </p>
+                    {/* All Transaction Data */}
+                    <div className={styles.transactionGrid}>
+                        <Field label="Transaction ID" value={transaction.txId}/>
+                        <Field label="ISO Message ID" value={transaction.isoMessageId}/>
+                        <Field label="End To End ID" value={transaction.endToEndId}/>
+                        <Field label="Local Instrument" value={transaction.localInstrument}/>
+                        <Field label="Category Purpose" value={transaction.categoryPurpose}/>
+
+                        <Field label="Debtor Name" value={transaction.debtorName}/>
+                        <Field label="Debtor Account" value={transaction.debtorAccount}/>
+                        <Field label="Debtor Account Type" value={transaction.debtorAccountType}/>
+                        <Field
+                            label="Debtor Agent BIC"
+                            value={getBicLabel(transaction.debtorAgentBIC)}
+                        />
+                        <Field label="Debtor Issuer" value={transaction.debtorIssuer}/>
+
+                        <Field label="Creditor Name" value={transaction.creditorName}/>
+                        <Field label="Creditor Account" value={transaction.creditorAccount}/>
+                        <Field label="Creditor Account Type" value={transaction.creditorAccountType}/>
+                        <Field
+                            label="Creditor Agent BIC"
+                            value={getBicLabel(transaction.creditorAgentBIC)}
+                        />
+                        <Field label="Creditor Issuer" value={transaction.creditorIssuer}/>
+
+                        <Field
+                            label="Remittance Information"
+                            value={transaction.remittanceInformation}
+                            fullWidth
+                        />
                     </div>
-                </div>
-
-                {/* All Transaction Data */}
-                <div className={styles.transactionGrid}>
-                    <Field label="Transaction ID" value={transaction.txId}/>
-                    <Field label="ISO Message ID" value={transaction.isoMessageId}/>
-                    <Field label="End To End ID" value={transaction.endToEndId}/>
-                    <Field label="Local Instrument" value={transaction.localInstrument}/>
-                    <Field label="Category Purpose" value={transaction.categoryPurpose}/>
-
-                    <Field label="Debtor Name" value={transaction.debtorName}/>
-                    <Field label="Debtor Account" value={transaction.debtorAccount}/>
-                    <Field label="Debtor Account Type" value={transaction.debtorAccountType}/>
-                    <Field
-                        label="Debtor Agent BIC"
-                        value={getBicLabel(transaction.debtorAgentBIC)}
-                    />
-                    <Field label="Debtor Issuer" value={transaction.debtorIssuer}/>
-
-                    <Field label="Creditor Name" value={transaction.creditorName}/>
-                    <Field label="Creditor Account" value={transaction.creditorAccount}/>
-                    <Field label="Creditor Account Type" value={transaction.creditorAccountType}/>
-                    <Field
-                        label="Creditor Agent BIC"
-                        value={getBicLabel(transaction.creditorAgentBIC)}
-                    />
-                    <Field label="Creditor Issuer" value={transaction.creditorIssuer}/>
-
-                    <Field
-                        label="Remittance Information"
-                        value={transaction.remittanceInformation}
-                        fullWidth
-                    />
-                </div>
-            </>
+                </>
             ))}
 
             {/* Tabs Navigation at Bottom */}
