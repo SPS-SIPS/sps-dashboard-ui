@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FiMenu } from 'react-icons/fi';
 import {useAuthentication} from "../../../auth/AuthProvider";
 import SystemHealthIndicator from '../../SystemHealth/SystemHealthIndicator';
+import ParticipantLiveIndicator from '../../LiveParticipants/ParticipantLiveIndicator';
 
 interface NavbarProps {
     onMenuToggle: () => void;
@@ -55,7 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile }) => {
             </div>
 
             <div className={`${styles.rightSection} relative flex items-center gap-4`}>
-                
+                <ParticipantLiveIndicator />
                <SystemHealthIndicator />
                 <AvatarDropdown firstName={userName!} />
                
