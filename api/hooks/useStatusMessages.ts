@@ -1,6 +1,5 @@
 import useAxiosPrivate from "./useAxiosPrivate";
 
-
 export type StatusMessagesQuery = {
     relatedToISOMessageId?: number;
     msgId?: string;
@@ -45,7 +44,6 @@ const useStatusMessages = () => {
             const response = await axiosPrivate.get<StatusMessage[]>(BASE_URL, {
                 params: query,
             });
-            console.log("Data: ",response.data,query);
             return response.data;
         } catch (error: any) {
             throw error;

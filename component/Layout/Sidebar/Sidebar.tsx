@@ -19,7 +19,7 @@ import {
     FaTools
 } from "react-icons/fa";
 import {useAuthentication} from "../../../auth/AuthProvider";
-import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
+import {AiOutlineDatabase, AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRadarChart} from "react-icons/ai";
 import {FaCodeCompare} from "react-icons/fa6";
 import {LuScanBarcode} from "react-icons/lu";
 
@@ -48,6 +48,11 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             path: '/',
             icon: <FiHome className={styles.icon}/>,
             roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway',"Admin","recon"]
+        },
+        {
+            title: 'Live Participants',
+            path: '/participants',
+            icon: <AiOutlineRadarChart  className={styles.icon} />,
         },
         {
             title: 'Documentation',
