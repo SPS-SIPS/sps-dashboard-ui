@@ -42,6 +42,8 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
     const {roles} = useAuthentication();
     const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
 
+    const activeProfile = process.env.NEXT_PUBLIC_ACTIVE_PROFILE;
+
     const navItems: NavItem[] = [
         {
             title: 'Dashboard',
@@ -220,7 +222,7 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             icon: <FaEnvelopeOpenText className={styles.icon}/>,
             roles: ['iso_messages']
         },
-        {
+        ...(activeProfile !== 'prod' ? [{
             title: 'API Tester',
             path: '/api-tester',
             icon: <FaRocket className={styles.icon}/>,
@@ -237,7 +239,7 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                     icon: <FiChevronRight className={styles.icon}/>
                 }
             ],
-        },
+        }] : []),
         {
             title: 'SOMQR',
             path: '/qr-codes',
