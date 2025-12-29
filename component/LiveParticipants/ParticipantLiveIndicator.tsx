@@ -48,7 +48,7 @@ export default function ParticipantLiveIndicator() {
         return (
             <div className="flex items-center gap-2 text-sm text-gray-500">
                 <span className="animate-pulse h-2.5 w-2.5 rounded-full bg-gray-300"/>
-                Checking available participants...
+                participants...
             </div>
         );
     }
