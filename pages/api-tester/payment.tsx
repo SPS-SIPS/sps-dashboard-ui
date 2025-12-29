@@ -57,6 +57,18 @@ const PaymentPage = () => {
     setLoading(false);
   };
 
+  const activeProfile = process.env.NEXT_PUBLIC_ACTIVE_PROFILE;
+
+  useEffect(() => {
+    if (activeProfile === "prod") {
+      void router.replace("/unauthorized");
+    }
+  }, [activeProfile, router]);
+
+  if (activeProfile === "prod") {
+    return null;
+  }
+
   const prefilledValues = internalData
     ? mapToPrefilledValues(internalData)
     : null;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useApiRequest} from "../../utils/apiService";
 import SpinLoading from "../../component/Loading/SpinLoading/SpinLoading";
 import VerificationRequest from "../../component/RequestForm/VerificationRequest";
@@ -26,12 +26,24 @@ const VerificationRequestPage: React.FC = () => {
     const [response, setResponse] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [endpointsData, setEndpointsData] = useState<EndpointsData | null>(null);
-    const router = useRouter();
     const {makeApiRequest} = useApiRequest();
 
     const handleApiUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setApiUrl(e.target.value);
     };
+
+    const router = useRouter();
+    const activeProfile = process.env.NEXT_PUBLIC_ACTIVE_PROFILE;
+
+    useEffect(() => {
+        if (activeProfile === "prod") {
+            void router.replace("/unauthorized");
+        }
+    }, [activeProfile, router]);
+
+    if (activeProfile === "prod") {
+        return null;
+    }
 
     const handleSubmit = async (formValues: Record<string, string>, endpoints: EndpointsData | null) => {
         setUrlError("");
