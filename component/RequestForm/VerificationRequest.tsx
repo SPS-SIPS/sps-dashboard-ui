@@ -47,7 +47,7 @@ const VerificationRequest: React.FC<VerificationRequestProps> = ({
     };
 
     void loadParticipants();
-  }, [getLiveParticipants]);
+  }, []);
 
   const bicOptions: Option[] = participants.map((p) => ({
     value: p.institutionBic,

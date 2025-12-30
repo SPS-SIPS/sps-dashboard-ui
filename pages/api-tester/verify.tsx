@@ -98,6 +98,8 @@ const VerificationRequestPage: React.FC = () => {
                 ...responseFieldValues,
             };
 
+            console.log("Combined Fields for Payment Request:", combinedFields);
+
             const internalData = remapToInternalFields(combinedFields, {
                 ...verificationResponseFields,
                 ...verificationRequestFields
