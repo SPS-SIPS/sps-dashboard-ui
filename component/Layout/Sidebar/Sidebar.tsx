@@ -384,7 +384,7 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                             <FiCpu className={styles.badgeIcon} />
                             <div className={styles.badgeText}>
                                 <span className={styles.brandName}>Shaam</span>
-                                <span className={styles.versionTag}>v1.0.4-stable</span>
+                                <span className={styles.versionTag}>v1.5.0-stable</span>
                             </div>
                         </div>
                         <div
