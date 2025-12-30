@@ -19,7 +19,7 @@ import {
     FaTools
 } from "react-icons/fa";
 import {useAuthentication} from "../../../auth/AuthProvider";
-import {AiOutlineDatabase, AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRadarChart} from "react-icons/ai";
+import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRadarChart} from "react-icons/ai";
 import {FaCodeCompare} from "react-icons/fa6";
 import {LuScanBarcode} from "react-icons/lu";
 
@@ -316,7 +316,7 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             return null;
         }
         return (
-            <>
+            <div key={item.path}>
 
                 <div key={item.path} className={styles.navItemContainer}>
                     <div
@@ -345,7 +345,7 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                         </>
                     )}
                 </div>
-            </>
+            </div>
         );
     };
 
