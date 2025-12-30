@@ -42,22 +42,70 @@
     position: relative;
 }
 
+/* Sidebar.module.css Updates */
+
 .productBadge {
-    margin: var(--spacing-md);
-    padding: var(--spacing-xs) var(--spacing-md);
-    text-align: center;
+    margin: var(--spacing-lg) var(--spacing-md);
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: var(--letter-spacing-wide);
-
-    color: var(--color-text-light);
-    background: rgba(255, 255, 255, 0.06);
-
-    border-radius: var(--radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
 }
 
+.productBadge:hover {
+    background: rgba(115, 179, 68, 0.05);
+    border-color: rgba(115, 179, 68, 0.3);
+}
+
+.badgeIcon {
+    font-size: 1.4rem;
+    color: var(--color-primary);
+    filter: drop-shadow(0 0 4px rgba(115, 179, 68, 0.4));
+}
+
+.badgeText {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.brandName {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-white);
+    letter-spacing: 0.02em;
+}
+
+.versionTag {
+    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-secondary); /* or #94a3b8 */
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* The Live Pulse Dot */
+.versionTag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-primary);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(115, 179, 68, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(115, 179, 68, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(115, 179, 68, 0); }
+}
 
 .navItem:hover {
     background-color: var(--navbar-bg);
