@@ -316,27 +316,36 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             return null;
         }
         return (
+            <>
+            
             <div key={item.path} className={styles.navItemContainer}>
                 <div
                     className={`${styles.navItem} ${isActive(item.path) ? styles.active : ''}`}
                     style={{paddingLeft: `${1 + depth}rem`}}
                     onClick={() => hasChildren ? toggleExpand(item.title) : handleItemClick(item.path)}
                 >
+                    
                     <span className={styles.iconWrapper}>{item.icon}</span>
                     <span className={styles.navText}>{item.title}</span>
                     {hasChildren && (
+                        
                         <span className={styles.chevron}>
+                            
               {isExpanded ? <FiChevronDown/> : <FiChevronRight/>}
             </span>
                     )}
                 </div>
 
                 {hasChildren && isExpanded && (
+                    <>
+                    
                     <div className={styles.subItems}>
                         {item.items?.map(subItem => renderNavItem(subItem, depth + 1))}
                     </div>
+                    </>
                 )}
             </div>
+            </>
         );
     };
 
@@ -347,8 +356,10 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
     return (
         <nav className={styles.navigationContainer}>
             <div className={`${styles.sideNav} ${isOpen ? styles.open : styles.closed}`}>
+                
                 {isMobile && (
                     <div className={styles.mobileHeader}>
+                        
                         <div className={styles.logoContainer}>
                             <Link href="/" passHref>
                                 <span className={styles.logo}>SPS</span>
@@ -368,24 +379,33 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                 </div>
                 {/* For non-mobile devices the toggleButton is rendered within the sidebar */}
                 {!isMobile && isOpen && (
+                    <>
+                <div className={styles.productBadge}>
+  Shaam Web · v1
+</div>
                     <div
                         className={`${styles.toggleButton} ${isOpen ? styles.openButton : ''}`}
                         aria-label="Toggle sidebar"
                         onClick={handleToggle}
                     >
+                        
                         <AiOutlineDoubleLeft/>
                     </div>
+                    </>
                 )}
             </div>
             {/* When sidebar is closed, the toggleButton is rendered separately */}
             {!isMobile && !isOpen && (
+                <>
                 <div
                     className={`${styles.toggleButton} ${!isOpen ? styles.closedButton : ''}`}
                     aria-label="Toggle sidebar"
                     onClick={handleToggle}
                 >
+                {/* <h1 className='text-white'>SH v1</h1> */}
                     <AiOutlineDoubleRight/>
                 </div>
+                </>
             )}
         </nav>
     );

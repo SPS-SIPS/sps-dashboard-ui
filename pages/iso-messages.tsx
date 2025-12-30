@@ -46,6 +46,7 @@ const EMPTY_FILTERS = {
   msgDefIdr: "",
   status: "",
   type: "",
+  endToEndId: "",
   fromDate: "",
   toDate: "",
 };
@@ -129,6 +130,7 @@ const ISOMessagesList = () => {
       RelatedToISOMessageId: undefined,
       msgId: undefined,
       bizMsgIdr: undefined,
+      endToEndId: undefined,
       msgDefIdr: undefined,
       fromDate: undefined,
       toDate: undefined,
@@ -278,6 +280,13 @@ const ISOMessagesList = () => {
                   handleFilterChange("msgDefIdr", e.target.value)
                 }
                 placeholder="Msg Definition ID"
+              />
+              <SearchInput
+                value={filters.endToEndId}
+                onChange={(e) =>
+                  handleFilterChange("endToEndId", e.target.value)
+                }
+                placeholder="End To End ID"
               />
             </div>
 

@@ -54,7 +54,7 @@ export default function ParticipantLiveIndicator() {
     }
 
     return (
-        <div ref={menuRef} className="relative">
+        <div ref={menuRef} className="relative hidden sm:block">
             <button
                 onClick={() => setMenuOpen(prev => !prev)}
                 className="inline-flex items-center gap-2 px-3 py-1.5 text-white

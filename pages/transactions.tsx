@@ -241,7 +241,7 @@ const TransactionsList = () => {
                         >
                             <TiInfo/> Details
                         </button>
-                        {(transaction.type === 1 || transaction.type === 2) && (
+                        {/* {(transaction.type === 1 || transaction.type === 2) && (
                             <button
                                 className="p-2 bg-gray-300 text-gray-700-700 rounded-md flex items-center gap-1 hover:bg-gray-200 hover:cursor-pointer transition"
                                 title="Status"
@@ -249,7 +249,7 @@ const TransactionsList = () => {
                             >
                                 <FaExclamationCircle/> Status
                             </button>
-                        )}
+                        )} */}
                     </div>
                 );
 

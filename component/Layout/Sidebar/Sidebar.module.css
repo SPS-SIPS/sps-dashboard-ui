@@ -42,6 +42,23 @@
     position: relative;
 }
 
+.productBadge {
+    margin: var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-md);
+    text-align: center;
+
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: var(--letter-spacing-wide);
+
+    color: var(--color-text-light);
+    background: rgba(255, 255, 255, 0.06);
+
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+
 .navItem:hover {
     background-color: var(--navbar-bg);
     color: var(--color-white);
