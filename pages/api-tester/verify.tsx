@@ -26,6 +26,7 @@ const VerificationRequestPage: React.FC = () => {
     const [response, setResponse] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [endpointsData, setEndpointsData] = useState<EndpointsData | null>(null);
+    const [processingPayment, setProcessingPayment] = useState(false);
     const {makeApiRequest} = useApiRequest();
 
     const handleApiUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,39 +67,53 @@ const VerificationRequestPage: React.FC = () => {
         setLoading(false);
     };
 
-    const handleSendPaymentRequest = () => {
+    const handleSendPaymentRequest = async () => {
         if (!submittedData || !response?.data || !endpointsData) return;
 
-        const verificationResponseFields = getUserFieldsFromEndpoint(
-            endpointsData,
-            "VerificationResponse",
-            ["Id", "Type", "Name", "Currency"]
-        );
-        const verificationRequestFields = getUserFieldsFromEndpoint(
-            endpointsData,
-            "VerificationRequest",
-            ["ToBIC"]
-        );
+        try {
+            setProcessingPayment(true);
 
-        const submittedFieldValues = extractFieldsFromData(submittedData, Object.values(verificationRequestFields));
-        const responseFieldValues = extractFieldsFromData(response.data, Object.values(verificationResponseFields));
+            const verificationResponseFields = getUserFieldsFromEndpoint(
+                endpointsData,
+                "VerificationResponse",
+                ["Id", "Type", "Name", "Currency"]
+            );
+            const verificationRequestFields = getUserFieldsFromEndpoint(
+                endpointsData,
+                "VerificationRequest",
+                ["ToBIC"]
+            );
 
-        const combinedFields = {
-            ...submittedFieldValues,
-            ...responseFieldValues,
-        };
+            const submittedFieldValues = extractFieldsFromData(
+                submittedData,
+                Object.values(verificationRequestFields)
+            );
+            const responseFieldValues = extractFieldsFromData(
+                response.data,
+                Object.values(verificationResponseFields)
+            );
 
-        const internalData = remapToInternalFields(combinedFields, {
-            ...verificationResponseFields,
-            ...verificationRequestFields
-        });
-        void router.push({
-            pathname: '/api-tester/payment',
-            query: {
-                data: JSON.stringify(internalData),
-            },
-        });
+            const combinedFields = {
+                ...submittedFieldValues,
+                ...responseFieldValues,
+            };
+
+            const internalData = remapToInternalFields(combinedFields, {
+                ...verificationResponseFields,
+                ...verificationRequestFields
+            });
+
+            await router.push({
+                pathname: "/api-tester/payment",
+                query: {
+                    data: JSON.stringify(internalData),
+                },
+            });
+        } finally {
+            setProcessingPayment(false);
+        }
     };
+
 
     const isVerified = (() => {
         const isVerifiedField = getUserFieldFromEndpoint(endpointsData, "VerificationResponse", "IsVerified");
@@ -159,6 +174,7 @@ const VerificationRequestPage: React.FC = () => {
                                 type="button"
                                 className={styles.clearButton}
                                 onClick={() => setSubmittedData(null)}
+                                disabled={loading || processingPayment}
                             >
                                 Clear & Retry
                             </ActionButton>
@@ -168,8 +184,9 @@ const VerificationRequestPage: React.FC = () => {
                                     type="button"
                                     className={styles.sendPaymentButton}
                                     onClick={handleSendPaymentRequest}
+                                    disabled={processingPayment}
                                 >
-                                    Process Payment
+                                    {processingPayment ? "Processing Payment..." : "Process Payment"}
                                 </ActionButton>
                             )}
                         </div>
