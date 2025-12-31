@@ -9,6 +9,12 @@ const statusColorMap: Record<Status, string> = {
 
 export const HealthStatusIcon = ({ status }: { status: Status }) => (
   <span
-    className={`inline-block h-2.5 w-2.5 rounded-full ${statusColorMap[status]}`}
+    className={` inline-flex
+    h-2.5 w-2.5
+    rounded-full
+    ${statusColorMap[status]}
+    animate-pulse
+    ring-4
+    ring-opacity-40`}
   />
 );
