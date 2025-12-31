@@ -1,30 +1,27 @@
-import React from 'react';
-import styles from './TransactionDetailsModal.module.css';
-import { Transaction, TransactionType } from '../../types/types';
-import { AiOutlineClose } from 'react-icons/ai';
-import useParticipants from '../../api/hooks/useParticipants';
-
-
+import React from "react";
+import styles from "./TransactionDetailsModal.module.css";
+import { Transaction, TransactionType } from "../../types/types";
+import { AiOutlineClose } from "react-icons/ai";
+import useParticipants from "../../api/hooks/useParticipants";
+import { useBicLabel } from "../../api/hooks/useBicLable";
 
 interface Props {
   transaction: Transaction | null;
   onClose: () => void;
 }
 
-
-
 export const getTransactionTypeLabel = (type: TransactionType) => {
   switch (type) {
     case TransactionType.Deposit:
-      return 'Deposit';
+      return "Deposit";
     case TransactionType.Withdrawal:
-      return 'Withdrawal';
+      return "Withdrawal";
     case TransactionType.ReadyForReturn:
-      return 'Ready For Return';
+      return "Ready For Return";
     case TransactionType.ReturnWithdrawal:
-      return 'Return Withdrawal';
+      return "Return Withdrawal";
     default:
-      return 'Unknown';
+      return "Unknown";
   }
 };
 
@@ -43,81 +40,65 @@ const getTransactionTypeClass = (type: TransactionType) => {
   }
 };
 
-
-
-const useBicLabel = () => {
-  const { bicOptions } = useParticipants();
-
-  return React.useCallback(
-    (bic?: string) => {
-      const option = bicOptions.find(o => o.value === bic);
-      return option ? option.label : bic || '-';
-    },
-    [bicOptions]
-  );
-};
-
-
-
 const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
-  const getBicLabel = useBicLabel(); 
+  const getBicLabel = useBicLabel();
 
   if (!transaction) return null;
 
   const transactionSections = [
     {
-      title: 'Overview',
+      title: "Overview",
       fields: [
-        { label: 'ID', value: transaction.id },
-        { label: 'Type', value: getTransactionTypeLabel(transaction.type) },
+        { label: "ID", value: transaction.id },
+        { label: "Type", value: getTransactionTypeLabel(transaction.type) },
         {
-          label: 'Amount',
-          value: `${transaction.amount ?? '-'} ${transaction.currency ?? ''}`,
+          label: "Amount",
+          value: `${transaction.amount ?? "-"} ${transaction.currency ?? ""}`,
         },
-        { label: 'ISO Message ID', value: transaction.isoMessageId },
+        { label: "ISO Message ID", value: transaction.isoMessageId },
       ],
     },
     {
-      title: 'Debtor',
+      title: "Debtor",
       fields: [
-        { label: 'Name', value: transaction.debtorName },
-        { label: 'Account', value: transaction.debtorAccount },
-        { label: 'Account Type', value: transaction.debtorAccountType },
+        { label: "Name", value: transaction.debtorName },
+        { label: "Account", value: transaction.debtorAccount },
+        { label: "Account Type", value: transaction.debtorAccountType },
         {
-          label: 'Agent BIC',
+          label: "Agent BIC",
           value: getBicLabel(transaction.debtorAgentBIC),
         },
-        { label: 'Issuer', value: transaction.debtorIssuer },
+        { label: "Issuer", value: transaction.debtorIssuer },
       ],
     },
     {
-      title: 'Creditor',
+      title: "Creditor",
       fields: [
-        { label: 'Name', value: transaction.creditorName },
-        { label: 'Account', value: transaction.creditorAccount },
-        { label: 'Account Type', value: transaction.creditorAccountType },
+        { label: "Name", value: transaction.creditorName },
+        { label: "Account", value: transaction.creditorAccount },
+        { label: "Account Type", value: transaction.creditorAccountType },
         {
-          label: 'Agent BIC',
+          label: "Agent BIC",
           value: getBicLabel(transaction.creditorAgentBIC),
         },
-        { label: 'Issuer', value: transaction.creditorIssuer },
+        { label: "Issuer", value: transaction.creditorIssuer },
       ],
     },
     {
-      title: 'Payment Details',
+      title: "Payment Details",
       fields: [
-        { label: 'From BIC', value: getBicLabel(transaction.fromBIC) },
-        { label: 'Local Instrument', value: transaction.localInstrument },
-        { label: 'Category Purpose', value: transaction.categoryPurpose },
-        { label: 'End To End ID', value: transaction.endToEndId },
-        { label: 'Transaction ID', value: transaction.txId },
+        { label: "From BIC", value: getBicLabel(transaction.fromBIC) },
+        { label: "Local Instrument", value: transaction.localInstrument },
+        { label: "Category Purpose", value: transaction.categoryPurpose },
+        { label: "End To End ID", value: transaction.endToEndId },
+        { label: "Transaction ID", value: transaction.txId },
       ],
     },
     {
-      title: 'Remittance',
+      title: "Remittance",
       fields: [
         {
-          label: 'Remittance Information',
+          label: "Remittance Information",
           value: transaction.remittanceInformation,
         },
       ],
@@ -144,9 +125,7 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
             )}`}
           >
             <div className={styles.transactionMainInfo}>
-              <h4 className={styles.transactionHeading}>
-                Transaction Details
-              </h4>
+              <h4 className={styles.transactionHeading}>Transaction Details</h4>
 
               <p className={styles.transactionParties}>
                 <span className={styles.bic}>
@@ -155,7 +134,7 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
 
                 {transaction.creditorAgentBIC && (
                   <>
-                    {' - '}
+                    {" - "}
                     <span className={styles.bic}>
                       {getBicLabel(transaction.creditorAgentBIC)}
                     </span>
@@ -164,12 +143,8 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
 
                 <span className={styles.separator}> • </span>
 
-                <span className={styles.amount}>
-                  {transaction.amount}
-                </span>
-                <span className={styles.currency}>
-                  {transaction.currency}
-                </span>
+                <span className={styles.amount}>{transaction.amount}</span>
+                <span className={styles.currency}>{transaction.currency}</span>
               </p>
             </div>
 
@@ -179,20 +154,16 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
           </div>
 
           <div className={styles.detailsContainer}>
-            {transactionSections.map(section => (
+            {transactionSections.map((section) => (
               <div key={section.title} className={styles.section}>
                 <h4 className={styles.sectionTitle}>{section.title}</h4>
 
                 <div className={styles.fieldGrid}>
-                  {section.fields.map(field =>
+                  {section.fields.map((field) =>
                     field.value ? (
                       <div key={field.label} className={styles.fieldRow}>
-                        <span className={styles.fieldLabel}>
-                          {field.label}
-                        </span>
-                        <span className={styles.fieldValue}>
-                          {field.value}
-                        </span>
+                        <span className={styles.fieldLabel}>{field.label}</span>
+                        <span className={styles.fieldValue}>{field.value}</span>
                       </div>
                     ) : null
                   )}

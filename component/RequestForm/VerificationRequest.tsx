@@ -31,8 +31,8 @@ const VerificationRequest: React.FC<VerificationRequestProps> = ({
   const { endpoints, loading, error } = useEndpoints();
   const [fieldMappings, setFieldMappings] = useState<FieldMapping[]>([]);
   const [formValues, setFormValues] = useState<Record<string, string>>({});
-  
-  const {bicOptions} = useParticipants();
+
+  const { bicOptions } = useParticipants();
 
   const handleInputChange = (userField: string, value: string) => {
     setFormValues((prev) => ({

@@ -16,18 +16,15 @@ const BASE_URL = "api/v1/Participants";
 const useParticipants = () => {
   const axiosPrivate = useAxiosPrivate();
 
-  /* ======================================================
-     API METHODS (low-level)
-  ====================================================== */
-
   const getLiveParticipants = async (
     isLive?: boolean
   ): Promise<ParticipantStatus[]> => {
-    const response = await axiosPrivate.get<
-      ApiResponse<ParticipantStatus[]>
-    >(`${BASE_URL}/live`, {
-      params: isLive !== undefined ? { IsLive: isLive } : undefined,
-    });
+    const response = await axiosPrivate.get<ApiResponse<ParticipantStatus[]>>(
+      `${BASE_URL}/live`,
+      {
+        params: isLive !== undefined ? { IsLive: isLive } : undefined,
+      }
+    );
 
     return response.data.data;
   };
@@ -50,9 +47,7 @@ const useParticipants = () => {
     return response.data.data;
   };
 
-  /* ======================================================
-     STATEFUL LIVE PARTICIPANTS (high-level)
-  ====================================================== */
+ 
 
   const [participants, setParticipants] = useState<ParticipantStatus[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,9 +74,7 @@ const useParticipants = () => {
     };
   }, []);
 
-  /* ======================================================
-     DERIVED DATA
-  ====================================================== */
+
 
   const bicOptions: Option[] = useMemo(
     () =>

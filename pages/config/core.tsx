@@ -58,8 +58,12 @@ const ISO20022ConfigForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!config) return;
-    const { name, value } = e.target;
-    setConfig({ ...config, [name]: value });
+    const { name, type, value, checked } = e.target;
+
+    setConfig({
+      ...config,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const showModalWithProps = (
@@ -212,6 +216,36 @@ const ISO20022ConfigForm = () => {
                 onChange={onChange}
                 placeholder="Enter SAF Max Retries"
                 min={0}
+              />
+            </div>
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Advanced Settings</h2>
+
+              <Checkbox
+                label="Include Idempotency Headers"
+                name="includeIdempotencyHeaders"
+                checked={cfg.includeIdempotencyHeaders}
+                onChange={onChange}
+              />
+
+              <Input
+                label="HTTP Timeout (seconds)"
+                type="number"
+                name="httpTimeoutSeconds"
+                value={cfg.httpTimeoutSeconds.toString()}
+                onChange={onChange}
+                placeholder="Enter HTTP Timeout in seconds"
+                min={1}
+              />
+
+              <Input
+                label="DB Persist Timeout (seconds)"
+                type="number"
+                name="dbPersistTimeoutSeconds"
+                value={cfg.dbPersistTimeoutSeconds.toString()}
+                onChange={onChange}
+                placeholder="Enter DB Persist Timeout in seconds"
+                min={1}
               />
             </div>
           </>

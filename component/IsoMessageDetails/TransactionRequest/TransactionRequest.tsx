@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {FiArrowRight, FiX} from "react-icons/fi";
 import {
-    getBicLabel,
     getTransactionTypeLabel,
 } from "../../TransactionDetailsModal/TransactionDetailsModal";
 
@@ -12,6 +11,7 @@ import SummaryTab from "./NavigationTabs/SummaryTab/SummaryTab";
 import UnderConstructionTab from "./NavigationTabs/UnderConstructionTab/UnderConstructionTab";
 import styles from "./TransactionRequest.module.css";
 import {useTransactions} from "../../../api/hooks/useTransactions";
+import { useBicLabel } from "../../../api/hooks/useBicLable";
 
 const breadcrumbs = [
     {label: "Home", link: "/"},
@@ -49,6 +49,7 @@ const TransactionRequest: React.FC<Props> = ({txId, onClose}) => {
     ];
 
     const [activeTab, setActiveTab] = useState("Summary");
+    const getBicLabel = useBicLabel();
 
     // Render tab content based on activeTab
     const renderTabContent = () => {

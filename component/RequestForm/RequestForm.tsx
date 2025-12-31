@@ -25,7 +25,7 @@ const RequestForm: React.FC<RequestFormProps> = ({
   buttonText,
 }) => {
   const [formValues, setFormValues] = useState<Record<string, string>>({});
-    const { bicOptions } = useParticipants();
+  const { bicOptions } = useParticipants();
   const handleInputChange = (userField: string, value: string) => {
     setFormValues((prev) => ({
       ...prev,
