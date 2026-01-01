@@ -7,6 +7,7 @@ export type ConfigurationsXade = {
   chainPath: string;
   algorithms: string[];
   verificationWindowMinutes: number;
+  baseDNS: string;
   bic: string;
   withoutPKI: boolean;
 };
