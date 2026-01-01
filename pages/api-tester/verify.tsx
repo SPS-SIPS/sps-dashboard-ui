@@ -45,7 +45,7 @@ const VerificationRequestPage: React.FC = () => {
 
   useEffect(() => {
     if (activeProfile === "prod") {
-      void router.replace("/unauthorized");
+      void router.replace("/403");
     }
   }, [activeProfile, router]);
 
