@@ -12,6 +12,7 @@ import SummaryTab from "./NavigationTabs/SummaryTab/SummaryTab";
 import UnderConstructionTab from "./NavigationTabs/UnderConstructionTab/UnderConstructionTab";
 import styles from "./TransactionRequest.module.css";
 import {useTransactions} from "../../../api/hooks/useTransactions";
+import StatusTab from "./NavigationTabs/StatusTab/StatusTab";
 
 const breadcrumbs = [
     {label: "Home", link: "/"},
@@ -57,7 +58,13 @@ const TransactionRequest: React.FC<Props> = ({txId, onClose}) => {
                 return <SummaryTab transactions={transactions}/>;
 
             case "Status History":
-                return <UnderConstructionTab title="Status History"/>;
+                // return <UnderConstructionTab title="Status History"/>;
+            // case "Status History":
+                return (
+                    <StatusTab
+                        isoMessageIds={transactions.map(t => t.isoMessageId)}
+                    />
+                );
 
             case "Verifications":
                 return <UnderConstructionTab title="Verifications"/>;

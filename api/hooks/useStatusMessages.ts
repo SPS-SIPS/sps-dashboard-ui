@@ -1,4 +1,5 @@
 import useAxiosPrivate from "./useAxiosPrivate";
+import {ISOMessageType, TransactionStatus} from "../../types/types";
 
 export type StatusMessagesQuery = {
     relatedToISOMessageId?: number;
@@ -15,8 +16,8 @@ export type StatusMessagesQuery = {
 
 export type StatusMessage = {
     id: number;
-    messageType: string;
-    status: string;
+    messageType: ISOMessageType;
+    status: TransactionStatus;
     msgId: string;
     bizMsgIdr?: string;
     msgDefIdr?: string;
