@@ -116,13 +116,13 @@ const StatusTab: React.FC<StatusTabProps> = ({isoMessageIds}) => {
                                 className={styles.payloadBtn}
                                 onClick={() => openXmlModal("Request XML", msg.request || "")}
                             >
-                                View Request XML
+                                View Request
                             </button>
                             <button
                                 className={styles.payloadBtn}
                                 onClick={() => openXmlModal("Response XML", msg.response || "")}
                             >
-                                View Response XML
+                                View Response
                             </button>
                         </div>
                     </div>

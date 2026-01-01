@@ -1,127 +1,137 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
 import Input from "../common/Input/Input";
 import SelectInput from "../common/SelectInput/SelectInput";
-import styles from './RequestForm.module.css';
-import {bicOptions, verificationMethods} from "../../constants/gatewayFormOptions";
+import styles from "./RequestForm.module.css";
+import { verificationMethods } from "../../constants/gatewayFormOptions";
+import useParticipants from "../../api/hooks/useParticipants";
 
 interface FieldMapping {
-    internalField: string;
-    userField: string;
-    type: string;
+  internalField: string;
+  userField: string;
+  type: string;
 }
 
 interface RequestFormProps {
-    requestType?: string;
-    fieldMappings?: FieldMapping[];
-    onSubmit: (data: Record<string, string>) => void;
-    buttonText: string;
+  requestType?: string;
+  fieldMappings?: FieldMapping[];
+  onSubmit: (data: Record<string, string>) => void;
+  buttonText: string;
 }
 
 const RequestForm: React.FC<RequestFormProps> = ({
-                                                     requestType,
-                                                     fieldMappings = [],
-                                                     onSubmit,
-                                                     buttonText,
-                                                 }) => {
-    const [formValues, setFormValues] = useState<Record<string, string>>({});
+  requestType,
+  fieldMappings = [],
+  onSubmit,
+  buttonText,
+}) => {
+  const [formValues, setFormValues] = useState<Record<string, string>>({});
+  const { bicOptions } = useParticipants();
+  const handleInputChange = (userField: string, value: string) => {
+    setFormValues((prev) => ({
+      ...prev,
+      [userField]: value,
+    }));
+  };
 
-    const handleInputChange = (userField: string, value: string) => {
-        setFormValues(prev => ({
-            ...prev,
-            [userField]: value
-        }));
-    };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formValues);
+  };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onSubmit(formValues);
-    };
-
-    if (!requestType || !fieldMappings.length) {
-        return <div className={styles.noSelection}>Select a request type from the list</div>;
-    }
-
+  if (!requestType || !fieldMappings.length) {
     return (
-        <div className={styles.formContainer}>
-            <div className={styles.header}>
-                <h2 className={styles.formTitle}>{requestType}</h2>
-            </div>
-
-            <form onSubmit={handleSubmit} className={styles.requestForm}>
-                {fieldMappings.map((mapping) => (
-                    <div key={mapping.userField} className={styles.mappingItem}>
-                        {mapping.internalField === 'Type' ? (
-                            <SelectInput
-                                label={`${mapping.userField} (${mapping.type})`}
-                                value={formValues[mapping.userField] || ''}
-                                onChange={(e) => handleInputChange(mapping.userField, e.target.value)}
-                                options={verificationMethods}
-                                placeholder="-- Select a type --"
-                                required
-                            />
-                        ) : mapping.internalField === 'ToBIC' ? (
-                            <SelectInput
-                                label={`${mapping.userField} (${mapping.type})`}
-                                value={formValues[mapping.userField] || ''}
-                                onChange={(e) => handleInputChange(mapping.userField, e.target.value)}
-                                options={bicOptions}
-                                placeholder="-- Select a BIC --"
-                                required
-                            />
-                        ) : (
-                            <Input
-                                label={`${mapping.userField} (${mapping.type})`}
-                                value={formValues[mapping.userField] || ''}
-                                onChange={(e) => handleInputChange(mapping.userField, e.target.value)}
-                                type={getInputType(mapping.type)}
-                                placeholder={`Enter ${mapping.userField}`}
-                                required={mapping.internalField !== 'Code'}
-                            />
-                        )}
-
-                    </div>
-                ))}
-
-                <div className={styles.buttonGroup}>
-                    <button
-                        type="button"
-                        className={styles.clearButton}
-                        onClick={() => setFormValues({})}
-                    >
-                        Clear
-                    </button>
-                    <button
-                        type="submit"
-                        className={styles.submitButton}
-                        disabled={!isFormValid()}
-                    >
-                        {buttonText}
-                    </button>
-                </div>
-            </form>
-        </div>
+      <div className={styles.noSelection}>
+        Select a request type from the list
+      </div>
     );
+  }
 
-    function isFormValid() {
-        return fieldMappings.every(mapping => {
-            if (mapping.internalField === 'Code') return true;
-            return formValues[mapping.userField]?.trim();
-        });
-    }
+  return (
+    <div className={styles.formContainer}>
+      <div className={styles.header}>
+        <h2 className={styles.formTitle}>{requestType}</h2>
+      </div>
 
-    function getInputType(fieldType: string): string {
-        switch (fieldType.toLowerCase()) {
-            case 'datetime':
-                return 'datetime-local';
-            case 'bool':
-                return 'checkbox';
-            case 'double':
-            case 'number':
-                return 'number';
-            default:
-                return 'text';
-        }
+      <form onSubmit={handleSubmit} className={styles.requestForm}>
+        {fieldMappings.map((mapping) => (
+          <div key={mapping.userField} className={styles.mappingItem}>
+            {mapping.internalField === "Type" ? (
+              <SelectInput
+                label={`${mapping.userField} (${mapping.type})`}
+                value={formValues[mapping.userField] || ""}
+                onChange={(e) =>
+                  handleInputChange(mapping.userField, e.target.value)
+                }
+                options={verificationMethods}
+                placeholder="-- Select a type --"
+                required
+              />
+            ) : mapping.internalField === "ToBIC" ? (
+              <SelectInput
+                label={`${mapping.userField} (${mapping.type})`}
+                value={formValues[mapping.userField] || ""}
+                onChange={(e) =>
+                  handleInputChange(mapping.userField, e.target.value)
+                }
+                options={bicOptions}
+                placeholder="-- Select a BIC --"
+                required
+              />
+            ) : (
+              <Input
+                label={`${mapping.userField} (${mapping.type})`}
+                value={formValues[mapping.userField] || ""}
+                onChange={(e) =>
+                  handleInputChange(mapping.userField, e.target.value)
+                }
+                type={getInputType(mapping.type)}
+                placeholder={`Enter ${mapping.userField}`}
+                required={mapping.internalField !== "Code"}
+              />
+            )}
+          </div>
+        ))}
+
+        <div className={styles.buttonGroup}>
+          <button
+            type="button"
+            className={styles.clearButton}
+            onClick={() => setFormValues({})}
+          >
+            Clear
+          </button>
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={!isFormValid()}
+          >
+            {buttonText}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+
+  function isFormValid() {
+    return fieldMappings.every((mapping) => {
+      if (mapping.internalField === "Code") return true;
+      return formValues[mapping.userField]?.trim();
+    });
+  }
+
+  function getInputType(fieldType: string): string {
+    switch (fieldType.toLowerCase()) {
+      case "datetime":
+        return "datetime-local";
+      case "bool":
+        return "checkbox";
+      case "double":
+      case "number":
+        return "number";
+      default:
+        return "text";
     }
+  }
 };
 
 export default RequestForm;

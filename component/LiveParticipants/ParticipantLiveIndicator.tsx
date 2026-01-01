@@ -1,25 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
-import useParticipants from '../../api/hooks/useParticipants';
-import LiveParticipantsDropdown from './LiveParticipantsDropdown';
+import {useEffect, useRef, useState} from "react";
+import useParticipants from "../../api/hooks/useParticipants";
+import LiveParticipantsDropdown from "./LiveParticipantsDropdown";
 
 export default function ParticipantLiveIndicator() {
-  const { getLiveParticipants } = useParticipants();
+    const {getLiveParticipants} = useParticipants();
 
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [participant, setParticipant] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [participant, setParticipant] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
 
-  const menuRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const loadHealth = async () => {
-      try {
-        const data = await getLiveParticipants();
-        setParticipant(data);
-      } finally {
-        setLoading(false);
-      }
-    };
+    useEffect(() => {
+        const loadHealth = async () => {
+            try {
+                const data = await getLiveParticipants();
+                setParticipant(data);
+            } finally {
+                setLoading(false);
+            }
+        };
 
         void loadHealth();
     }, []);
@@ -28,10 +28,7 @@ export default function ParticipantLiveIndicator() {
         if (!menuOpen) return;
 
         const handleClickOutside = (event: MouseEvent) => {
-            if (
-                menuRef.current &&
-                !menuRef.current.contains(event.target as Node)
-            ) {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
                 setMenuOpen(false);
             }
         };
@@ -42,7 +39,6 @@ export default function ParticipantLiveIndicator() {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [menuOpen]);
-
 
     if (loading) {
         return (
@@ -56,21 +52,17 @@ export default function ParticipantLiveIndicator() {
     return (
         <div ref={menuRef} className="relative hidden sm:block">
             <button
-                onClick={() => setMenuOpen(prev => !prev)}
+                onClick={() => setMenuOpen((prev) => !prev)}
                 className="inline-flex items-center gap-2 px-3 py-1.5 text-white
         rounded-md text-sm font-medium shadow-sm hover:bg-gray-50 hover:cursor-pointer hover:text-gray-900
         ring-2
         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 
         bg-gray-800"
             >
-                <h3 className='text-bold'>Participants</h3>
-
-
+                <h3 className="text-bold">Participants</h3>
             </button>
 
-            {menuOpen && (
-                <LiveParticipantsDropdown participant={participant}/>
-            )}
+            {menuOpen && <LiveParticipantsDropdown participant={participant}/>}
         </div>
     );
 }

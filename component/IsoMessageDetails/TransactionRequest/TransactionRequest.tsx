@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {FiArrowRight, FiX} from "react-icons/fi";
 import {
-    getBicLabel,
     getTransactionTypeLabel,
 } from "../../TransactionDetailsModal/TransactionDetailsModal";
 
@@ -12,6 +11,7 @@ import SummaryTab from "./NavigationTabs/SummaryTab/SummaryTab";
 import UnderConstructionTab from "./NavigationTabs/UnderConstructionTab/UnderConstructionTab";
 import styles from "./TransactionRequest.module.css";
 import {useTransactions} from "../../../api/hooks/useTransactions";
+import {useBicLabel} from "../../../api/hooks/useBicLable";
 import StatusTab from "./NavigationTabs/StatusTab/StatusTab";
 
 const breadcrumbs = [
@@ -50,6 +50,7 @@ const TransactionRequest: React.FC<Props> = ({txId, onClose}) => {
     ];
 
     const [activeTab, setActiveTab] = useState("Summary");
+    const getBicLabel = useBicLabel();
 
     // Render tab content based on activeTab
     const renderTabContent = () => {
@@ -58,13 +59,10 @@ const TransactionRequest: React.FC<Props> = ({txId, onClose}) => {
                 return <SummaryTab transactions={transactions}/>;
 
             case "Status History":
-                // return <UnderConstructionTab title="Status History"/>;
-            // case "Status History":
-                return (
-                    <StatusTab
-                        isoMessageIds={transactions.map(t => t.isoMessageId)}
-                    />
-                );
+                const isoMessageIds = transactions
+                    .map((tx) => tx.isoMessageId)
+                    .filter((id): id is number => !!id);
+                return <StatusTab isoMessageIds={isoMessageIds}/>;
 
             case "Verifications":
                 return <UnderConstructionTab title="Verifications"/>;

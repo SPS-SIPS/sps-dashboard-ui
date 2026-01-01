@@ -47,9 +47,9 @@ const EMPTY_FILTERS = {
     status: "",
     type: "",
     endToEndId: "",
-    transactionId: "",
     fromDate: "",
     toDate: "",
+    transactionId: "",
 };
 
 const PAGE_SIZE_OPTIONS = [
@@ -129,10 +129,10 @@ const ISOMessagesList = () => {
             status: undefined,
             type: undefined,
             RelatedToISOMessageId: undefined,
-            transactionId: undefined,
             msgId: undefined,
             bizMsgIdr: undefined,
             endToEndId: undefined,
+            transactionId:undefined,
             msgDefIdr: undefined,
             fromDate: undefined,
             toDate: undefined,
@@ -161,6 +161,7 @@ const ISOMessagesList = () => {
             RelatedToISOMessageId: newFilters.RelatedToISOMessageId
                 ? Number(newFilters.RelatedToISOMessageId)
                 : undefined,
+            transactionId: newFilters.transactionId || undefined,
             page: 0,
         });
     };
@@ -256,18 +257,14 @@ const ISOMessagesList = () => {
                         <div className={styles.searchInputRow}>
                             <SearchInput
                                 value={filters.transactionId}
-                                onChange={(e) =>
-                                    handleFilterChange("transactionId", e.target.value)
-                                }
+                                onChange={(e) => handleFilterChange("transactionId", e.target.value)}
                                 placeholder="Transaction ID"
                             />
-
                             <SearchInput
                                 value={filters.msgId}
                                 onChange={(e) => handleFilterChange("msgId", e.target.value)}
                                 placeholder="Message ID"
                             />
-
                             <SearchInput
                                 value={filters.bizMsgIdr}
                                 onChange={(e) =>

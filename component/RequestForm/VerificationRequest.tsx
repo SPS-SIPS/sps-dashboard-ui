@@ -7,7 +7,6 @@ import SelectInput from "../common/SelectInput/SelectInput";
 import { verificationMethods } from "../../constants/gatewayFormOptions";
 import styles from "./RequestForm.module.css";
 import useParticipants from "../../api/hooks/useParticipants";
-import { ParticipantStatus } from "../../types/participants";
 
 export interface FieldMapping {
   internalField: string;
@@ -30,29 +29,10 @@ const VerificationRequest: React.FC<VerificationRequestProps> = ({
   onSubmit,
 }) => {
   const { endpoints, loading, error } = useEndpoints();
-  const { getLiveParticipants } = useParticipants();
   const [fieldMappings, setFieldMappings] = useState<FieldMapping[]>([]);
   const [formValues, setFormValues] = useState<Record<string, string>>({});
 
-  const [participants, setParticipants] = useState<ParticipantStatus[]>([]);
-
-  useEffect(() => {
-    const loadParticipants = async () => {
-      try {
-        const data = await getLiveParticipants();
-        setParticipants(data);
-      } catch (err) {
-        console.error("Error loading participants:", err);
-      }
-    };
-
-    void loadParticipants();
-  }, []);
-
-  const bicOptions: Option[] = participants.map((p) => ({
-    value: p.institutionBic,
-    label: p.institutionName,
-  }));
+  const { bicOptions } = useParticipants();
 
   const handleInputChange = (userField: string, value: string) => {
     setFormValues((prev) => ({
