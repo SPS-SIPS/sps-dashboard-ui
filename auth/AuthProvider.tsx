@@ -38,6 +38,7 @@ export const KeycloakAuthProvider = ({
         const authenticated = await keycloakInstance.init({
           onLoad: "check-sso",
           checkLoginIframe: false,
+          pkceMethod: 'S256',
           // silentCheckSsoRedirectUri: window.location.origin + "/silent-check-sso.html",
         });
 

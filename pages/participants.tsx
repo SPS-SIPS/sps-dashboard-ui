@@ -118,30 +118,62 @@ const ParticipantsDashboard = () => {
                             <th>Failures</th>
                             <th>Successes</th>
                             <th>Last Error</th>
+                            <th>Current Balance</th>
+                            <th>Available Balance</th>
+                            <th>Can Send</th>
+                            <th>Min Send Balance</th>
                             <th>Action</th>
                         </tr>
                         </thead>
+
                         <tbody>
                         {participants.map((p) => (
                             <tr key={p.institutionBic} className={styles.tableRow}>
                                 <td>{p.institutionBic}</td>
                                 <td>{p.institutionName}</td>
+
                                 <td>
-                                    <span
-                                        className={
-                                            p.isLive
-                                                ? styles.liveStatus
-                                                : styles.downStatus
-                                        }
-                                    >
-                                        {p.isLive ? "LIVE" : "DOWN"}
-                                    </span>
+                                 <span
+                                     className={p.isLive ? styles.liveStatus : styles.downStatus}
+                                 >
+                                   {p.isLive ? "LIVE" : "DOWN"}
+                                 </span>
                                 </td>
+
                                 <td>{new Date(p.lastCheckedAt).toLocaleString()}</td>
                                 <td>{new Date(p.lastStatusChangeAt).toLocaleString()}</td>
+
                                 <td>{p.consecutiveFailures}</td>
                                 <td>{p.consecutiveSuccesses}</td>
-                                <td>{p.lastError ?? "-"}</td>
+
+                                <td>{p.lastError || "-"}</td>
+
+                                <td>
+                                    {p.currentBalance !== null && p.currentBalance !== undefined
+                                        ? p.currentBalance.toLocaleString()
+                                        : "-"}
+                                </td>
+
+                                <td>
+                                    {p.availableBalance !== null && p.availableBalance !== undefined
+                                        ? p.availableBalance.toLocaleString()
+                                        : "-"}
+                                </td>
+
+                                <td>
+                                      <span
+                                          className={p.canSend ? styles.canSendYes : styles.canSendNo}
+                                      >
+                                        {p.canSend ? "YES" : "NO"}
+                                      </span>
+                                </td>
+
+                                <td>
+                                    {p.minimumSendBalance !== null && p.minimumSendBalance !== undefined
+                                        ? p.minimumSendBalance.toLocaleString()
+                                        : "-"}
+                                </td>
+
                                 <td>
                                     <button
                                         onClick={() => handleCheckLive(p.institutionBic)}
@@ -153,6 +185,7 @@ const ParticipantsDashboard = () => {
                             </tr>
                         ))}
                         </tbody>
+
                     </table>
                 </div>
             )}

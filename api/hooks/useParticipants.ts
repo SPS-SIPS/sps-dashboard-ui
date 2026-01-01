@@ -25,7 +25,6 @@ const useParticipants = () => {
                 params: isLive !== undefined ? {IsLive: isLive} : undefined,
             }
         );
-
         return response.data.data;
     };
 
