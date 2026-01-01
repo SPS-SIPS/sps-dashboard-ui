@@ -1,6 +1,7 @@
+/* Health.module.css - Complete Styles */
+
 .healthPage {
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    /*min-height: 100vh;*/
     padding: var(--spacing-xl);
     animation: fadeIn 0.5s ease;
 }
@@ -68,6 +69,71 @@
     20%, 40%, 60%, 80% { transform: translateX(4px); }
 }
 
+/* ==================================
+   Zone Styles
+================================== */
+
+/* Zone card backgrounds */
+.zoneGreen {
+    border-left: 5px solid #22c55e !important;
+    background-color: #ecfdf5 !important;
+}
+
+.zoneAmber {
+    border-left: 5px solid #f59e0b !important;
+    background-color: #fffbeb !important;
+}
+
+.zoneRed {
+    border-left: 5px solid #ef4444 !important;
+    background-color: #fef2f2 !important;
+}
+
+/* Zone text colors */
+.zoneTextGreen {
+    color: #16a34a !important;
+    font-weight: 700;
+}
+
+.zoneTextAmber {
+    color: #d97706 !important;
+    font-weight: 700;
+}
+
+.zoneTextRed {
+    color: #dc2626 !important;
+    font-weight: 700;
+}
+
+.zoneText {
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ==================================
+   Status Styles
+================================== */
+
+/* Status text colors */
+.okText {
+    color: #10b981 !important;
+    font-weight: 700;
+}
+
+.degradedText {
+    color: #f59e0b !important;
+    font-weight: 700;
+}
+
+.errorText {
+    color: #ef4444 !important;
+    font-weight: 700;
+}
+
+/* ==================================
+   Overall Status
+================================== */
+
 .overallStatus {
     background: white;
     padding: var(--spacing-xl);
@@ -121,6 +187,10 @@
     margin-left: var(--spacing-sm);
 }
 
+/* ==================================
+   Components Grid
+================================== */
+
 .components {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -128,17 +198,9 @@
     margin-top: var(--spacing-xl);
 }
 
-@media (max-width: 1024px) {
-    .components {
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    }
-}
-
-@media (max-width: 768px) {
-    .components {
-        grid-template-columns: 1fr;
-    }
-}
+/* ==================================
+   Component Cards
+================================== */
 
 .componentCard {
     background: white;
@@ -196,6 +258,10 @@
     border-radius: var(--radius-xl);
 }
 
+/* ==================================
+   Component Header
+================================== */
+
 .componentHeader {
     display: flex;
     align-items: center;
@@ -238,6 +304,29 @@
     font-size: var(--font-size-xxl);
 }
 
+/* ==================================
+   Status Icon Colors
+================================== */
+
+.ok {
+    color: #10b981;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+.degraded {
+    color: #f59e0b;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+.error {
+    color: #ef4444;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+/* ==================================
+   Component Text Content
+================================== */
+
 .componentCard p {
     font-size: var(--font-size-base);
     color: var(--color-text-secondary);
@@ -254,23 +343,11 @@
     min-width: 120px;
 }
 
-/* Status Icon Colors */
-.ok {
-    color: #10b981;
-    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
-}
+/* ==================================
+   Balance Box Styling
+================================== */
 
-.degraded {
-    color: #f59e0b;
-    text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
-}
-
-.error {
-    color: #ef4444;
-    text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
-}
-
-/* Balance Box Styling */
+/* Base Balance Box */
 .balanceBox {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
     border-radius: var(--radius-lg);
@@ -289,6 +366,55 @@
     }
 }
 
+/* Green Zone Balance Box */
+.balanceBoxGreen {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(34, 197, 94, 0.15) 100%) !important;
+    border: 2px solid rgba(16, 185, 129, 0.4) !important;
+    animation: pulseGlowGreen 2s infinite !important;
+}
+
+@keyframes pulseGlowGreen {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 25px 8px rgba(16, 185, 129, 0.25);
+    }
+}
+
+/* Amber Zone Balance Box */
+.balanceBoxAmber {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 191, 36, 0.15) 100%) !important;
+    border: 2px solid rgba(245, 158, 11, 0.4) !important;
+    animation: pulseGlowAmber 2s infinite !important;
+}
+
+@keyframes pulseGlowAmber {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 25px 8px rgba(245, 158, 11, 0.25);
+    }
+}
+
+/* Red Zone Balance Box */
+.balanceBoxRed {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.15) 100%) !important;
+    border: 2px solid rgba(239, 68, 68, 0.4) !important;
+    animation: pulseGlowRed 2s infinite !important;
+}
+
+@keyframes pulseGlowRed {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 25px 8px rgba(239, 68, 68, 0.25);
+    }
+}
+
+/* Balance Box Content */
 .balanceBox p {
     font-size: var(--font-size-lg);
     color: var(--color-text-primary);
@@ -299,16 +425,58 @@
 }
 
 .balanceBox p svg {
-    color: #10b981;
     font-size: var(--font-size-md);
 }
 
+/* Green zone icon color */
+.balanceBoxGreen p svg {
+    color: #10b981 !important;
+}
+
+/* Amber zone icon color */
+.balanceBoxAmber p svg {
+    color: #f59e0b !important;
+}
+
+/* Red zone icon color */
+.balanceBoxRed p svg {
+    color: #ef4444 !important;
+}
+
+/* Default icon color */
+.balanceBox:not(.balanceBoxGreen):not(.balanceBoxAmber):not(.balanceBoxRed) p svg {
+    color: #10b981 !important;
+}
+
 .balanceBox p strong {
-    color: #059669;
     font-weight: 800;
     font-size: var(--font-size-lg);
     margin-left: auto;
 }
+
+/* Green zone balance amount */
+.balanceBoxGreen p strong {
+    color: #059669 !important;
+}
+
+/* Amber zone balance amount */
+.balanceBoxAmber p strong {
+    color: #d97706 !important;
+}
+
+/* Red zone balance amount */
+.balanceBoxRed p strong {
+    color: #dc2626 !important;
+}
+
+/* Default balance amount color */
+.balanceBox:not(.balanceBoxGreen):not(.balanceBoxAmber):not(.balanceBoxRed) p strong {
+    color: #059669 !important;
+}
+
+/* ==================================
+   Error Message
+================================== */
 
 .errorMessage {
     background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
@@ -327,7 +495,10 @@
     75% { transform: translateX(2px); }
 }
 
-/* Last checked styling */
+/* ==================================
+   Last Checked Styling
+================================== */
+
 .componentCard p:last-child {
     margin-top: var(--spacing-lg);
     padding-top: var(--spacing-sm);
@@ -340,8 +511,21 @@
     color: var(--color-text-primary);
 }
 
-/* Responsive Design */
+/* ==================================
+   Responsive Design
+================================== */
+
+@media (max-width: 1024px) {
+    .components {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
+    .components {
+        grid-template-columns: 1fr;
+    }
+    
     .healthPage {
         padding: var(--spacing-md);
     }
@@ -430,7 +614,10 @@
     }
 }
 
-/* Animation delays for component cards */
+/* ==================================
+   Animation Delays for Cards
+================================== */
+
 .componentCard:nth-child(1) { animation-delay: 0.1s; }
 .componentCard:nth-child(2) { animation-delay: 0.2s; }
 .componentCard:nth-child(3) { animation-delay: 0.3s; }
@@ -439,7 +626,10 @@
 .componentCard:nth-child(6) { animation-delay: 0.6s; }
 .componentCard:nth-child(7) { animation-delay: 0.7s; }
 
-/* Hover effect enhancements */
+/* ==================================
+   Hover Effects
+================================== */
+
 .componentCard:hover .statusIcon {
     animation: bounce 0.5s ease;
 }
@@ -449,7 +639,10 @@
     50% { transform: translateY(-10px); }
 }
 
-/* Gradient overlay for cards based on status */
+/* ==================================
+   Gradient Overlays for Cards
+================================== */
+
 .componentCard.ok::after {
     content: '';
     position: absolute;
@@ -486,7 +679,10 @@
     border-radius: var(--radius-xl);
 }
 
-/* Custom scrollbar for components container */
+/* ==================================
+   Custom Scrollbar
+================================== */
+
 .components {
     max-height: calc(100vh - 200px);
     overflow-y: auto;
