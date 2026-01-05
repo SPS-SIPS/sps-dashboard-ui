@@ -8,7 +8,10 @@ interface AlertModalProps {
     onConfirm: () => void;
     onClose?: () => void;
     error?: boolean;
+    success?: boolean;
+    warning?: boolean;
     buttonText?: string;
+    showCloseButton?: boolean;
 }
 
 const AlertModal: React.FC<AlertModalProps> = ({
@@ -17,22 +20,50 @@ const AlertModal: React.FC<AlertModalProps> = ({
                                                    onConfirm,
                                                    onClose,
                                                    error = false,
+                                                   success = false,
+                                                   warning = false,
                                                    buttonText = "OK",
+                                                   showCloseButton = true,
                                                }) => {
+
+    // Determine modal type for styling
+    const getModalTypeClass = () => {
+        if (error) return styles.errorModal;
+        if (success) return styles.successModal;
+        return '';
+    };
+
+    // Determine button class
+    const getButtonClass = () => {
+        if (error) return styles.errorButton;
+        if (success) return styles.successButton;
+        return styles.confirmButton;
+    };
+
     return (
-        <div className={styles.modalOverlay}>
-            <div className={styles.modal}>
-                {onClose && (
-                    <button className={styles.closeButton} onClick={onClose}>
+        <div className={styles.modalOverlay} onClick={onClose}>
+            <div
+                className={`${styles.modal} ${getModalTypeClass()}`}
+                onClick={(e) => e.stopPropagation()}
+            >
+                {showCloseButton && onClose && (
+                    <button
+                        className={styles.closeButton}
+                        onClick={onClose}
+                        aria-label="Close modal"
+                    >
                         <MdClose className={styles.closeIcon} size={20} />
                     </button>
                 )}
+
                 <h3>{title}</h3>
                 <p>{message}</p>
+
                 <div className={styles.buttons}>
                     <button
                         onClick={onConfirm}
-                        className={error ? styles.errorButton : styles.confirmButton}
+                        className={getButtonClass()}
+                        autoFocus
                     >
                         {buttonText}
                     </button>
