@@ -1,150 +1,535 @@
+/* EndpointsPage.module.css */
+/* Follows the same design patterns as ConfigurationsForm.module.css */
+
+/* ==================================
+   Layout & Container
+================================== */
+
 .container {
-    padding: var(--spacing-xxl);
-    background: var(--color-background);
-    min-height: 100%;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  animation: fadeIn 0.5s var(--ease-in-out);
+  background: var(--color-background);
+  min-height: calc(100vh - 200px);
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--spacing-md));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================================
+   Header Section
+================================== */
+
 .header {
-    text-align: center;
-    margin-bottom: var(--spacing-xxl);
+  margin-bottom: var(--spacing-xxl);
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 1px solid var(--color-border);
+  text-align: center;
 }
 
 .title {
-    color: var(--color-text-primary);
-    font-size: var(--font-size-xxl);
-    margin-bottom: var(--spacing-md);
-    font-weight: 600;
+  font-size: var(--font-size-xxl);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-sm);
+  line-height: 1.2;
+  letter-spacing: var(--letter-spacing-wide);
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-lg);
-    line-height: 1.5;
-    max-width: 800px;
-    margin: 0 auto;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+  opacity: 0.9;
 }
+
+/* ==================================
+   Loading State
+================================== */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xxl);
+  background: var(--color-background-secondary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  min-height: 400px;
+}
+
+.loading p {
+  margin-top: var(--spacing-lg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+/* ==================================
+   Error State
+================================== */
+
+.error {
+  background: var(--color-error-background);
+  color: var(--color-error-label);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-xl);
+  margin: var(--spacing-xl) 0;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--color-error);
+  animation: shake 0.5s var(--ease-in-out);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+/* ==================================
+   No Endpoints State
+================================== */
+
+.noEndpoints {
+  text-align: center;
+  padding: var(--spacing-xxl);
+  background: var(--color-background-secondary);
+  border-radius: var(--radius-xl);
+  border: 2px dashed var(--color-border);
+  margin: var(--spacing-xl) 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+/* ==================================
+   Endpoint Container
+================================== */
 
 .endpointContainer {
-    background: var(--color-background-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--spacing-xl);
-    box-shadow: var(--shadow-sm);
+  background: var(--color-background);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--spacing-xl);
 }
 
+.endpointContainer:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.endpointContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  opacity: 0.7;
+}
+
+/* ==================================
+   Endpoint Header
+================================== */
+
 .endpointHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-lg);
-    background: var(--color-background-tertiary);
-    border-bottom: 1px solid var(--color-border);
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--color-border);
 }
 
 .endpointTitle {
-    color: var(--color-primary-dark);
-    font-size: var(--font-size-lg);
-    margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+  position: relative;
 }
+
+.endpointTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}
+
+/* ==================================
+   Endpoint Actions
+================================== */
 
 .endpointActions {
-    display: flex;
-    gap: var(--spacing-md);
+  display: flex;
+  gap: var(--spacing-md);
 }
 
-.button {
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--radius-md);
-    font-weight: 500;
-    transition: all var(--transition-fast);
-    cursor: pointer;
+/* Button Styles matching the design system */
+.editButton,
+.saveButton,
+.cancelButton {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
 }
 
 .editButton {
-    composes: button;
-    background: var(--color-primary);
-    color: var(--color-text-on-primary);
-    border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border: 1px solid var(--color-primary);
 }
 
-.editButton:hover {
-    background: var(--color-primary-hover);
+.editButton:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(115, 179, 68, 0.2);
 }
 
 .saveButton {
-    composes: button;
-    background: var(--color-success);
-    color: var(--color-text-on-primary);
-    border: 1px solid var(--color-success);
+  background: var(--color-success);
+  color: var(--color-text-on-primary);
+  border: 1px solid var(--color-success);
 }
 
-.saveButton:hover {
-    background: var(--color-success);
-    opacity: 0.9;
+.saveButton:hover:not(:disabled) {
+  background: #218838;
+  border-color: #1e7e34;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
 }
 
 .cancelButton {
-        composes: button;
-        background: var(--color-background);
-        color: var(--color-text-secondary);
-        border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
 }
 
-.cancelButton:hover {
-    background-color: var(--color-background-secondary);
-    border-color: var(--color-error);
-    color: var(--color-error);
+.cancelButton:hover:not(:disabled) {
+  background: var(--color-background-accent);
+  border-color: var(--color-border-hover);
+  transform: translateY(-1px);
 }
+
+.editButton:active:not(:disabled),
+.saveButton:active:not(:disabled),
+.cancelButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.editButton:disabled,
+.saveButton:disabled,
+.cancelButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================================
+   Mappings Grid
+================================== */
 
 .mappingsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
-    padding: var(--spacing-lg);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
 }
 
 .mappingItem {
-    background: var(--color-background);
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
 }
 
-.loading{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: var(--spacing-lg);
-}
-.error,
-.noEndpoints {
-    text-align: center;
-    padding: var(--spacing-xxl);
-    font-size: var(--font-size-lg);
-    color: var(--color-text-secondary);
+/* Input label styling to match the design */
+.mappingItem label {
+  font-weight: 600;
+  color: var(--color-text-label);
+  margin-bottom: var(--spacing-xs);
+  display: block;
+  font-size: var(--font-size-sm);
 }
 
-.error {
-    color: var(--color-error);
-    background: var(--color-error-background);
-    border-radius: var(--radius-md);
+/* Input field styling */
+.mappingItem input[type="text"] {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-base);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-background);
+  transition: all var(--transition-normal);
+  color: var(--color-text-primary);
+  font-family: inherit;
+}
+
+.mappingItem input[type="text"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(115, 179, 68, 0.1);
+}
+
+.mappingItem input[type="text"]:disabled {
+  background: var(--color-background-disabled);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+
+/* ==================================
+   Responsive Design
+================================== */
+
+@media (max-width: 1024px) {
+  .container {
+    max-width: 100%;
     padding: var(--spacing-lg);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .endpointContainer {
+    padding: var(--spacing-lg);
+  }
+  
+  .mappingsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+  }
 }
 
 @media (max-width: 768px) {
-    .container {
-        padding: var(--spacing-md);
-    }
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .header {
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-lg);
+  }
+  
+  .title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+  
+  .endpointContainer {
+    padding: var(--spacing-md);
+  }
+  
+  .endpointHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+  
+  .endpointTitle {
+    font-size: var(--font-size-lg);
+  }
+  
+  .endpointActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .mappingsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .loading {
+    padding: var(--spacing-xl);
+    min-height: 300px;
+  }
+  
+  .error,
+  .noEndpoints {
+    padding: var(--spacing-lg);
+    font-size: var(--font-size-base);
+  }
+}
 
-    .mappingsGrid {
-        grid-template-columns: 1fr;
-    }
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .endpointContainer {
+    padding: var(--spacing-sm);
+  }
+  
+  .endpointTitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .endpointActions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-base);
+  }
+  
+  .mappingItem input[type="text"] {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .loading {
+    padding: var(--spacing-lg);
+  }
+  
+  .loading p {
+    font-size: var(--font-size-base);
+  }
+}
 
-    .endpointHeader {
-        flex-direction: column;
-        gap: var(--spacing-md);
-        align-items: flex-start;
-    }
+/* ==================================
+   Accessibility Improvements
+================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .container,
+  .endpointContainer,
+  .error {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .endpointContainer {
+    border: 2px solid var(--color-text-primary);
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    border: 2px solid currentColor;
+  }
+  
+  .mappingItem input[type="text"] {
+    border: 2px solid var(--color-text-primary);
+  }
+}
+
+/* Focus states for accessibility */
+.editButton:focus-visible,
+.saveButton:focus-visible,
+.cancelButton:focus-visible,
+.mappingItem input[type="text"]:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* ==================================
+   Child Component Styling
+================================== */
+
+.loading :global(.spin-loading) {
+  width: 60px;
+  height: 60px;
+}
+
+/* Input component styling */
+.mappingItem :global(.input-error) {
+  border-color: var(--color-error) !important;
+  background-color: var(--color-error-background) !important;
+}
+
+.mappingItem :global(.input-valid) {
+  border-color: var(--color-success) !important;
+  background-color: var(--color-success-background) !important;
+}
+
+/* AlertModal customization (matches ConfigurationsForm.module.css) */
+:global(.alert-modal) {
+  background: var(--color-background) !important;
+  border-radius: var(--radius-xl) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+:global(.alert-modal-title) {
+  color: var(--color-text-primary) !important;
+  font-size: var(--font-size-xl) !important;
+  font-weight: 700 !important;
+}
+
+:global(.alert-modal-message) {
+  color: var(--color-text-secondary) !important;
+  font-size: var(--font-size-md) !important;
+  line-height: 1.6 !important;
+}
+
+:global(.alert-modal-button) {
+  background: var(--color-primary) !important;
+  color: var(--color-text-on-primary) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: var(--spacing-sm) var(--spacing-lg) !important;
+  font-weight: 600 !important;
+  transition: background-color var(--transition-normal) !important;
+}
+
+:global(.alert-modal-button:hover) {
+  background: var(--color-primary-hover) !important;
+}
+
+:global(.alert-modal.error) {
+  border-top: 4px solid var(--color-error) !important;
+}
+
+:global(.alert-modal.error .alert-modal-title) {
+  color: var(--color-error) !important;
 }

@@ -1,177 +1,590 @@
+/* ConfigurationsForm.module.css - Hosts Config Button Fixes Added */
+/* Uses existing design system variables */
+
+/* ==================================
+   Layout & Container
+================================== */
+
 .formContainer {
-    padding: var(--spacing-xxl);
-    background: var(--color-background);
-    min-height: 100%;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  animation: fadeIn 0.5s var(--ease-in-out);
+  background: var(--color-background);
+  min-height: calc(100vh - 200px);
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--spacing-md));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================================
+   Header Section
+================================== */
+
 .header {
-    text-align: center;
-    margin-bottom: var(--spacing-xxl);
+  margin-bottom: var(--spacing-xxl);
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 1px solid var(--color-border);
+  text-align: center;
 }
 
 .title {
-    color: var(--color-text-primary);
-    font-size: var(--font-size-xxl);
-    margin-bottom: var(--spacing-md);
-    font-weight: 600;
+  font-size: var(--font-size-xxl);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-sm);
+  line-height: 1.2;
+  letter-spacing: var(--letter-spacing-wide);
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-lg);
-    line-height: 1.5;
-    max-width: 800px;
-    margin: 0 auto;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+  opacity: 0.9;
 }
 
+/* ==================================
+   Loading State
+================================== */
 
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xxl);
+  background: var(--color-background-secondary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  min-height: 400px;
+}
+
+.loadingContainer p {
+  margin-top: var(--spacing-lg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+/* ==================================
+   Form Styling
+================================== */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xxl);
+}
+
+/* ==================================
+   Form Sections (for children components)
+================================== */
+
+/* These styles are for the sections rendered by the child component */
 .section {
-    padding: var(--spacing-xl);
-    background-color: var(--color-background-secondary);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--color-border);
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
+  background: var(--color-background);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.section:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  opacity: 0.7;
 }
 
 .sectionTitle {
-    font-size: var(--font-size-lg);
-    color: var(--color-primary-dark);
-    margin-bottom: var(--spacing-lg);
-    padding-bottom: var(--spacing-sm);
-    border-bottom: 1px solid var(--color-border);
-    font-weight: 500;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--color-border);
+  position: relative;
 }
 
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-lg);
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
 }
+
+/* ==================================
+   Input Groups (for children components)
+================================== */
 
 .passwordSection {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-primary-light);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  margin: var(--spacing-md) 0;
 }
 
-.checkbox {
-    align-self: flex-start;
-    margin-top: calc(-1 * var(--spacing-sm));
-}
+/* ==================================
+   Form Actions
+================================== */
 
 .actions {
-    display: flex;
-    /*justify-content: flex-end;*/
-    /*margin-top: var(--spacing-lg);*/
-    justify-content: center;
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--spacing-xl) 0;
+  margin-top: var(--spacing-xl);
+  border-top: 2px solid var(--color-border);
 }
 
-.addButton,
-.removeButton {
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--radius-sm);
-    font-weight: 500;
-    transition: all 0.2s var(--ease-in-out);
-    cursor: pointer;
-    border: 1px solid transparent;
-    font-size: var(--font-size-base);
+.button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-normal);
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  height: 3.25rem;
 }
 
-/* Add Origin Button */
-.addButton {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    align-self: flex-start;
-    margin-top: var(--spacing-xs);
-}
-
-.addButton:hover {
-    background-color: var(--color-primary-dark);
-    transform: translateY(-1px);
-}
-
-.addButton:active {
-    transform: translateY(0);
-}
-
-/* Remove Button */
-.removeButton {
-    background-color: var(--color-error);
-    color: var(--color-white);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    margin-left: var(--spacing-sm);
-}
-
-.removeButton:hover {
-    background-color: var(--color-error-dark);
-}
-
-/* Inline Group */
-.inlineGroup {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    width: 100%;
-}
-
-.inlineGroup > :first-child {
-    flex-grow: 1;
-}
-
-.loadingContainer {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-    justify-content: center;
-    align-items: center;
-}
+/* ==================================
+   Error Container
+================================== */
 
 .errorContainer {
-    padding: var(--spacing-xl);
-    color: var(--color-error);
-    background-color: var(--color-error-background);
-    border-radius: var(--radius-lg);
-    text-align: center;
-    margin: var(--spacing-xxl) auto;
-    max-width: var(--breakpoint-tablet);
-    border: 1px solid var(--color-error-border);
+  background: var(--color-error-background);
+  color: var(--color-error-label);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-xl);
+  margin: var(--spacing-xl) auto;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--color-error);
+  animation: shake 0.5s var(--ease-in-out);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+/* ==================================
+   Modal Overrides (for AlertModal)
+================================== */
+
+/* Custom modal styling that uses AlertModal component */
+.modalOverlay {
+  background: var(--color-overlay);
+}
+
+.modalContent {
+  background: var(--color-background);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ==================================
+   Hosts Configuration Specific Styles
+   Added to fix button spacing issues
+================================== */
+
+/* Inline Group for host input + remove button */
+.inlineGroup {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.inlineGroup:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Input container takes most of the width */
+.inlineGroup > div:first-child {
+  flex: 1;
+}
+
+/* Remove button - compact and visually distinct */
+.removeButton {
+  background: var(--color-error-background);
+  color: var(--color-error);
+  border: 1px solid var(--color-error-border);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-width: 100px;
+  height: 42px;
+  margin-top: 26px; /* Aligns with input field */
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeButton:hover:not(:disabled) {
+  background: var(--color-error);
+  color: var(--color-text-on-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+}
+
+.removeButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.removeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Add button - prominent and separated */
+.addButton {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 2px dashed var(--color-primary);
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  width: 100%;
+  max-width: 200px;
+  margin: var(--spacing-xl) auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.addButton:hover:not(:disabled) {
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border-style: solid;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(115, 179, 68, 0.3);
+}
+
+.addButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.addButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.addButton::before {
+  content: '+';
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+/* Container for the hosts list */
+.hostsListContainer {
+  margin-bottom: var(--spacing-xxl);
+}
+
+/* ==================================
+   Responsive Design for Hosts Form
+================================== */
+
+@media (max-width: 1024px) {
+  .formContainer {
+    max-width: 100%;
+    padding: var(--spacing-lg);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .section {
+    padding: var(--spacing-lg);
+  }
 }
 
 @media (max-width: 768px) {
-    .formContainer {
-        padding: var(--spacing-lg);
-    }
+  .formContainer {
+    padding: var(--spacing-md);
+  }
+  
+  .header {
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-lg);
+  }
+  
+  .title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+  
+  .section {
+    padding: var(--spacing-md);
+  }
+  
+  .sectionTitle {
+    font-size: var(--font-size-lg);
+  }
+  
+  .actions {
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .button {
+    width: 100%;
+    min-width: unset;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-base);
+    height: 3rem;
+  }
+  
+  .loadingContainer {
+    padding: var(--spacing-xl);
+    min-height: 300px;
+  }
+  
+  .errorContainer {
+    padding: var(--spacing-lg);
+    font-size: var(--font-size-base);
+  }
+  
+  /* Hosts specific responsive */
+  .inlineGroup {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: stretch;
+  }
 
-    .section {
-        padding: var(--spacing-lg);
-    }
+  .removeButton {
+    width: 100%;
+    max-width: 100%;
+    margin-top: var(--spacing-sm);
+    height: 40px;
+    align-self: flex-end;
+  }
 
-    .title {
-        font-size: var(--font-size-xl);
-    }
+  .addButton {
+    width: 100%;
+    max-width: 100%;
+    margin-top: var(--spacing-xl);
+  }
+}
 
-    .subtitle {
-        font-size: var(--font-size-base);
-    }
-    .button{
-        width: 100%;
-    }
+@media (max-width: 480px) {
+  .formContainer {
+    padding: var(--spacing-sm);
+  }
+  
+  .section {
+    padding: var(--spacing-sm);
+  }
+  
+  .sectionTitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    height: 2.75rem;
+  }
+  
+  .loadingContainer {
+    padding: var(--spacing-lg);
+  }
+  
+  .loadingContainer p {
+    font-size: var(--font-size-base);
+  }
+  
+  /* Hosts specific small screen */
+  .inlineGroup {
+    gap: var(--spacing-xs);
+  }
 
-    .addButton,
-    .removeButton {
-        width: 100%;
-        justify-content: center;
-    }
+  .removeButton {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    height: 36px;
+  }
 
-    .inlineGroup {
-        flex-direction: column;
-    }
+  .addButton {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-base);
+  }
+}
 
-    .removeButton {
-        margin-left: 0;
-        width: 100%;
-        order: 2;
-    }
+/* ==================================
+   Accessibility Improvements
+================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .formContainer,
+  .section,
+  .button,
+  .errorContainer {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .section {
+    border: 2px solid var(--color-text-primary);
+  }
+  
+  .button {
+    border: 2px solid currentColor;
+  }
+  
+  .errorContainer {
+    border: 2px solid var(--color-error);
+  }
+}
+
+/* Focus states for accessibility */
+.button:focus-visible,
+.section:focus-within {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* Loading animation */
+.loadingContainer :global(.spin-loading) {
+  width: 60px;
+  height: 60px;
+}
+
+/* Form validation states (for Input component) */
+.form :global(.input-error) {
+  border-color: var(--color-error) !important;
+  background-color: var(--color-error-background) !important;
+}
+
+.form :global(.input-valid) {
+  border-color: var(--color-success) !important;
+  background-color: var(--color-success-background) !important;
+}
+
+/* Checkbox styling (for Checkbox component) */
+.form :global(.checkbox-container) {
+  color: var(--color-text-primary);
+}
+
+.form :global(.checkbox-container:hover) {
+  background-color: var(--color-background-accent);
+}
+
+/* AlertModal customization */
+:global(.alert-modal) {
+  background: var(--color-background) !important;
+  border-radius: var(--radius-xl) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+:global(.alert-modal-title) {
+  color: var(--color-text-primary) !important;
+  font-size: var(--font-size-xl) !important;
+  font-weight: 700 !important;
+}
+
+:global(.alert-modal-message) {
+  color: var(--color-text-secondary) !important;
+  font-size: var(--font-size-md) !important;
+  line-height: 1.6 !important;
+}
+
+:global(.alert-modal-button) {
+  background: var(--color-primary) !important;
+  color: var(--color-text-on-primary) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: var(--spacing-sm) var(--spacing-lg) !important;
+  font-weight: 600 !important;
+  transition: background-color var(--transition-normal) !important;
+}
+
+:global(.alert-modal-button:hover) {
+  background: var(--color-primary-hover) !important;
+}
+
+/* Error modal specific */
+:global(.alert-modal.error) {
+  border-top: 4px solid var(--color-error) !important;
+}
+
+:global(.alert-modal.error .alert-modal-title) {
+  color: var(--color-error) !important;
+}
+
+/* Success modal specific */
+:global(.alert-modal:not(.error)) {
+  border-top: 4px solid var(--color-success) !important;
+}
+
+:global(.alert-modal:not(.error) .alert-modal-title) {
+  color: var(--color-success) !important;
 }
