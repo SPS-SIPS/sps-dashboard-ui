@@ -24,7 +24,6 @@ const useEnumerations = () => {
             const response = await axiosPrivate.get<ResponseData>(url);
             return response.data;
         } catch (error) {
-            console.error("API Error:", error);
             throw error;
         }
     };
