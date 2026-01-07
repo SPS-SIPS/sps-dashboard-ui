@@ -6,20 +6,14 @@ import {
     getTransactionStatusType,
     TransactionType,
     TransactionStatus,
-    APIResponse,
-    APIError,
 } from "../types/types";
 import styles from "../styles/TransactionsList.module.css";
 import SearchInput from "../component/common/SearchInput/SearchInput";
 import SelectInput from "../component/common/SelectInput/SelectInput";
 import ActionButton from "../component/common/ActionButton/ActionButton";
 import RoleGuard from "../auth/RoleGuard";
-import {FaExclamationCircle} from "react-icons/fa";
 import {TiInfo} from "react-icons/ti";
 import TransactionDetailsModal from "../component/TransactionDetailsModal/TransactionDetailsModal";
-import {useApiRequest} from "../utils/apiService";
-import {baseURL} from "../constants/constants";
-import TransactionStatusModal from "../component/TransactionModel/TransactionStatus";
 
 const allColumns = [
     {id: "txId", label: "Transaction ID"},
@@ -74,16 +68,6 @@ const TransactionsList = () => {
 
     const [showColumnSettings, setShowColumnSettings] = useState(false);
 
-    // Status API
-    const [statusModalOpen, setStatusModalOpen] = useState(false);
-    const [statusResponse, setStatusResponse] = useState<APIResponse | null>(
-        null
-    );
-    const [statusError, setStatusError] = useState<APIError | null>(null);
-    const [statusLoading, setStatusLoading] = useState(false);
-    const [apiUrl] = useState<string>(`${baseURL}/api/v1/Gateway/Status`);
-    const {makeApiRequest} = useApiRequest();
-
     const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
         const stored = localStorage.getItem(VISIBLE_COLUMNS_KEY);
         return stored ? JSON.parse(stored) : ["txId", "type", "amount"];
@@ -120,46 +104,6 @@ const TransactionsList = () => {
                 ? (newFilters.Status as unknown as TransactionStatus)
                 : undefined,
         });
-    };
-
-    const handleStatusClick = async (transaction: Transaction) => {
-        setStatusModalOpen(true);
-        setStatusResponse(null);
-        setStatusError(null);
-        setStatusLoading(true);
-        try {
-            const result = await makeApiRequest({
-                url: apiUrl,
-                method: "post",
-                data: {
-                    EndToEnd: transaction.endToEndId,
-                    TxId: transaction.txId,
-                    ToBIC: transaction.creditorAgentBIC,
-                },
-            });
-
-            if (result.success) {
-                setStatusResponse({
-                    data: result.data,
-                    status: result.status,
-                    success: true,
-                });
-            } else {
-                setStatusError({
-                    message: "Status request failed",
-                    details: result.error,
-                    statusCode: result.status,
-                });
-            }
-        } catch (err) {
-            setStatusError({
-                message: "Unexpected error",
-                details: (err as Error).message,
-                statusCode: 500,
-            });
-        } finally {
-            setStatusLoading(false);
-        }
     };
 
     const handlePageSizeChange = (value: string) => {
@@ -241,15 +185,6 @@ const TransactionsList = () => {
                         >
                             <TiInfo/> Details
                         </button>
-                        {/* {(transaction.type === 1 || transaction.type === 2) && (
-                            <button
-                                className="p-2 bg-gray-300 text-gray-700-700 rounded-md flex items-center gap-1 hover:bg-gray-200 hover:cursor-pointer transition"
-                                title="Status"
-                                onClick={() => handleStatusClick(transaction)}
-                            >
-                                <FaExclamationCircle/> Status
-                            </button>
-                        )} */}
                     </div>
                 );
 
@@ -499,13 +434,6 @@ const TransactionsList = () => {
                 <TransactionDetailsModal
                     transaction={selectedTransaction}
                     onClose={() => setSelectedTransaction(null)}
-                />
-                <TransactionStatusModal
-                    open={statusModalOpen}
-                    loading={statusLoading}
-                    response={statusResponse}
-                    error={statusError}
-                    onClose={() => setStatusModalOpen(false)}
                 />
 
                 {loading && query.page > 0 && (

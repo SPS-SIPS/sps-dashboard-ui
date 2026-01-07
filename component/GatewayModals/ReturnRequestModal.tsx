@@ -99,8 +99,7 @@ const ReturnRequestModal: React.FC<ReturnRequestModalProps> = ({
     const isFormValid =
         formState.reason.trim() !== "" &&
         formState.returnIdInput.trim() !== "" &&
-        txId.trim() !== "" &&
-        endToEndId.trim() !== "";
+        txId.trim() !== "";
 
     const resetModal = () => {
         setFormState({
@@ -158,6 +157,7 @@ const ReturnRequestModal: React.FC<ReturnRequestModalProps> = ({
                             value={txId}
                             type="text"
                             disabled
+                            required
                             onChange={() => {
                             }}
                         />
@@ -167,6 +167,7 @@ const ReturnRequestModal: React.FC<ReturnRequestModalProps> = ({
                             value={endToEndId}
                             type="text"
                             disabled
+                            required
                             onChange={() => {
                             }}
                         />
@@ -190,6 +191,7 @@ const ReturnRequestModal: React.FC<ReturnRequestModalProps> = ({
                             }
                             type="text"
                             placeholder="Enter additional info"
+                            required
                         />
 
                         <div className={styles.returnIdContainer}>

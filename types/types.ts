@@ -55,9 +55,6 @@ export interface Transaction {
   creditorAgentBIC?: string;
   creditorIssuer?: string;
   remittanceInformation?: string;
-  status?: string; // TransactionStatus as string
-  fromDate?: string;
-  toDate?: string;
 }
 
 export interface ISOMessage {

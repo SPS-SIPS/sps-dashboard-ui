@@ -18,8 +18,7 @@ import RoleGuard from "../auth/RoleGuard";
 import XmlViewerModal from "../component/XmlViewerModal/XmlViewerModal";
 import AlertModal from "../component/common/AlertModal/AlertModal";
 import {useAuthentication} from "../auth/AuthProvider";
-import VerificationRequest from "../component/IsoMessageDetails/VerificationRequest/VerificationRequest";
-import TransactionRequest from "../component/IsoMessageDetails/TransactionRequest/TransactionRequest";
+import IsoMessageDetails from "../component/IsoMessageDetails/IsoMessageDetails/IsoMessageDetails";
 
 const allColumns = [
     {id: "id", label: "ID"},
@@ -132,7 +131,7 @@ const ISOMessagesList = () => {
             msgId: undefined,
             bizMsgIdr: undefined,
             endToEndId: undefined,
-            transactionId:undefined,
+            transactionId: undefined,
             msgDefIdr: undefined,
             fromDate: undefined,
             toDate: undefined,
@@ -445,17 +444,13 @@ const ISOMessagesList = () => {
 
                                             {showDetailsColumn ? (
                                                 <td>
-                                                    {message.txId ? (
-                                                        <button
-                                                            className={styles.iconButton}
-                                                            type="button"
-                                                            onClick={() => handleShowDetails(message)}
-                                                        >
-                                                            <FiEye/> Details
-                                                        </button>
-                                                    ) : (
-                                                        <span>-</span>
-                                                    )}
+                                                    <button
+                                                        className={styles.iconButton}
+                                                        type="button"
+                                                        onClick={() => handleShowDetails(message)}
+                                                    >
+                                                        <FiEye/> Details
+                                                    </button>
                                                 </td>
                                             ) : null}
                                         </tr>
@@ -506,17 +501,12 @@ const ISOMessagesList = () => {
                         />
                     )}
                 </div>
-            ) : selectedMessage.messageType === ISOMessageType.VerificationRequest ? (
-                <VerificationRequest
+            ) : (
+                <IsoMessageDetails
                     isoMessage={selectedMessage}
                     onClose={handleCloseDetails}
                 />
-            ) : selectedMessage.messageType === ISOMessageType.TransactionRequest ? (
-                <TransactionRequest
-                    txId={selectedMessage.txId!}
-                    onClose={handleCloseDetails}
-                />
-            ) : null}
+            )}
         </RoleGuard>
     );
 };

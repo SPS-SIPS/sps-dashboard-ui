@@ -1,22 +1,24 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import styles from "./GatewayModal.module.css";
 import useGatewayAPI from "../../api/hooks/useGatewayAPI";
-import { AiOutlineClose, AiOutlineWarning } from "react-icons/ai";
-import { FiLoader } from "react-icons/fi";
-import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import {AiOutlineClose, AiOutlineWarning} from "react-icons/ai";
+import {FiLoader} from "react-icons/fi";
+import {extractErrorMessage} from "../../utils/extractErrorMessage";
 
 interface RetryReturnModalProps {
     returnId: string;
     isOpen: boolean;
     onClose: () => void;
+    onSuccess?: () => void;
 }
 
 const RetryReturnModal: React.FC<RetryReturnModalProps> = ({
                                                                returnId,
                                                                isOpen,
                                                                onClose,
+                                                               onSuccess,
                                                            }) => {
-    const { retryReturn, loading } = useGatewayAPI();
+    const {retryReturn, loading} = useGatewayAPI();
 
     const [response, setResponse] = useState<any>(null);
     const [fetchError, setFetchError] = useState<string | null>(null);
@@ -59,6 +61,7 @@ const RetryReturnModal: React.FC<RetryReturnModalProps> = ({
             try {
                 const res = await retryReturn(returnId);
                 setResponse(res);
+                if (onSuccess) onSuccess();
             } catch (err) {
                 setFetchError(
                     extractErrorMessage(err, "Failed to retry return")
@@ -79,21 +82,21 @@ const RetryReturnModal: React.FC<RetryReturnModalProps> = ({
                     onClick={onClose}
                     aria-label="Close retry return modal"
                 >
-                    <AiOutlineClose size={20} />
+                    <AiOutlineClose size={20}/>
                 </button>
 
                 <h3>Retry Return</h3>
 
                 {loading && (
                     <p className={styles.loading}>
-                        <FiLoader className={styles.spinner} />
+                        <FiLoader className={styles.spinner}/>
                         Retrying return...
                     </p>
                 )}
 
                 {!loading && fetchError && (
                     <p className={styles.errorMessage}>
-                        <AiOutlineWarning />
+                        <AiOutlineWarning/>
                         {fetchError}
                     </p>
                 )}

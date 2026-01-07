@@ -1,4 +1,4 @@
-import { useBicLabel } from "../../../api/hooks/useBicLable";
+import {useBicLabel} from "../../../api/hooks/useBicLable";
 import {getTransactionStatusText, ISOMessage, ISOMessageType, TransactionStatus} from "../../../types/types";
 import React, {useState} from "react";
 import {getMessageTypeTitle, MESSAGE_TYPE_BREADCRUMB_LABELS} from "../../../utils/isoMessage";
@@ -10,6 +10,10 @@ import styles from "./IsoMessageDetails.module.css"
 import XmlViewerModal from "../../XmlViewerModal/XmlViewerModal";
 import StatusTab from "./NavigationTabs/StatusTab/StatusTab";
 import SummaryTab from "./NavigationTabs/SummaryTab/SummaryTab";
+import StatusChecker from "../../GatewayModals/StatusChecker";
+import RetryReturnModal from "../../GatewayModals/RetryReturnModal";
+import ConfirmationModal from "../../common/ConfirmationModal/ConfirmationModal";
+import ReturnRequestModal from "../../GatewayModals/ReturnRequestModal";
 
 interface Props {
     isoMessage: ISOMessage;
@@ -28,9 +32,28 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
         {label: "ISO Messages", link: "/iso-messages"},
         {
             label: `ISO 20022 ${MESSAGE_TYPE_BREADCRUMB_LABELS[isoMessage.messageType]}`, link: `/iso-messages`,
-
         },
     ];
+
+    const [modals, setModals] = useState({
+        statusChecker: false,
+        confirmRetry: false,
+        retryReturn: false,
+        returnRequest: false,
+    });
+
+    const [round, setRound] = useState<number>(isoMessage.round);
+
+    const openModal = (key: keyof typeof modals) =>
+        setModals((prev) => ({ ...prev, [key]: true }));
+
+    const closeModal = (key: keyof typeof modals) =>
+        setModals((prev) => ({ ...prev, [key]: false }));
+
+    const handleConfirmRetry = () => {
+        closeModal("confirmRetry");
+        openModal("retryReturn");
+    };
 
     const hasValue = (value?: string | null) =>
         value !== null && value !== undefined && value.trim() !== "";
@@ -69,10 +92,10 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
     const renderTabContent = () => {
         switch (activeTab) {
             case "related-transactions":
-                return <SummaryTab txId={isoMessage.txId} />;
+                return <SummaryTab txId={isoMessage.txId}/>;
 
             case "status-history":
-                return <StatusTab isoMessageIds={[isoMessage.id]} />;
+                return <StatusTab isoMessageIds={[isoMessage.id]}/>;
 
             default:
                 return <UnderConstructionTab title={activeTab}/>;
@@ -81,39 +104,48 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
 
     const shouldShowStatusButton =
         isoMessage.status !== TransactionStatus.Success &&
-        isoMessage.messageType !== ISOMessageType.VerificationRequest &&
-        isoMessage.messageType !== ISOMessageType.VerificationResponse &&
+        (isoMessage.messageType === ISOMessageType.TransactionRequest ||
+            isoMessage.messageType === ISOMessageType.ReturnRequest) &&
         hasValue(isoMessage.txId) &&
         hasValue(isoMessage.endToEndId) &&
         hasValue(isoMessage.toBIC);
 
     const shouldShowReturnButton =
-        isoMessage.round >= 3 &&
-        (
-            isoMessage.messageType === ISOMessageType.TransactionRequest ||
-            isoMessage.messageType === ISOMessageType.ReturnRequest
-        );
+        isoMessage.messageType === ISOMessageType.TransactionRequest &&
+        round >= 3 &&
+        (isoMessage.status === TransactionStatus.Pending ||
+            isoMessage.status === TransactionStatus.ReadyForReturn) &&
+        hasValue(isoMessage.txId) &&
+        (() => {
+            if (!isoMessage.date) return false;
+            const messageDate = new Date(isoMessage.date);
+            const twoDaysAgo = new Date();
+            twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+            return messageDate >= twoDaysAgo;
+        })();
 
     const shouldShowRetryButton =
-        isoMessage.status !== TransactionStatus.Success &&
-        isoMessage.round < 3 &&
-        isoMessage.messageType === ISOMessageType.TransactionRequest;
+        isoMessage.messageType === ISOMessageType.TransactionRequest &&
+        round < 3 &&
+        (isoMessage.status === TransactionStatus.Pending ||
+            isoMessage.status === TransactionStatus.ReadyForReturn) &&
+        hasValue(isoMessage.txId);
 
     return (
         <div className={styles.container}>
             <div className={styles.headerContainer}>
-                <Breadcrumb breadcrumbs={breadcrumbs} />
+                <Breadcrumb breadcrumbs={breadcrumbs}/>
 
                 <div className={styles.headerActions}>
                     {/* Retry */}
                     {shouldShowRetryButton && (
                         <button
                             className={`${styles.actionButton} ${styles.retry}`}
-                            onClick={() => console.log("Retry")}
+                            onClick={() => openModal("confirmRetry")}
                             type="button"
                             title="Retry Message"
                         >
-                            <FiRefreshCw size={16} />
+                            <FiRefreshCw size={16}/>
                             <span>Retry</span>
                         </button>
                     )}
@@ -121,11 +153,11 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
                     {shouldShowReturnButton && (
                         <button
                             className={`${styles.actionButton} ${styles.return}`}
-                            onClick={() => console.log("Return")}
+                            onClick={() => openModal("returnRequest")}
                             type="button"
-                            title="Return Message"
+                            title="Return Request"
                         >
-                            <FiCornerUpLeft size={16} />
+                            <FiCornerUpLeft size={16}/>
                             <span>Return</span>
                         </button>
                     )}
@@ -133,7 +165,7 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
                     {shouldShowStatusButton && (
                         <button
                             className={`${styles.actionButton} ${styles.status}`}
-                            onClick={() => console.log("Check Status")}
+                            onClick={() => openModal("statusChecker")}
                             type="button"
                             title="Check Status"
                         >
@@ -148,7 +180,7 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
                         type="button"
                         title="Close"
                     >
-                        <FiX size={16} />
+                        <FiX size={16}/>
                         <span>Close</span>
                     </button>
                 </div>
@@ -196,7 +228,7 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
                 </div>
                 <div className={styles.infoRow}>
                     <span className={styles.label}>Round:</span>
-                    <span className={styles.value}>{displayValue(isoMessage.round)}</span>
+                    <span className={styles.value}>{displayValue(round)}</span>
                 </div>
                 <div className={styles.infoRow}>
                     <span className={styles.label}>Date:</span>
@@ -290,6 +322,40 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
                     onClose={() => setSelectedXml(null)}
                 />
             )}
+
+            <StatusChecker
+                isOpen={modals.statusChecker}
+                onClose={() => closeModal("statusChecker")}
+                endToEndId={isoMessage.endToEndId!}
+                txId={isoMessage.txId!}
+                toBIC={isoMessage.toBIC!}
+            />
+
+            {modals.confirmRetry && (
+                <ConfirmationModal
+                    title="Confirm Retry"
+                    message={`Are you sure you want to re-call your core banking system to process the transaction with ID ${isoMessage.txId}? This action cannot be undone.`}
+                    confirmText="Yes, Retry"
+                    cancelText="No, Cancel"
+                    onConfirm={handleConfirmRetry}
+                    onCancel={() => closeModal("confirmRetry")}
+                />
+            )}
+
+            <RetryReturnModal
+                isOpen={modals.retryReturn}
+                onClose={() => closeModal("retryReturn")}
+                returnId={isoMessage.txId!}
+                onSuccess={() => setRound(prev => prev +1)}
+            />
+
+            <ReturnRequestModal
+                isOpen={modals.returnRequest}
+                onClose={() => closeModal("returnRequest")}
+                endToEndId={isoMessage.endToEndId!}
+                txId={isoMessage.txId!}
+            />
+
         </div>
     );
 };
