@@ -1,0 +1,50 @@
+.dashboardCard {
+    background-color: var(--color-primary-light);
+    color: var(--color-white);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px;
+    transition: transform var(--transition-fast);
+}
+
+.dashboardCard:hover {
+    transform: translateY(-5px);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+}
+
+.cardIcon {
+    font-size: var(--font-size-xl);
+    color: var(--color-white);
+}
+
+.cardTitle {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: 600;
+}
+
+.cardContent {
+    flex-grow: 1;
+}
+
+.cardValue {
+    font-size: var(--font-size-xxl);
+    font-weight: bold;
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.cardDescription {
+    font-size: var(--font-size-sm);
+    margin: 0;
+    opacity: 0.8;
+}

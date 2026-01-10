@@ -1,0 +1,37 @@
+.section {
+    background-color: var(--color-white);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-md);
+}
+
+.sectionTitle {
+    color: var(--color-primary);
+    font-size: var(--font-size-xl);
+    margin-top: 0;
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: var(--spacing-sm);
+}
+
+.systemHealthGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.lastUpdated {
+    text-align: right;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+    .systemHealthGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .sectionTitle {
+        font-size: var(--font-size-lg);
+    }
+}
