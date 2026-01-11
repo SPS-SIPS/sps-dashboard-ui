@@ -1,0 +1,497 @@
+/* CashFlowCard.module.css */
+
+.container {
+    background: linear-gradient(135deg, var(--color-background) 0%, var(--color-background-secondary) 100%);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+.container:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-hover);
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
+    opacity: 0.3;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+}
+
+.title {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.title::before {
+    content: '💰';
+    font-size: var(--font-size-md);
+}
+
+.period {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    background: var(--color-background-accent);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    font-weight: 500;
+}
+
+/* Flow Distribution Bar */
+.flowDistribution {
+    margin: var(--spacing-md) 0;
+}
+
+.distributionBar {
+    display: flex;
+    height: 32px;
+    background: var(--color-background-tertiary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.inboundSegment {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-md);
+    color: white;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    transition: width 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.outboundSegment {
+    background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-md);
+    color: white;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    transition: width 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.segmentLabel {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.segmentPercentage {
+    font-weight: 700;
+    font-size: var(--font-size-md);
+}
+
+/* Flow Sections */
+.flowSections {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--spacing-lg);
+    align-items: center;
+}
+
+.flowCard {
+    background: var(--color-background-accent);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-lg);
+    transition: all var(--transition-normal);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.flowCard:hover {
+    background: linear-gradient(135deg, var(--color-background-accent) 0%, rgba(255, 255, 255, 0.1) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.flowCardHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.flowIconInbound {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #059669;
+    border: 2px solid rgba(16, 185, 129, 0.2);
+}
+
+.flowIconOutbound {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #dc2626;
+    border: 2px solid rgba(239, 68, 68, 0.2);
+}
+
+.flowTitle {
+    flex: 1;
+}
+
+.flowType {
+    margin: 0 0 var(--spacing-xs);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
+    font-weight: 700;
+}
+
+.flowSubtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+.flowCardBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.primaryMetric {
+    margin-bottom: var(--spacing-lg);
+}
+
+.metricLabel {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-bottom: var(--spacing-xs);
+}
+
+.amountInbound {
+    margin: 0;
+    color: #059669;
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.amountOutbound {
+    margin: 0;
+    color: #dc2626;
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.secondaryMetrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-top: auto;
+}
+
+.metric {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.metricIcon {
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+}
+
+.metricDetails {
+    flex: 1;
+}
+
+.metricValue {
+    display: block;
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1.2;
+}
+
+.metricLabel {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    margin: 0;
+    letter-spacing: normal;
+}
+
+/* Net Divider */
+.netDivider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-md);
+}
+
+.dividerLine {
+    width: 2px;
+    height: 40px;
+    background: var(--color-border);
+    border-radius: 2px;
+}
+
+.netIndicator {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid;
+    font-size: var(--font-size-lg);
+}
+
+.netIndicator.positive {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.netIndicator.negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.netIndicator.neutral {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+/* Net Flow Summary */
+.netFlowSummary {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid;
+    background: linear-gradient(135deg, rgba(115, 179, 68, 0.05) 0%, rgba(79, 70, 229, 0.05) 100%);
+}
+
+.netFlowSummary.positive {
+    border-color: rgba(16, 185, 129, 0.2);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+}
+
+.netFlowSummary.negative {
+    border-color: rgba(239, 68, 68, 0.2);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
+}
+
+.netFlowSummary.neutral {
+    border-color: rgba(245, 158, 11, 0.2);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%);
+}
+
+.netFlowHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.netIconPositive,
+.netIconNegative,
+.netIconNeutral {
+    font-size: var(--font-size-xl);
+}
+
+.netFlowTitle {
+    margin: 0 0 var(--spacing-xs);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+}
+
+.netFlowDescription {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.netFlowAmount {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.netAmountContainer {
+    flex: 1;
+}
+
+.netAmountValue {
+    margin: var(--spacing-xs) 0 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-xxl);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.flowComparison {
+    text-align: right;
+    padding: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.comparisonLabel {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+}
+
+.comparisonValue {
+    display: block;
+    font-size: var(--font-size-lg);
+    font-weight: 800;
+    color: var(--color-text-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .flowSections {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+
+    .netDivider {
+        flex-direction: row;
+        gap: var(--spacing-md);
+    }
+
+    .dividerLine {
+        width: 40px;
+        height: 2px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-lg);
+        gap: var(--spacing-lg);
+    }
+
+    .flowCard {
+        padding: var(--spacing-md);
+    }
+
+    .flowIconInbound,
+    .flowIconOutbound {
+        width: 40px;
+        height: 40px;
+    }
+
+    .amountInbound,
+    .amountOutbound {
+        font-size: var(--font-size-lg);
+    }
+
+    .netAmountValue {
+        font-size: var(--font-size-xl);
+    }
+
+    .title {
+        font-size: var(--font-size-md);
+    }
+
+    .flowDistribution {
+        margin: var(--spacing-sm) 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-md);
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    .secondaryMetrics {
+        grid-template-columns: 1fr;
+    }
+
+    .netFlowAmount {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+
+    .flowComparison {
+        width: 100%;
+        text-align: left;
+    }
+
+    .distributionBar {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .inboundSegment,
+    .outboundSegment {
+        height: 32px;
+        width: 100% !important;
+        justify-content: space-between;
+        padding: 0 var(--spacing-sm);
+    }
+}

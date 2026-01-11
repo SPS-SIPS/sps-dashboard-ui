@@ -6,7 +6,6 @@ import AlertModal from "../../component/common/AlertModal/AlertModal";
 import styles from "../../styles/EndpointsPage.module.css";
 import Head from "next/head";
 import RoleGuard from "../../auth/RoleGuard";
-import {extractErrorMessage} from "../../utils/extractErrorMessage";
 import SpinLoading from "../../component/Loading/SpinLoading/SpinLoading";
 
 type FieldMapping = {
@@ -42,7 +41,6 @@ const EndpointsPage = () => {
     const [editingEndpoint, setEditingEndpoint] = useState<string | null>(null);
     const [localChanges, setLocalChanges] = useState<EndpointData>({});
     const [showErrorModal, setShowErrorModal] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string>("fgadasdflakjsfafdkahkfdhakdshfa");
 
     React.useEffect(() => {
         if (initialEndpoints) {
@@ -53,7 +51,6 @@ const EndpointsPage = () => {
     // Show modal when there's an update error
     React.useEffect(() => {
         if (updateError) {
-            setErrorMessage(updateError);
             setShowErrorModal(true);
         }
     }, [updateError]);
@@ -122,7 +119,6 @@ const EndpointsPage = () => {
             }));
             handleCancelEditing(endpointName);
         } catch (err) {
-            setErrorMessage(extractErrorMessage(err, "Failed to update endpoint. Please try again."));
             setShowErrorModal(true);
         }
     };
@@ -153,7 +149,7 @@ const EndpointsPage = () => {
                     </div>
                 ) : error ? (
                     <div className={styles.error}>
-                        Error: {errorMessage}
+                        Error: {error}
                     </div>
                 ) : !endpoints ? (
                     <>

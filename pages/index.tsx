@@ -1,17 +1,17 @@
-
-import RoleGuard from "../auth/RoleGuard";
-import ApiConfigurationDashboard from './ApiConfigurationDashboard';
-import FinancialAnalyticsDashboard from './FinancialAnalyticsDashboard';
+import React from 'react';
+import GuestDashboard from "../component/Dashboard/GuestDashboard/GuestDashboard";
+import FullDashboard from "../component/Dashboard/FullDashboard/FullDashboard";
+import { useAuthentication } from "../auth/AuthProvider";
 
 const DashboardPage = () => {
-  return (
-    <>
+    const { roles } = useAuthentication();
+    const hasDashboardRole = roles.includes("dashboard");
 
-        <FinancialAnalyticsDashboard />
- 
-
-    </>
-  );
+    return (
+        <>
+            {hasDashboardRole ? <FullDashboard /> : <GuestDashboard />}
+        </>
+    );
 };
 
 export default DashboardPage;
