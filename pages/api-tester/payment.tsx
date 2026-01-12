@@ -6,7 +6,7 @@ import { mapToPrefilledValues } from "../../utils/endpointHelpers";
 import SpinLoading from "../../component/Loading/SpinLoading/SpinLoading";
 import Input from "../../component/common/Input/Input";
 import ActionButton from "../../component/common/ActionButton/ActionButton";
-import sharedStyles from "../../component/ApiRequestTester/ApiRequestTester.module.css";
+import sharedStyles from "../../component/RequestForm/SharedStyles.module.css";
 import styles from "../../styles/VerificationRequestPage.module.css";
 import { validateUrl } from "../../utils/validation";
 import { useApiRequest } from "../../utils/apiService";

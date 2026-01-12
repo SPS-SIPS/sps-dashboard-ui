@@ -13,7 +13,7 @@ import {
   getUserFieldsFromEndpoint,
   remapToInternalFields,
 } from "../../utils/endpointHelpers";
-import sharedStyles from "../../component/ApiRequestTester/ApiRequestTester.module.css";
+import sharedStyles from "../../component/RequestForm/SharedStyles.module.css";
 import styles from "../../styles/VerificationRequestPage.module.css";
 import RoleGuard from "../../auth/RoleGuard";
 import { useRouter } from "next/router";
