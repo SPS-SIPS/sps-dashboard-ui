@@ -8,6 +8,7 @@ import {
     FiUser
 } from 'react-icons/fi';
 import styles from './IssuerActivityCard.module.css';
+import {bicOptionsDev, bicOptionsProd} from "../../../constants/gatewayFormOptions";
 
 interface IssuerData {
     issuer: string;
@@ -30,16 +31,6 @@ const IssuerActivityCard: React.FC<IssuerActivityCardProps> = ({
                                                                    maxAmount = 0,
                                                                    className = ''
                                                                }) => {
-
-    // Format issuer name
-    const issuerName = useMemo(() => {
-        return data.issuer
-            .replace(/_/g, ' ')
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(' ');
-    }, [data.issuer]);
-
     // Format currency with abbreviations
     const formatCurrency = (val: number) => {
         if (val >= 1000000000) {
@@ -67,12 +58,22 @@ const IssuerActivityCard: React.FC<IssuerActivityCardProps> = ({
         return { label: 'Low', color: 'var(--color-success)' };
     }, [data.transactionCount]);
 
+    const activeProfile = process.env.NEXT_PUBLIC_ACTIVE_PROFILE || 'dev';
+
+    const bicOptions = activeProfile === 'prod' ? bicOptionsProd : bicOptionsDev;
+
+    const issuerLabel = useMemo(() => {
+        const found = bicOptions.find(bic => bic.value.toUpperCase() === data.issuer.toUpperCase());
+        return found ? found.label : data.issuer;
+    }, [data.issuer, bicOptions]);
+
+
     return (
         <div
             className={`${styles.card} ${styles[type]} ${className}`}
             data-index={index}
             role="article"
-            aria-label={`${issuerName} - ${type} activity`}
+            aria-label={`${issuerLabel} - ${type} activity`}
         >
             {/* Header with issuer info */}
             <div className={styles.cardHeader}>
@@ -81,8 +82,8 @@ const IssuerActivityCard: React.FC<IssuerActivityCardProps> = ({
                         <FiUser size={20} />
                     </div>
                     <div className={styles.issuerDetails}>
-                        <h3 className={styles.issuerName} title={issuerName}>
-                            {issuerName}
+                        <h3 className={styles.issuerName} title={issuerLabel}>
+                            {issuerLabel}
                         </h3>
                         <div className={`${styles.typeBadge} ${styles[`${type}Badge`]}`}>
                             {type === 'debtor' ?

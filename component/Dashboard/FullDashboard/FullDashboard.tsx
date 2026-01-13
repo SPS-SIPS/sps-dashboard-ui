@@ -530,7 +530,7 @@ export default function FullDashboard() {
                             <div className={styles.issuerGrid}>
                                 {debtorIssuers.length > 0 && (
                                     <div className={styles.issuerGroup}>
-                                        <h4 className={styles.issuerGroupTitle}>Debtor Issuers</h4>
+                                        <h4 className={styles.issuerGroupTitle}>Outgoing Funds</h4>
                                         <div className={styles.issuerCards}>
                                             {debtorIssuers.map((issuer, index) => (
                                                 <IssuerActivityCard
@@ -550,7 +550,7 @@ export default function FullDashboard() {
 
                                 {creditorIssuers.length > 0 && (
                                     <div className={styles.issuerGroup}>
-                                        <h4 className={styles.issuerGroupTitle}>Creditor Issuers</h4>
+                                        <h4 className={styles.issuerGroupTitle}>Incoming Funds</h4>
                                         <div className={styles.issuerCards}>
                                             {creditorIssuers.map((issuer, index) => (
                                                 <IssuerActivityCard
