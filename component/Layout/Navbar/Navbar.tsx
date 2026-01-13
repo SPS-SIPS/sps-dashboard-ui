@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import styles from './Navbar.module.css';
 import Image from 'next/image';
-import { AvatarDropdown } from "./AvatarDropdown/AvatarDropdown";
+import {AvatarDropdown} from "./AvatarDropdown/AvatarDropdown";
 import Link from "next/link";
-import { FiMenu } from 'react-icons/fi';
+import {FiMenu} from 'react-icons/fi';
 import {useAuthentication} from "../../../auth/AuthProvider";
 import SystemHealthIndicator from '../../SystemHealth/SystemHealthIndicator';
 import ParticipantLiveIndicator from '../../LiveParticipants/ParticipantLiveIndicator';
@@ -13,8 +13,8 @@ interface NavbarProps {
     isMobile: boolean;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile }) => {
-    const { userName } = useAuthentication();
+export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile}) => {
+    const {userName} = useAuthentication();
     const [, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -24,6 +24,7 @@ export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile }) => {
                 setMenuOpen(false);
             }
         }
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
@@ -37,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile }) => {
                         onClick={onMenuToggle}
                         aria-label="Toggle menu"
                     >
-                        <FiMenu size={24} />
+                        <FiMenu size={24}/>
                     </button>
                 )}
 
@@ -56,10 +57,9 @@ export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile }) => {
             </div>
 
             <div className={`${styles.rightSection} relative flex items-center gap-4`}>
-                <ParticipantLiveIndicator />
-               <SystemHealthIndicator />
-                <AvatarDropdown firstName={userName!} />
-               
+                <ParticipantLiveIndicator/>
+                <SystemHealthIndicator/>
+                <AvatarDropdown firstName={userName!}/>
             </div>
         </header>
     );

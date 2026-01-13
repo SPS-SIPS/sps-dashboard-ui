@@ -1,23 +1,14 @@
-/* CashFlowCard.module.css */
-
 .container {
     background: linear-gradient(135deg, var(--color-background) 0%, var(--color-background-secondary) 100%);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-sm);
     border: 1px solid var(--color-border);
     padding: var(--spacing-xl);
-    box-shadow: var(--shadow-sm);
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xl);
-}
-
-.container:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--color-border-hover);
 }
 
 .container::before {
