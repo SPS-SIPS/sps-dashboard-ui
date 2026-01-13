@@ -30,7 +30,7 @@ const transactionColorMap: Record<string, string> = {
 const transactionIconMap: Record<string, React.ReactNode> = {
     deposit: <FiArrowDownCircle/>,
     withdrawal: <FiArrowUpCircle/>,
-    readyforreturn: <FiRefreshCw/>,
+    returndeposit: <FiRefreshCw/>,
     returnwithdrawal: <FiRotateCcw/>,
     default: <FiDollarSign/>,
 };
