@@ -1,5 +1,4 @@
 import useAxiosPrivate from "./useAxiosPrivate";
-import {TransactionType} from "../../types/types";
 
 export type PeriodType = 'All' | 'Today' | 'ThisWeek' | 'LastWeek' | 'ThisMonth' | 'LastMonth' | 'Last3Months' | 'ThisYear';
 
@@ -9,7 +8,7 @@ export type DashboardQuery = {
 
 // DTOs based on your C# models
 export type TransactionTypeSummary = {
-    type: TransactionType;
+    type: string;
     count: number;
     totalAmount: number;
 };

@@ -13,7 +13,7 @@ import {
     TransactionTypeDistribution,
     TransactionTypeSummary,
 } from "../../../api/hooks/useDashboardAPI";
-import {TransactionType} from "../../../types/types";
+
 
 type Props = {
     data: TransactionTypeDistribution;
@@ -22,7 +22,7 @@ type Props = {
 const transactionColorMap: Record<string, string> = {
     deposit: "#10b981", // Emerald 500
     withdrawal: "#ef4444", // Red 500
-    readyforreturn: "#f59e0b", // Amber 500
+    returndeposit: "#f59e0b", // Amber 500
     returnwithdrawal: "#8b5cf6", // Violet 500
     default: "#64748b", // Slate 500
 };
@@ -30,7 +30,7 @@ const transactionColorMap: Record<string, string> = {
 const transactionIconMap: Record<string, React.ReactNode> = {
     deposit: <FiArrowDownCircle/>,
     withdrawal: <FiArrowUpCircle/>,
-    readyforreturn: <FiRefreshCw/>,
+    returndeposit: <FiRefreshCw/>,
     returnwithdrawal: <FiRotateCcw/>,
     default: <FiDollarSign/>,
 };
@@ -38,18 +38,35 @@ const transactionIconMap: Record<string, React.ReactNode> = {
 const formatNumber = (value: number) =>
     new Intl.NumberFormat("en-US").format(value);
 
-const transactionTypeLabelMap: Record<TransactionType, string> = {
-    [TransactionType.Deposit]: "Deposits",
-    [TransactionType.Withdrawal]: "Withdrawals",
-    [TransactionType.ReadyForReturn]: "Ready for Return",
-    [TransactionType.ReturnWithdrawal]: "Return Withdrawals",
-};
 
-const transactionTypeKeyMap: Record<TransactionType, string> = {
-    [TransactionType.Deposit]: "deposit",
-    [TransactionType.Withdrawal]: "withdrawal",
-    [TransactionType.ReadyForReturn]: "readyforreturn",
-    [TransactionType.ReturnWithdrawal]: "returnwithdrawal",
+const transactionTypeConfig: Record<
+    string,
+    {
+        label: string;
+        color: string;
+        icon: React.ReactNode;
+    }
+> = {
+    deposit: {
+        label: "Deposits",
+        color: "#10b981",
+        icon: <FiArrowDownCircle />,
+    },
+    withdrawal: {
+        label: "Withdrawals",
+        color: "#ef4444",
+        icon: <FiArrowUpCircle />,
+    },
+    returndeposit: {
+        label: "Return Deposits",
+        color: "#f59e0b",
+        icon: <FiRotateCcw />,
+    },
+    returnwithdrawal: {
+        label: "Return Withdrawals",
+        color: "#8b5cf6",
+        icon: <FiRefreshCw />,
+    },
 };
 
 const formatCurrency = (value: number) =>
@@ -77,12 +94,17 @@ const TransactionTypeDistributionSection: React.FC<Props> = ({data}) => {
         );
     }
 
+    const normalizeTransactionType = (type: string) =>
+        type.replace(/\s+/g, "").toLowerCase();
+
+
     return (
         <div className={styles.section}>
             <div className={styles.grid}>
                 {data.transactionTypeSummary.map((tx: TransactionTypeSummary) => {
-                    const label = transactionTypeLabelMap[tx.type];
-                    const key = transactionTypeKeyMap[tx.type];
+                    const key = normalizeTransactionType(tx.type);
+
+                    const config = transactionTypeConfig[key];
 
                     const cardColor = transactionColorMap[key] ?? transactionColorMap.default;
                     const icon = transactionIconMap[key] ?? transactionIconMap.default;
@@ -90,7 +112,7 @@ const TransactionTypeDistributionSection: React.FC<Props> = ({data}) => {
                     return (
                         <DashboardCard
                             key={tx.type}
-                            title={label}
+                            title={config?.label ?? tx.type}
                             value={formatCurrency(tx.totalAmount)}
                             description={`${formatNumber(tx.count)} transactions`}
                             icon={icon}
