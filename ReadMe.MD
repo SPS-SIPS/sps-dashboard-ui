@@ -98,11 +98,41 @@ NEXT_PUBLIC_API_URL=http://localhost:8081
 NEXT_PUBLIC_KEYCLOAK_URL=https://localhost:8080
 NEXT_PUBLIC_KEYCLOAK_REALM=your_realm
 NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=your_client_id
+
+# Active application profile
+NEXT_PUBLIC_ACTIVE_PROFILE=dev
+# options: dev | test | prod
 ```
 
-- **NEXT_PUBLIC_API_URL**: The base URL for the SIPS Connect API.
-- **NEXT_PUBLIC_KEYCLOAK_URL**, **REALM**, **CLIENT_ID**: Keycloak authentication settings.
+### Environment Variables Explained
 
+| Variable                         | Description                            |
+| -------------------------------- | -------------------------------------- |
+| `NEXT_PUBLIC_API_URL`            | Base URL for SPS / SIPS backend APIs   |
+| `NEXT_PUBLIC_KEYCLOAK_URL`       | Keycloak authentication server         |
+| `NEXT_PUBLIC_KEYCLOAK_REALM`     | Keycloak realm                         |
+| `NEXT_PUBLIC_KEYCLOAK_CLIENT_ID` | Keycloak client ID                     |
+| `NEXT_PUBLIC_ACTIVE_PROFILE`     | Controls environment-based UI behavior |
+
+---
+
+## Environment-Based Feature Visibility
+
+The following **API Tester pages are automatically hidden when**:
+
+```env
+NEXT_PUBLIC_ACTIVE_PROFILE=prod
+```
+
+### Pages Hidden in `prod`
+
+#### 🔒 API Verification Request Tester
+
+#### 🔒 API Payment Request Tester
+
+👉 These tools remain **available in `dev` and `test` profiles only** to prevent misuse in production environments.
+
+---
 ### 3. Build and Run the Dashboard
 
 Start the dashboard using Docker Compose:
