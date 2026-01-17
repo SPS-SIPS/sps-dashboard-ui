@@ -1,0 +1,316 @@
+/* IssuerActivityCard.module.css */
+
+.card {
+    background: linear-gradient(135deg, var(--color-background) 0%, var(--color-background-secondary) 100%);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-hover);
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary) 0%, #4f46e5 100%);
+    opacity: 0.3;
+}
+
+/* Type-specific styling */
+.card.debtor::before {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.card.creditor::before {
+    background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+/* Header */
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.issuerInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex: 1;
+}
+
+.issuerIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(115, 179, 68, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.issuerDetails {
+    flex: 1;
+    min-width: 0;
+}
+
+.issuerName {
+    margin: 0 0 var(--spacing-xs);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.typeBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.debtorBadge {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+    color: #059669;
+}
+
+.creditorBadge {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+    color: #1d4ed8;
+}
+
+.typeIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.typeLabel {
+    font-size: var(--font-size-xs);
+}
+
+/* Body */
+.cardBody {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.metricsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.metricCard {
+    background: var(--color-background-accent);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-normal);
+}
+
+.metricCard:hover {
+    background: linear-gradient(135deg, var(--color-background-accent) 0%, rgba(115, 179, 68, 0.05) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.metricHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.metricIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(115, 179, 68, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+}
+
+.metricLabel {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.metricValue {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.2;
+}
+
+.metricSubtext {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+/* Progress section */
+.progressSection {
+    margin-top: var(--spacing-xs);
+}
+
+.progressHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+}
+
+.progressLabel {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+.progressPercentage {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.progressContainer {
+    height: 6px;
+    background: var(--color-background-tertiary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary) 0%, #4f46e5 100%);
+    border-radius: var(--radius-lg);
+    transition: width 0.5s ease;
+}
+
+.card.debtor .progressBar {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.card.creditor .progressBar {
+    background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+/* Footer */
+.cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+}
+
+.activityIndicator {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.activityIcon {
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+}
+
+.activityLevel {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.rank {
+    font-size: var(--font-size-lg);
+    font-weight: 800;
+    color: var(--color-primary);
+    opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card {
+        padding: var(--spacing-md);
+        gap: var(--spacing-md);
+    }
+
+    .metricsGrid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+
+    .issuerName {
+        font-size: var(--font-size-md);
+    }
+
+    .metricValue {
+        font-size: var(--font-size-lg);
+    }
+
+    .issuerIcon {
+        width: 40px;
+        height: 40px;
+        font-size: var(--font-size-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: var(--spacing-sm);
+    }
+
+    .issuerInfo {
+        gap: var(--spacing-sm);
+    }
+
+    .issuerIcon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .typeBadge {
+        padding: var(--spacing-xxs) var(--spacing-xs);
+        font-size: 0.625rem;
+    }
+
+    .cardFooter {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+}

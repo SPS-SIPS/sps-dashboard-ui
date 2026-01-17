@@ -26,7 +26,7 @@ export const AvatarDropdown: React.FC<AvatarDropdownProps> = ({firstName}) => {
     }, []);
 
     const goToProfile = () => {
-        router.push('/profile');
+        void router.push('/profile');
     };
 
     const getFirstLetter = (name: string) => name.charAt(0).toUpperCase();

@@ -56,7 +56,7 @@ const XadesConfigForm = () => {
             }
         };
 
-        fetchData();
+        void fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -146,6 +146,7 @@ const XadesConfigForm = () => {
                         />
                         <Input label="Verification Window (minutes)" name="verificationWindowMinutes" type="number" value={cfg.verificationWindowMinutes.toString()} onChange={onChange} min={1} />
                         <Input label="BIC" name="bic" type="text" value={cfg.bic} onChange={onChange} />
+                        <Input label="Base DN" name="baseDN" type="text" value={cfg.baseDNS} onChange={onChange} />
                         <Checkbox label="Without PKI" name="withoutPKI" checked={cfg.withoutPKI} onChange={onChange} />
                     </div>
                 )}

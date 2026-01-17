@@ -39,7 +39,10 @@ function ConfigFormWrapper<T>({
             </div>
 
             {loading ? (
-                <div className={styles.loadingContainer}><SpinLoading /></div>
+                <div className={styles.loadingContainer}>
+                    <SpinLoading />
+                    <p>loading...</p>
+                </div>
             ) : config ? (
                 <form onSubmit={onSubmit} className={styles.form}>
                     {renderForm(config, onChange)}

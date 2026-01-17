@@ -4,42 +4,346 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--color-overlay);
+    background: var(--color-overlay);
+    backdrop-filter: blur(8px);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     z-index: var(--z-index-modal);
+    padding: var(--spacing-md);
+    animation: fadeInOverlay 0.3s ease;
+}
+
+@keyframes fadeInOverlay {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(8px);
+    }
 }
 
 .modal {
+    background: linear-gradient(135deg, var(--color-background) 0%, var(--color-background-secondary) 100%);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 500px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-lg);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(79, 70, 229, 0.05) 100%);
+    border-bottom: 1px solid var(--color-border);
     position: relative;
-    background-color: white;
-    border-radius: var(--radius-lg);
-    padding: 20px;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary) 0%, #4f46e5 100%);
+    opacity: 0.7;
+}
+
+.header h3 {
+    margin: 0;
+    color: var(--color-primary-dark);
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.header h3::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, #4f46e5 100%);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(115, 179, 68, 0.3);
+}
+
+.closeButton {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    color: var(--color-text-light);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     box-shadow: var(--shadow-sm);
-    width: 300px;
+    transition: all var(--transition-normal);
+    flex-shrink: 0;
+}
+
+.closeButton:hover {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%);
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: var(--shadow-md);
+}
+
+.closeButton:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
+.message {
+    padding: var(--spacing-xxl) var(--spacing-xl);
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+    line-height: 1.6;
     text-align: center;
+    font-weight: 500;
+    background: var(--color-background);
+    position: relative;
+}
+
+.message::before {
+    content: '❓';
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-background);
+    border: 2px solid var(--color-primary);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+    color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+    z-index: 1;
 }
 
 .buttons {
-    margin-top: 20px;
     display: flex;
-    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--color-background-secondary) 0%, var(--color-background-tertiary) 100%);
+    border-top: 1px solid var(--color-border);
 }
 
-.confirmButton, .cancelButton {
-    padding: 10px 15px;
+.confirmButton,
+.cancelButton {
+    flex: 1;
+    padding: var(--spacing-md) var(--spacing-xl);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-base);
+    font-weight: 600;
     cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    min-height: 48px;
+    position: relative;
+    overflow: hidden;
+}
+
+.confirmButton::before,
+.cancelButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.confirmButton:hover::before,
+.cancelButton:hover::before {
+    opacity: 1;
 }
 
 .confirmButton {
-    background-color: var(--color-primary);
-    color: white;
+    background: linear-gradient(135deg, var(--color-success) 0%, #059669 100%);
+    color: var(--color-text-light);
+    box-shadow: 0 4px 6px rgba(34, 197, 94, 0.2);
+}
+
+.confirmButton:hover {
+    background: linear-gradient(135deg, #16a34a 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(34, 197, 94, 0.3);
+}
+
+.confirmButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
 }
 
 .cancelButton {
-    background-color: var(--color-error);
-    color: white;
+    background: linear-gradient(135deg, var(--color-text-secondary) 0%, var(--color-nav-dark-bg) 100%);
+    color: var(--color-text-light);
+    box-shadow: 0 4px 6px rgba(100, 116, 139, 0.2);
+}
+
+.cancelButton:hover {
+    background: linear-gradient(135deg, var(--color-nav-dark-bg) 0%, var(--footer-bg) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(100, 116, 139, 0.3);
+}
+
+.cancelButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.2);
+}
+
+/* Danger variant - if you want to add a danger button later */
+.confirmButton.danger {
+    background: linear-gradient(135deg, var(--color-error) 0%, var(--color-error-dark) 100%);
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+}
+
+.confirmButton.danger:hover {
+    background: linear-gradient(135deg, var(--color-error-hover) 0%, #b91c1c 100%);
+    box-shadow: 0 6px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal {
+        max-width: 400px;
+    }
+
+    .header {
+        padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+    }
+
+    .header h3 {
+        font-size: var(--font-size-lg);
+    }
+
+    .message {
+        padding: var(--spacing-xl) var(--spacing-lg);
+        font-size: var(--font-size-md);
+    }
+
+    .message::before {
+        width: 40px;
+        height: 40px;
+        top: -20px;
+        font-size: var(--font-size-md);
+    }
+
+    .buttons {
+        padding: var(--spacing-lg);
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .confirmButton,
+    .cancelButton {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .closeButton {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modalOverlay {
+        padding: var(--spacing-sm);
+    }
+
+    .modal {
+        max-width: 100%;
+        border-radius: var(--radius-lg);
+    }
+
+    .header {
+        padding: var(--spacing-lg) var(--spacing-md) var(--spacing-sm);
+    }
+
+    .header h3 {
+        font-size: var(--font-size-md);
+    }
+
+    .message {
+        padding: var(--spacing-lg) var(--spacing-md);
+        font-size: var(--font-size-base);
+    }
+
+    .message::before {
+        width: 36px;
+        height: 36px;
+        top: -18px;
+        font-size: var(--font-size-sm);
+    }
+
+    .buttons {
+        padding: var(--spacing-md);
+    }
+
+    .confirmButton,
+    .cancelButton {
+        min-height: 40px;
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+}
+
+.confirmButton:focus-visible,
+.cancelButton:focus-visible,
+.closeButton:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .modalOverlay,
+    .modal {
+        animation: none;
+    }
+
+    .closeButton:hover,
+    .confirmButton:hover,
+    .cancelButton:hover {
+        transform: none;
+    }
+
+    .confirmButton::before,
+    .cancelButton::before {
+        transition: none;
+    }
 }

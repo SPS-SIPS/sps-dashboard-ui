@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ActionButton from "../common/ActionButton/ActionButton";
 import styles from './XmlViewerModal.module.css';
-import {AiOutlineClose} from "react-icons/ai";
+import { AiOutlineClose } from "react-icons/ai";
 
 interface XmlViewerModalProps {
     content: string;
@@ -9,9 +9,44 @@ interface XmlViewerModalProps {
     onClose: () => void;
 }
 
-const XmlViewerModal: React.FC<XmlViewerModalProps> = ({content, title, onClose}) => {
+const XmlViewerModal: React.FC<XmlViewerModalProps> = ({ content, title, onClose }) => {
+    const [copied, setCopied] = useState(false);
+
     const handleCopy = () => {
-        navigator.clipboard.writeText(content);
+        navigator.clipboard.writeText(content)
+            .then(() => {
+                setCopied(true); // show "Copied!" message
+                setTimeout(() => setCopied(false), 2000);
+            })
+            .catch((err) => {
+                console.error("Failed to copy:", err);
+            });
+    };
+
+    const formatXml = (xmlString: string) => {
+        const PADDING = '  '; // 2-space indentation
+        const reg = /(>)(<)(\/*)/g;
+        let formatted = '';
+        let pad = 0;
+
+        xmlString = xmlString.replace(reg, '$1\r\n$2$3');
+        xmlString.split('\r\n').forEach((node) => {
+            let indent = 0;
+            if (node.match(/.+<\/\w[^>]*>$/)) {
+                indent = 0;
+            } else if (node.match(/^<\/\w/)) {
+                if (pad !== 0) pad -= 1;
+            } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+                indent = 1;
+            } else {
+                indent = 0;
+            }
+
+            formatted += PADDING.repeat(pad) + node + '\r\n';
+            pad += indent;
+        });
+
+        return formatted.trim();
     };
 
     return (
@@ -24,8 +59,9 @@ const XmlViewerModal: React.FC<XmlViewerModalProps> = ({content, title, onClose}
                             onClick={handleCopy}
                             className={styles.copyButton}
                         >
-                            Copy XML
+                            Copy Message
                         </ActionButton>
+                        {copied && <span className={styles.copiedText}>Copied!</span>}
                         <button
                             onClick={onClose}
                             className={styles.closeButton}
@@ -35,8 +71,8 @@ const XmlViewerModal: React.FC<XmlViewerModalProps> = ({content, title, onClose}
                     </div>
                 </div>
                 <pre className={styles.xmlPreview}>
-        {content}
-        </pre>
+                    {formatXml(content)}
+                </pre>
             </div>
         </div>
     );

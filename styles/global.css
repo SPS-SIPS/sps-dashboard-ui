@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 html,
 body {
     padding: 0;
@@ -43,11 +45,15 @@ img {
 
 :root {
     /* Color Scheme */
+    --navbar-bg: #0F172A;
+    --footer-bg: #171717;
+    --color-nav-dark-bg: #1f2731;
     --color-primary: #73b344;
     --color-primary-hover: #5d9930;
     --color-primary-light: #e8f3e1;
     --color-primary-dark: #4a7d2a;
     --color-error: #dc3545;
+    --color-degraded: #F59E0B;
     --color-error-background: #f8d7da;
     --color-error-hover: #c82333;
     --color-warning: #ffc107;

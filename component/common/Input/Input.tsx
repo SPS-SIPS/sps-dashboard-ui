@@ -22,7 +22,7 @@ const Input: React.FC<InputProps> = ({
                                          onChange,
                                          type,
                                          required = false,
-                                         autoComplete = 'off',
+                                         autoComplete = 'on',
                                          placeholder,
                                          name,
                                          errorMessage,

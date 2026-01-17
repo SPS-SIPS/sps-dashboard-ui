@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import useAxiosPrivate from "./useAxiosPrivate";
+import {extractErrorMessage} from "../../utils/extractErrorMessage";
 
 export type FieldMapping = {
     internalField: string;
@@ -28,16 +29,12 @@ const useEndpoints = () => {
                 setEndpoints(response.data);
                 setLoading(false);
             } catch (err: unknown) {
-                let errorMessage = 'Something went wrong';
-                if (err instanceof Error) {
-                    errorMessage = err.message;
-                }
-                setError(errorMessage);
+                setError(extractErrorMessage(err));
                 setLoading(false);
             }
         };
 
-        fetchEndpoints();
+        void fetchEndpoints();
     }, []);
 
     return { endpoints, loading, error };

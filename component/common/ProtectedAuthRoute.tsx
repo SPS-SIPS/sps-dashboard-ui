@@ -9,7 +9,7 @@ const ProtectedAuthRoute = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         if (!isLoading && isAuthenticated) {
-            router.replace("/");
+            void router.replace("/");
         }
     }, [isAuthenticated, isLoading, router]);
 

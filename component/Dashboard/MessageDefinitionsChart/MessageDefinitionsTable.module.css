@@ -1,0 +1,427 @@
+.container {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: var(--radius-sm);
+    border: 1px solid #e2e8f0;
+    padding: var(--spacing-xl);
+
+    transition: all 0.3s ease;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.titleSection {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+}
+
+.titleIcon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.title {
+    margin: 0 0 var(--spacing-xs);
+    color: #1e293b;
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.subtitle {
+    margin: 0;
+    color: #64748b;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.summary {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.summaryItem {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: #f8fafc;
+    border-radius: var(--radius-lg);
+    border: 1px solid #e2e8f0;
+    min-width: 140px;
+}
+
+.summaryIcon {
+    color: #64748b;
+    font-size: var(--font-size-xl);
+}
+
+.summaryValue {
+    display: block;
+    color: #1e293b;
+    font-size: var(--font-size-lg);
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: var(--spacing-xs);
+}
+
+.summaryLabel {
+    display: block;
+    color: #64748b;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Table Header */
+.tableHeader {
+    margin-bottom: var(--spacing-sm);
+}
+
+.tableHeaderRow {
+    display: grid;
+    grid-template-columns: 3fr 1fr 2fr 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: #f8fafc;
+    border-radius: var(--radius-lg);
+    border: 1px solid #e2e8f0;
+}
+
+.headerCell {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: #475569;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.headerIcon {
+    color: #94a3b8;
+}
+
+/* Table Body */
+.tableBody {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xl);
+}
+
+.tableRow {
+    display: grid;
+    grid-template-columns: 3fr 1fr 2fr 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.tableRow:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    transform: translateX(4px);
+}
+
+/* Standard Column */
+.standardColumn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.rankBadge {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.standardInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.messageId {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+}
+
+.standardName {
+    color: #1e293b;
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+}
+
+.version {
+    color: #64748b;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.messageCode {
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+    color: #475569;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    background: #f1f5f9;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    display: inline-block;
+}
+
+/* Usage Column */
+.usageColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.usageValue {
+    color: #1e293b;
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.usageLabel {
+    color: #64748b;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+/* Distribution Column */
+.distributionColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.percentageValue {
+    color: #1d4ed8;
+    font-size: var(--font-size-lg);
+    font-weight: 800;
+}
+
+.progressBar {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    border-radius: var(--radius-sm);
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Status Column */
+.statusColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.statusBadge {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    border: 2px solid;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+    width: fit-content;
+}
+
+.trendIndicator {
+    height: 3px;
+    background: #e2e8f0;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.trendBar {
+    height: 100%;
+    border-radius: var(--radius-sm);
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Footer */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid #e2e8f0;
+}
+
+.legend {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.legendColor {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.legendLabel {
+    color: #64748b;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.coverage {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--spacing-xs);
+}
+
+.coverageLabel {
+    color: #64748b;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.coverageValue {
+    color: #1d4ed8;
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .tableHeaderRow,
+    .tableRow {
+        grid-template-columns: 2fr 1fr 1.5fr 1fr;
+        gap: var(--spacing-sm);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-lg);
+    }
+
+    .header {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+        padding-bottom: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .summary {
+        width: 100%;
+    }
+
+    .summaryItem {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .tableHeaderRow,
+    .tableRow {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    .tableHeaderRow {
+        display: none;
+    }
+
+    .tableRow {
+        position: relative;
+        padding: var(--spacing-lg);
+    }
+
+    .rankBadge {
+        position: absolute;
+        top: var(--spacing-lg);
+        left: var(--spacing-lg);
+    }
+
+    .standardColumn {
+        margin-left: 56px;
+        padding-top: var(--spacing-xs);
+    }
+
+    .footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-lg);
+    }
+
+    .legend {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .coverage {
+        align-items: stretch;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-md);
+    }
+
+    .summaryItem {
+        padding: var(--spacing-sm);
+        min-width: 0;
+    }
+
+    .tableRow {
+        padding: var(--spacing-md);
+    }
+
+    .titleIcon {
+        width: 48px;
+        height: 48px;
+    }
+}

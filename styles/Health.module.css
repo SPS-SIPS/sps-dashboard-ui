@@ -1,0 +1,708 @@
+/* Health.module.css - Complete Styles */
+
+.healthPage {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    padding: var(--spacing-xl);
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.title {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-xxl);
+    font-weight: 800;
+    margin: 0 0 var(--spacing-xl);
+    background: linear-gradient(90deg, var(--color-primary) 0%, #4f46e5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xxl);
+    background: linear-gradient(135deg, rgba(115, 179, 68, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
+    border-radius: var(--radius-xl);
+    border: 2px dashed var(--color-primary);
+    margin: var(--spacing-xl) 0;
+}
+
+.loading p {
+    margin-top: var(--spacing-md);
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+}
+
+.error {
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+    color: white;
+    border-radius: var(--radius-xl);
+    margin: var(--spacing-xl) 0;
+    text-align: center;
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+    border-left: 4px solid #c92a2a;
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+/* ==================================
+   Zone Styles
+================================== */
+
+/* Zone card backgrounds */
+.zoneGreen {
+    border-left: 5px solid #22c55e !important;
+    background-color: #ecfdf5 !important;
+}
+
+.zoneAmber {
+    border-left: 5px solid #f59e0b !important;
+    background-color: #fffbeb !important;
+}
+
+.zoneRed {
+    border-left: 5px solid #ef4444 !important;
+    background-color: #fef2f2 !important;
+}
+
+/* Zone text colors */
+.zoneTextGreen {
+    color: #16a34a !important;
+    font-weight: 700;
+}
+
+.zoneTextAmber {
+    color: #d97706 !important;
+    font-weight: 700;
+}
+
+.zoneTextRed {
+    color: #dc2626 !important;
+    font-weight: 700;
+}
+
+.zoneText {
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ==================================
+   Status Styles
+================================== */
+
+/* Status text colors */
+.okText {
+    color: #10b981 !important;
+    font-weight: 700;
+}
+
+.degradedText {
+    color: #f59e0b !important;
+    font-weight: 700;
+}
+
+.errorText {
+    color: #ef4444 !important;
+    font-weight: 700;
+}
+
+/* ==================================
+   Overall Status
+================================== */
+
+.overallStatus {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border);
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.overallStatus::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--color-primary) 0%, #4f46e5 100%);
+    opacity: 0.3;
+}
+
+.overallStatus:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-sm);
+}
+
+.overallStatus.ok {
+    border-left: 6px solid #10b981;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(16, 185, 129, 0.05) 100%);
+}
+
+.overallStatus.degraded {
+    border-left: 6px solid #f59e0b;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(245, 158, 11, 0.05) 100%);
+}
+
+.overallStatus.error {
+    border-left: 6px solid #ef4444;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(239, 68, 68, 0.05) 100%);
+}
+
+.overallStatus strong {
+    font-size: var(--font-size-xxl);
+    margin-left: var(--spacing-sm);
+}
+
+/* ==================================
+   Components Grid
+================================== */
+
+.components {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+/* ==================================
+   Component Cards
+================================== */
+
+.componentCard {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.componentCard:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-sm);
+}
+
+.componentCard.ok {
+    border-left: 6px solid #10b981;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(16, 185, 129, 0.03) 100%);
+}
+
+.componentCard.degraded {
+    border-left: 6px solid #f59e0b;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(245, 158, 11, 0.03) 100%);
+}
+
+.componentCard.error {
+    border-left: 6px solid #ef4444;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(239, 68, 68, 0.03) 100%);
+}
+
+.componentCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2373b344' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.1;
+    pointer-events: none;
+    border-radius: var(--radius-xl);
+}
+
+/* ==================================
+   Component Header
+================================== */
+
+.componentHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, #4f46e5 100%);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-xl);
+    box-shadow: 0 4px 6px rgba(115, 179, 68, 0.2);
+    transition: all 0.3s ease;
+}
+
+.componentCard:hover .icon {
+    transform: rotate(15deg) scale(1.1);
+    box-shadow: 0 8px 16px rgba(115, 179, 68, 0.3);
+}
+
+.componentHeader h3 {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+    flex: 1;
+    text-transform: capitalize;
+    letter-spacing: 0.05em;
+}
+
+.statusIcon {
+    font-size: var(--font-size-xxl);
+}
+
+/* ==================================
+   Status Icon Colors
+================================== */
+
+.ok {
+    color: #10b981;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+.degraded {
+    color: #f59e0b;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+.error {
+    color: #ef4444;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+/* ==================================
+   Component Text Content
+================================== */
+
+.componentCard p {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.componentCard p strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+    min-width: 120px;
+}
+
+/* ==================================
+   Balance Box Styling
+================================== */
+
+/* Base Balance Box */
+.balanceBox {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-md) 0;
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 20px 5px rgba(16, 185, 129, 0.2);
+    }
+}
+
+/* Green Zone Balance Box */
+.balanceBoxGreen {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(34, 197, 94, 0.15) 100%) !important;
+    border: 2px solid rgba(16, 185, 129, 0.4) !important;
+    animation: pulseGlowGreen 2s infinite !important;
+}
+
+@keyframes pulseGlowGreen {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 25px 8px rgba(16, 185, 129, 0.25);
+    }
+}
+
+/* Amber Zone Balance Box */
+.balanceBoxAmber {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 191, 36, 0.15) 100%) !important;
+    border: 2px solid rgba(245, 158, 11, 0.4) !important;
+    animation: pulseGlowAmber 2s infinite !important;
+}
+
+@keyframes pulseGlowAmber {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 25px 8px rgba(245, 158, 11, 0.25);
+    }
+}
+
+/* Red Zone Balance Box */
+.balanceBoxRed {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.15) 100%) !important;
+    border: 2px solid rgba(239, 68, 68, 0.4) !important;
+    animation: pulseGlowRed 2s infinite !important;
+}
+
+@keyframes pulseGlowRed {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 25px 8px rgba(239, 68, 68, 0.25);
+    }
+}
+
+/* Balance Box Content */
+.balanceBox p {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-primary);
+    margin: var(--spacing-xs) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.balanceBox p svg {
+    font-size: var(--font-size-md);
+}
+
+/* Green zone icon color */
+.balanceBoxGreen p svg {
+    color: #10b981 !important;
+}
+
+/* Amber zone icon color */
+.balanceBoxAmber p svg {
+    color: #f59e0b !important;
+}
+
+/* Red zone icon color */
+.balanceBoxRed p svg {
+    color: #ef4444 !important;
+}
+
+/* Default icon color */
+.balanceBox:not(.balanceBoxGreen):not(.balanceBoxAmber):not(.balanceBoxRed) p svg {
+    color: #10b981 !important;
+}
+
+.balanceBox p strong {
+    font-weight: 800;
+    font-size: var(--font-size-lg);
+    margin-left: auto;
+}
+
+/* Green zone balance amount */
+.balanceBoxGreen p strong {
+    color: #059669 !important;
+}
+
+/* Amber zone balance amount */
+.balanceBoxAmber p strong {
+    color: #d97706 !important;
+}
+
+/* Red zone balance amount */
+.balanceBoxRed p strong {
+    color: #dc2626 !important;
+}
+
+/* Default balance amount color */
+.balanceBox:not(.balanceBoxGreen):not(.balanceBoxAmber):not(.balanceBoxRed) p strong {
+    color: #059669 !important;
+}
+
+/* ==================================
+   Error Message
+================================== */
+
+.errorMessage {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+    color: white;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-md);
+    font-weight: 600;
+    border-left: 4px solid #c92a2a;
+    animation: shakeSmall 0.5s ease;
+}
+
+@keyframes shakeSmall {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+}
+
+/* ==================================
+   Last Checked Styling
+================================== */
+
+.componentCard p:last-child {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.componentCard p:last-child strong {
+    color: var(--color-text-primary);
+}
+
+/* ==================================
+   Responsive Design
+================================== */
+
+@media (max-width: 1024px) {
+    .components {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .components {
+        grid-template-columns: 1fr;
+    }
+    
+    .healthPage {
+        padding: var(--spacing-md);
+    }
+
+    .title {
+        font-size: var(--font-size-xl);
+        text-align: center;
+    }
+
+    .overallStatus {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+        padding: var(--spacing-lg);
+    }
+
+    .overallStatus strong {
+        font-size: var(--font-size-xl);
+    }
+
+    .componentHeader {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-sm);
+    }
+
+    .icon {
+        width: 50px;
+        height: 50px;
+        font-size: var(--font-size-lg);
+    }
+
+    .componentHeader h3 {
+        font-size: var(--font-size-lg);
+    }
+
+    .statusIcon {
+        font-size: var(--font-size-xl);
+    }
+
+    .componentCard {
+        padding: var(--spacing-lg);
+    }
+
+    .componentCard p {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+
+    .componentCard p strong {
+        min-width: auto;
+    }
+
+    .balanceBox {
+        padding: var(--spacing-md);
+    }
+
+    .balanceBox p {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--spacing-xs);
+    }
+
+    .balanceBox p strong {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .healthPage {
+        padding: var(--spacing-sm);
+    }
+
+    .components {
+        gap: var(--spacing-lg);
+    }
+
+    .componentCard {
+        padding: var(--spacing-md);
+    }
+
+    .balanceBox p {
+        font-size: var(--font-size-base);
+    }
+}
+
+/* ==================================
+   Animation Delays for Cards
+================================== */
+
+.componentCard:nth-child(1) { animation-delay: 0.1s; }
+.componentCard:nth-child(2) { animation-delay: 0.2s; }
+.componentCard:nth-child(3) { animation-delay: 0.3s; }
+.componentCard:nth-child(4) { animation-delay: 0.4s; }
+.componentCard:nth-child(5) { animation-delay: 0.5s; }
+.componentCard:nth-child(6) { animation-delay: 0.6s; }
+.componentCard:nth-child(7) { animation-delay: 0.7s; }
+
+/* ==================================
+   Hover Effects
+================================== */
+
+.componentCard:hover .statusIcon {
+    animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* ==================================
+   Gradient Overlays for Cards
+================================== */
+
+.componentCard.ok::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, transparent 100%);
+    pointer-events: none;
+    border-radius: var(--radius-xl);
+}
+
+.componentCard.degraded::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, transparent 100%);
+    pointer-events: none;
+    border-radius: var(--radius-xl);
+}
+
+.componentCard.error::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, transparent 100%);
+    pointer-events: none;
+    border-radius: var(--radius-xl);
+}
+
+/* ==================================
+   Custom Scrollbar
+================================== */
+
+.components {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding-right: var(--spacing-sm);
+}
+
+.components::-webkit-scrollbar {
+    width: 8px;
+}
+
+.components::-webkit-scrollbar-track {
+    background: var(--color-background-accent);
+    border-radius: 4px;
+}
+
+.components::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--color-primary) 0%, #4f46e5 100%);
+    border-radius: 4px;
+}
+
+.components::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--color-primary-hover) 0%, #4338ca 100%);
+}

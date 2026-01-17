@@ -21,7 +21,7 @@ const Profile: React.FC = () => {
                 }
             }
         };
-        fetchUserInfo();
+        void fetchUserInfo();
     }, [keycloak]);
 
     const getInitials = () => {

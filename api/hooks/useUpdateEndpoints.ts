@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import useAxiosPrivate from "./useAxiosPrivate";
+import {extractErrorMessage} from "../../utils/extractErrorMessage";
 
 interface FieldMapping {
     InternalField: string;
@@ -34,13 +35,7 @@ const useUpdateEndpoints = () => {
             setLoading(false);
             return response.data;
         } catch (err: unknown) {
-            let errorMessage = 'Something went wrong';
-            if (err instanceof Error) {
-                errorMessage = err.message;
-            } else if (typeof err === 'string') {
-                errorMessage = err;
-            }
-            setError(errorMessage);
+            setError(extractErrorMessage(err, "Something went wrong"));
             setLoading(false);
         }
     };
