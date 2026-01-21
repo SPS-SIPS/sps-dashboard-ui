@@ -7,11 +7,10 @@ import RoleGuard from "../../../auth/RoleGuard";
 const PersonalQRParser: React.FC = () => {
     const {makeApiRequest} = useApiRequest();
     const handleParse = async (qrCode: string) => {
-        const response = await makeApiRequest({
+        return await makeApiRequest({
             url: `${baseURL}/api/v1/somqr/ParsePersonQR?code=${encodeURIComponent(qrCode)}`,
             method: 'get',
         });
-        return response.data;
     };
 
     return (

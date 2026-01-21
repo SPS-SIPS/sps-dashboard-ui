@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, {useState, useRef, useCallback, useEffect} from 'react';
 import styles from './QRParser.module.css';
 import ActionButton from '../common/ActionButton/ActionButton';
 import jsQR from 'jsqr';
@@ -18,15 +18,23 @@ import {
     MdDownload,
     MdError
 } from 'react-icons/md';
+import {extractErrorMessage} from "../../utils/extractErrorMessage";
 
 type JSONObject = { [key: string]: any } | any[] | string | number | boolean;
 
 type QRType = 'merchant' | 'personal';
 
+interface ApiResponse {
+    status?: number;
+    data?: any;
+    error?: string;
+    success: boolean;
+}
+
 interface QRParserProps {
     title: string;
     subtitle: string;
-    onParse: (qrCode: string) => Promise<JSONObject>;
+    onParse: (qrCode: string) => Promise<ApiResponse>;
     qrType: QRType;
 }
 
@@ -71,13 +79,13 @@ export const QRParser: React.FC<QRParserProps> = ({
         const trimmed = qr.trim();
         // Merchant QR Code starts with '000201'
         if (trimmed.startsWith('000201') && trimmed.length > 30) {
-            return { isValid: true, type: 'merchant' };
+            return {isValid: true, type: 'merchant'};
         }
         // Personal QR Code starts with '000202'
         if (trimmed.startsWith('000202') && trimmed.length > 30) {
-            return { isValid: true, type: 'personal' };
+            return {isValid: true, type: 'personal'};
         }
-        return { isValid: false, type: null };
+        return {isValid: false, type: null};
     }, []);
 
     // Helper to scan a QR code from a File object
@@ -173,7 +181,7 @@ export const QRParser: React.FC<QRParserProps> = ({
             setQrTypeDetected(validation.type);
             setError('');
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'An unknown error occurred during upload.');
+            setError(extractErrorMessage(err, 'An unknown error occurred during upload.'));
             setQrImage(null);
             setQrCode('');
             setQrTypeDetected(null);
@@ -204,10 +212,16 @@ export const QRParser: React.FC<QRParserProps> = ({
 
         try {
             // onParse now returns Promise<JSONObject>
+            console.log("sending req: ", qrCode)
             const result = await onParse(qrCode);
-            setParseResult(result);
+            console.log(result);
+            if (result.status === 200) {
+                setParseResult(result.data);
+            }
+            if (result.error)
+                setError(result.error);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'An unknown error occurred during parsing.');
+            setError(extractErrorMessage(err, 'An unknown error occurred during upload.'));
         } finally {
             setIsLoading(false);
         }
@@ -229,7 +243,7 @@ export const QRParser: React.FC<QRParserProps> = ({
         if (!parseResult) return;
 
         const dataStr = JSON.stringify(parseResult, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
         link.href = url;
@@ -255,7 +269,7 @@ export const QRParser: React.FC<QRParserProps> = ({
                 <div className={styles.headerContent}>
                     <div className={styles.titleSection}>
                         <div className={styles.titleIcon}>
-                            <MdQrCodeScanner />
+                            <MdQrCodeScanner/>
                         </div>
                         <div>
                             <h2 className={styles.title}>{title}</h2>
@@ -284,14 +298,14 @@ export const QRParser: React.FC<QRParserProps> = ({
                             className={`${styles.tabButton} ${activeTab === 'text' ? styles.active : ''}`}
                             onClick={() => setActiveTab('text')}
                         >
-                            <MdTextFields className={styles.tabIcon} />
+                            <MdTextFields className={styles.tabIcon}/>
                             <span>Text Input</span>
                         </button>
                         <button
                             className={`${styles.tabButton} ${activeTab === 'image' ? styles.active : ''}`}
                             onClick={() => setActiveTab('image')}
                         >
-                            <MdImage className={styles.tabIcon} />
+                            <MdImage className={styles.tabIcon}/>
                             <span>Image Upload</span>
                         </button>
                     </div>
@@ -343,19 +357,19 @@ export const QRParser: React.FC<QRParserProps> = ({
                                             disabled={!qrCode}
                                             title="Clear text"
                                         >
-                                            <MdClear />
+                                            <MdClear/>
                                         </button>
                                         <button
                                             className={styles.expandButton}
                                             onClick={() => setExpanded(!expanded)}
                                             title={expanded ? "Collapse" : "Expand"}
                                         >
-                                            {expanded ? <MdExpandLess /> : <MdExpandMore />}
+                                            {expanded ? <MdExpandLess/> : <MdExpandMore/>}
                                         </button>
                                     </div>
                                 </div>
                                 <div className={styles.formatHint}>
-                                    <MdInfo className={styles.hintIcon} />
+                                    <MdInfo className={styles.hintIcon}/>
                                     <span>Expected format: {qrType === 'merchant' ? '000201...' : '000202...'}</span>
                                 </div>
                             </div>
@@ -375,7 +389,7 @@ export const QRParser: React.FC<QRParserProps> = ({
                                                 onClick={resetState}
                                                 title="Remove Image & Data"
                                             >
-                                                <MdDelete /> Remove
+                                                <MdDelete/> Remove
                                             </button>
                                         </div>
                                         <div className={styles.imageWrapper}>
@@ -419,7 +433,7 @@ export const QRParser: React.FC<QRParserProps> = ({
                                             ) : (
                                                 <>
                                                     <div className={styles.uploadIcon}>
-                                                        <MdFileUpload />
+                                                        <MdFileUpload/>
                                                     </div>
                                                     <div className={styles.uploadText}>
                                                         <p className={styles.uploadTitle}>Upload QR Code Image</p>
@@ -457,7 +471,7 @@ export const QRParser: React.FC<QRParserProps> = ({
                             onClick={resetState}
                             disabled={isLoading}
                         >
-                            <MdClear /> Clear All
+                            <MdClear/> Clear All
                         </button>
                     )}
                 </div>
@@ -467,7 +481,7 @@ export const QRParser: React.FC<QRParserProps> = ({
                     <div className={styles.resultSection}>
                         <div className={styles.resultHeader}>
                             <div className={styles.resultTitleSection}>
-                                <MdCheckCircle className={styles.successIcon} />
+                                <MdCheckCircle className={styles.successIcon}/>
                                 <h3 className={styles.resultTitle}>Parsed Data</h3>
                                 <div
                                     className={styles.resultTypeBadge}
@@ -485,7 +499,7 @@ export const QRParser: React.FC<QRParserProps> = ({
                                     onClick={handleCopyResult}
                                     title="Copy Parsed JSON"
                                 >
-                                    {copied ? <MdCheckCircle /> : <MdContentCopy />}
+                                    {copied ? <MdCheckCircle/> : <MdContentCopy/>}
                                     {copied ? 'Copied!' : 'Copy JSON'}
                                 </button>
                                 <button
@@ -493,7 +507,7 @@ export const QRParser: React.FC<QRParserProps> = ({
                                     onClick={handleDownloadResult}
                                     title="Download as JSON"
                                 >
-                                    <MdDownload /> Download
+                                    <MdDownload/> Download
                                 </button>
                             </div>
                         </div>
@@ -507,7 +521,7 @@ export const QRParser: React.FC<QRParserProps> = ({
             {/* Error Display */}
             {error && (
                 <div className={styles.errorContainer}>
-                    <MdError className={styles.errorIcon} />
+                    <MdError className={styles.errorIcon}/>
                     <div className={styles.errorContent}>
                         <strong className={styles.errorTitle}>Validation Error</strong>
                         <p className={styles.errorMessage}>{error}</p>
@@ -516,7 +530,7 @@ export const QRParser: React.FC<QRParserProps> = ({
                         className={styles.dismissError}
                         onClick={() => setError('')}
                     >
-                        <MdClear />
+                        <MdClear/>
                     </button>
                 </div>
             )}
