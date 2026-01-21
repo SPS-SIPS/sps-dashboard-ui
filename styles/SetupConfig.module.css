@@ -1,0 +1,156 @@
+.container {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-xxl) var(--spacing-lg);
+}
+
+/* --- Error/Locked State --- */
+.errorMessage {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    max-width: 650px;
+    width: 100%;
+    padding: var(--spacing-xxl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.warningIcon {
+    color: var(--color-warning);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* --- Cards Grid Layout --- */
+.cardsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xl);
+    width: 100%;
+    max-width: 900px;
+}
+
+.card {
+    background-color: var(--color-white);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Special styling for the Confirm Card */
+.confirmCard:hover {
+    border-color: var(--color-success);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.cardIcon {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+}
+
+.confirmIcon {
+    font-size: 2.5rem;
+    color: var(--color-success);
+}
+
+.cardTitle {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.cardDescription {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* --- Shared Elements --- */
+.messageContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--spacing-md);
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.screenshot {
+    max-width: 100%;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-dark);
+    box-shadow: var(--shadow-sm);
+}
+
+.note {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    background-color: var(--color-background-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    border-left: 5px solid var(--color-primary);
+}
+
+.homeButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background-color: var(--navbar-bg);
+    color: var(--color-white);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-md);
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.homeButton:hover {
+    opacity: 0.9;
+}
+
+/* --- Mobile Responsive --- */
+@media (max-width: 768px) {
+    .cardsGrid {
+        grid-template-columns: 1fr;
+        max-width: 450px;
+    }
+
+    .container {
+        padding: var(--spacing-lg);
+    }
+
+    .cardIcon, .confirmIcon {
+        font-size: 2rem;
+    }
+}

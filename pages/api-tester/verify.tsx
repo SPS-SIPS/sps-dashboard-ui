@@ -18,6 +18,7 @@ import styles from "../../styles/VerificationRequestPage.module.css";
 import RoleGuard from "../../auth/RoleGuard";
 import { useRouter } from "next/router";
 import { baseURL } from "../../constants/constants";
+import {getAppConfig} from "../../utils/config";
 
 const VerificationRequestPage: React.FC = () => {
   const [submittedData, setSubmittedData] = useState<Record<
@@ -39,9 +40,9 @@ const VerificationRequestPage: React.FC = () => {
   const handleApiUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setApiUrl(e.target.value);
   };
-
+  const config = getAppConfig();
   const router = useRouter();
-  const activeProfile = process.env.NEXT_PUBLIC_ACTIVE_PROFILE;
+  const activeProfile = config.profile;
 
   useEffect(() => {
     if (activeProfile === "prod") {

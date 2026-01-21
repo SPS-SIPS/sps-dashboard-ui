@@ -11,6 +11,7 @@ import styles from "../../styles/VerificationRequestPage.module.css";
 import { validateUrl } from "../../utils/validation";
 import { useApiRequest } from "../../utils/apiService";
 import { baseURL } from "../../constants/constants";
+import {getAppConfig} from "../../utils/config";
 
 const PaymentPage = () => {
   const router = useRouter();
@@ -56,12 +57,12 @@ const PaymentPage = () => {
     setSubmittedData(formValues);
     setLoading(false);
   };
-
-  const activeProfile = process.env.NEXT_PUBLIC_ACTIVE_PROFILE;
+  const config = getAppConfig();
+  const activeProfile = config.profile;
 
   useEffect(() => {
     if (activeProfile === "prod") {
-      void router.replace("/unauthorized");
+      void router.replace("/403");
     }
   }, [activeProfile, router]);
 

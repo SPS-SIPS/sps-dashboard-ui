@@ -1,8 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {FiChevronDown, FiLogOut, FiUser} from 'react-icons/fi';
+import {FiChevronDown, FiLogOut, FiSettings, FiUser} from 'react-icons/fi';
 import styles from '../Navbar.module.css';
 import {useAuthentication} from "../../../../auth/AuthProvider";
 import {useRouter} from "next/router";
+import ConfigUpdateModal from "../../../ConfigUpdateModal/ConfigUpdateModal";
+import {getAppConfig} from "../../../../utils/config";
 
 interface AvatarDropdownProps {
     firstName: string;
@@ -10,9 +12,19 @@ interface AvatarDropdownProps {
 
 export const AvatarDropdown: React.FC<AvatarDropdownProps> = ({firstName}) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [showConfigModal, setShowConfigModal] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const {logout} = useAuthentication();
+    const config = getAppConfig();
+
+    const initialValues = {
+        baseUrl: config.api.baseUrl,
+        keycloakUrl: config.keycloak.url,
+        keycloakRealm: config.keycloak.realm,
+        keycloakClientId: config.keycloak.clientId,
+        profile: config.profile,
+    };
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -55,11 +67,30 @@ export const AvatarDropdown: React.FC<AvatarDropdownProps> = ({firstName}) => {
                         <FiUser className={styles.dropdownIcon}/>
                         <span>Profile</span>
                     </button>
+                    <button
+                        className={styles.dropdownItem}
+                        onClick={() => {
+                            setShowConfigModal(true);
+                            setIsDropdownOpen(false);
+                        }}
+                    >
+                        <FiSettings className={styles.dropdownIcon} />
+                        <span>Integration Config</span>
+                    </button>
                     <button className={styles.dropdownItem} onClick={logout}>
                         <FiLogOut className={styles.dropdownIcon}/>
                         <span>Logout</span>
                     </button>
                 </div>
+            )}
+
+            {showConfigModal && (
+                <ConfigUpdateModal
+                    popup={true}
+                    initialValues={initialValues}
+                    showCloseButton={true}
+                    onClose={() => setShowConfigModal(false)}
+                />
             )}
         </div>
     );
