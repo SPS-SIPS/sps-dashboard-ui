@@ -23,10 +23,6 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/public ./public
 
-
-# Copy certs if needed
-COPY --from=builder /app/certs ./certs
-
 # Copy server scripts
 COPY server-https.js ./server-https.js
 COPY entrypoint-https.sh ./entrypoint-https.sh
