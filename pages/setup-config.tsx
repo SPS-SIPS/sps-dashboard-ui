@@ -1,15 +1,34 @@
-import { getAppConfig } from "../utils/config";
+import {AppConfig, getAppConfig} from "../utils/config";
 import {AiOutlineWarning, AiOutlineHome, AiOutlineSetting, AiOutlineCheckCircle} from "react-icons/ai";
 import {useRouter} from "next/router";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import ConfigUpdateModal from "../component/ConfigUpdateModal/ConfigUpdateModal";
 import ConfirmationModal from "../component/common/ConfirmationModal/ConfirmationModal";
 import AlertModal from "../component/common/AlertModal/AlertModal";
 import styles from "../styles/SetupConfig.module.css";
+import SpinLoading from "../component/Loading/SpinLoading/SpinLoading";
 type ActiveModal = "update" | "confirm" | null;
 
+export interface ConfigFormValues {
+    baseUrl: string;
+    keycloakUrl: string;
+    keycloakRealm: string;
+    keycloakClientId: string;
+    profile: string;
+}
+
 const SetupConfig = () => {
-    const config = getAppConfig();
+    const [config, setConfig] = useState<AppConfig | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    const [formValues, setFormValues] = useState<ConfigFormValues>({
+        baseUrl: "",
+        keycloakUrl: "",
+        keycloakRealm: "",
+        keycloakClientId: "",
+        profile: "dev",
+    });
+
     const router = useRouter();
     const [activeModal, setActiveModal] = useState<ActiveModal>(null);
     const [alert, setAlert] = useState<{
@@ -19,6 +38,28 @@ const SetupConfig = () => {
     } | null>(null);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        async function fetchConfig() {
+            try {
+                const cfg = await getAppConfig();
+                setConfig(cfg);
+                setFormValues({
+                    baseUrl: cfg.api.baseUrl,
+                    keycloakUrl: cfg.keycloak.url,
+                    keycloakRealm: cfg.keycloak.realm,
+                    keycloakClientId: cfg.keycloak.clientId,
+                    profile: cfg.profile,
+                });
+            } catch (err) {
+                console.error("Failed to load config", err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        void fetchConfig();
+    }, []);
 
     const confirmSetup = async () => {
         setIsSubmitting(true);
@@ -39,6 +80,12 @@ const SetupConfig = () => {
                 error: data.code !== 200,
             });
 
+            if (data.code === 200) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
+
         } catch (err: any) {
             setAlert({
                 title: "Request Failed",
@@ -51,15 +98,24 @@ const SetupConfig = () => {
         }
     };
 
+    if (loading) {
+        return (
+            <div className={styles.statusMessage}>
+                <SpinLoading />
+                <p className={styles.statusText}>Loading configuration...</p>
+            </div>
+        );
+    }
 
+    if (!config) {
+        return (
+            <div className={styles.statusMessage}>
+                <AiOutlineWarning size={50} className={styles.warningIcon} />
+                <p className={styles.statusText}>Error loading configuration.</p>
+            </div>
+        );
+    }
 
-    const initialValues = {
-        baseUrl: config.api.baseUrl,
-        keycloakUrl: config.keycloak.url,
-        keycloakRealm: config.keycloak.realm,
-        keycloakClientId: config.keycloak.clientId,
-        profile: config.profile,
-    };
 
     const goHome = () => {
         void router.push("/");
@@ -143,8 +199,9 @@ const SetupConfig = () => {
             {activeModal === "update" && (
                 <ConfigUpdateModal
                     popup
-                    initialValues={initialValues}
+                    initialValues={formValues}
                     onClose={() => setActiveModal(null)}
+                    onUpdate={(updatedValues) => setFormValues(updatedValues)}
                     showCloseButton={true}
                 />
             )}

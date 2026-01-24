@@ -19,13 +19,15 @@ interface ConfigFormProps {
     popup?: boolean;
     showCloseButton?: boolean;
     onClose?: () => void;
+    onUpdate?: (updatedValues: ConfigFormValues) => void;
 }
 
 const ConfigUpdateModal: React.FC<ConfigFormProps> = ({
                                                           initialValues = {},
                                                           popup = false,
                                                           showCloseButton = false,
-                                                          onClose
+                                                          onClose,
+                                                          onUpdate
                                                       }) => {
     const [values, setValues] = useState<ConfigFormValues>({
         baseUrl: initialValues.baseUrl || "",
@@ -83,14 +85,17 @@ const ConfigUpdateModal: React.FC<ConfigFormProps> = ({
                 body: JSON.stringify(values),
             });
             const data = await res.json();
-
-            setModalProps({
-                title: data.code === 200 ? "Success" : "Error",
-                message: data.message || "Something went wrong",
-                success: data.code === 200,
-                error: data.code !== 200,
-            });
+                setModalProps({
+                    title: data.code === 200 ? "Success" : "Error",
+                    message: data.message || "Something went wrong",
+                    success: data.code === 200,
+                    error: data.code !== 200,
+                });
             setShowModal(true);
+
+            if (data.code === 200 && onUpdate) {
+                onUpdate(values);
+            }
         } catch (err) {
             setModalProps({
                 title: "Error",
@@ -172,9 +177,9 @@ const ConfigUpdateModal: React.FC<ConfigFormProps> = ({
                     value={values.profile}
                     onChange={handleChange}
                     options={[
-                        {value: "dev", label: "Dev"},
-                        {value: "test", label: "Test"},
-                        {value: "prod", label: "Prod"},
+                        {value: "dev", label: "Development"},
+                        {value: "test", label: "Testing"},
+                        {value: "prod", label: "Production"},
                     ]}
                     required
                 />

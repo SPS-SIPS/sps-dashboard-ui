@@ -1,7 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import {NextApiRequest, NextApiResponse} from "next";
 import fs from "fs";
 import path from "path";
 import {sendResponse} from "./update-config";
+import {AppConfig} from "../../utils/config";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== "POST") {
@@ -31,7 +32,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
             res,
             200,
             "OK",
-            "Setup confirmed successfully"
+            "Setup confirmed successfully",
+            currentData.config as AppConfig
         );
     } catch (err: any) {
         return sendResponse(

@@ -1,5 +1,3 @@
-import db from "../db.json";
-
 export type AppConfig = {
     api: {
         baseUrl: string;
@@ -32,15 +30,17 @@ function isAppConfig(value: unknown): value is AppConfig {
 
 let cachedConfig: AppConfig | null = null;
 
-export function getAppConfig(): AppConfig {
-    if (cachedConfig !== null) {
-        return cachedConfig;
-    }
+export async function getAppConfig(): Promise<AppConfig> {
+    if (cachedConfig) return cachedConfig;
 
-    const config: AppConfig = db.config;
+    let config: AppConfig;
+
+    const res = await fetch("/api/config");
+    const json = await res.json();
+    config = json.data;
 
     if (!isAppConfig(config)) {
-        throw new Error("Invalid or missing config in db.json");
+        throw new Error("Invalid or missing config");
     }
 
     cachedConfig = config;

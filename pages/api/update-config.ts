@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
+import {AppConfig} from "../../utils/config";
 
 function getTime() {
     return new Date().toISOString();
@@ -15,12 +16,13 @@ function isValidUrl(url: string): boolean {
     }
 }
 
-export function sendResponse(res: NextApiResponse, code: number, status: string, message = "") {
+export function sendResponse(res: NextApiResponse, code: number, status: string, message = "", data?: AppConfig) {
     return res.status(code).json({
         time: getTime(),
         code,
         status,
         message,
+        data
     });
 }
 
@@ -58,7 +60,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
         fs.writeFileSync(filePath, JSON.stringify(currentData, null, 2), "utf-8");
 
-        return sendResponse(res, 200, "OK", "Config updated successfully");
+        return sendResponse(res, 200, "OK", "Config updated successfully",currentData.config as AppConfig);
     } catch (err: any) {
         return sendResponse(res, 500, "InternalServerError", err.message || "Unknown error");
     }
