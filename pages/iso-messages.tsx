@@ -19,7 +19,7 @@ import XmlViewerModal from "../component/XmlViewerModal/XmlViewerModal";
 import AlertModal from "../component/common/AlertModal/AlertModal";
 import { useAuthentication } from "../auth/AuthProvider";
 import IsoMessageDetails from "../component/IsoMessageDetails/IsoMessageDetails/IsoMessageDetails";
-import ExcelExport from "./excel-export";
+import ExcelExport from "../component/ExcelExport/excel-export";
 
 const allColumns = [
   { id: "id", label: "ID" },
