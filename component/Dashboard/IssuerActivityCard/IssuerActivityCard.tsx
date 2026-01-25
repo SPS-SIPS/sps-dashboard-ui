@@ -9,6 +9,7 @@ import {
 } from 'react-icons/fi';
 import styles from './IssuerActivityCard.module.css';
 import {bicOptionsDev, bicOptionsProd} from "../../../constants/gatewayFormOptions";
+import {useAuthentication} from "../../../auth/AuthProvider";
 
 interface IssuerData {
     issuer: string;
@@ -58,7 +59,8 @@ const IssuerActivityCard: React.FC<IssuerActivityCardProps> = ({
         return { label: 'Low', color: 'var(--color-success)' };
     }, [data.transactionCount]);
 
-    const activeProfile = process.env.NEXT_PUBLIC_ACTIVE_PROFILE || 'dev';
+    const {config} = useAuthentication();
+    const activeProfile = config?.profile;
 
     const bicOptions = activeProfile === 'prod' ? bicOptionsProd : bicOptionsDev;
 

@@ -22,8 +22,6 @@ import {useAuthentication} from "../../../auth/AuthProvider";
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRadarChart} from "react-icons/ai";
 import {FaCodeCompare} from "react-icons/fa6";
 import {LuScanBarcode} from "react-icons/lu";
-import {getAppConfig} from "../../../utils/config";
-
 interface NavItem {
     title: string;
     path: string;
@@ -43,8 +41,8 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
     const {roles} = useAuthentication();
     const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
 
-    const config = getAppConfig();
-    const activeProfile = config.profile;
+    const {config} = useAuthentication();
+    const activeProfile = config?.profile;
 
     const navItems: NavItem[] = [
         {

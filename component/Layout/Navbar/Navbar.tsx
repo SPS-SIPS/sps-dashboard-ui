@@ -14,7 +14,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile}) => {
-    const {userName} = useAuthentication();
+    const {userName, config,roles} = useAuthentication();
     const [, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -59,7 +59,7 @@ export const Navbar: React.FC<NavbarProps> = ({onMenuToggle, isMobile}) => {
             <div className={`${styles.rightSection} relative flex items-center gap-4`}>
                 <ParticipantLiveIndicator/>
                 <SystemHealthIndicator/>
-                <AvatarDropdown firstName={userName!}/>
+                <AvatarDropdown firstName={userName!} roles={roles} config={config} />
             </div>
         </header>
     );

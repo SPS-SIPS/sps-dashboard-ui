@@ -1,8 +1,8 @@
 import QRForm from "../../../component/QRForm/QRForm";
 import {currencyOptions} from "../../../data/currencyOptions";
 import {mccOptions} from "../../../data/mccOptions";
-import {baseURL} from "../../../constants/constants";
 import RoleGuard from "../../../auth/RoleGuard";
+import {useAuthentication} from "../../../auth/AuthProvider";
 
 const Merchant = () => {
     const merchantInitialData = {
@@ -54,6 +54,9 @@ const Merchant = () => {
         {label: "Terminal Label", name: "terminalLabel", type: "text", required: false},
 
     ];
+
+    const {config} = useAuthentication();
+    const baseURL = config?.api.baseUrl;
 
     return (
         <RoleGuard allowedRoles={["som_qr"]}>

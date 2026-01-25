@@ -1,4 +1,3 @@
-import {useBicLabel} from "../../../api/hooks/useBicLable";
 import {getTransactionStatusText, ISOMessage, ISOMessageType, TransactionStatus} from "../../../types/types";
 import React, {useState} from "react";
 import {getMessageTypeTitle, MESSAGE_TYPE_BREADCRUMB_LABELS} from "../../../utils/isoMessage";
@@ -14,6 +13,8 @@ import StatusChecker from "../../GatewayModals/StatusChecker";
 import RetryReturnModal from "../../GatewayModals/RetryReturnModal";
 import ConfirmationModal from "../../common/ConfirmationModal/ConfirmationModal";
 import ReturnRequestModal from "../../GatewayModals/ReturnRequestModal";
+import {useAuthentication} from "../../../auth/AuthProvider";
+import {bicOptionsDev, bicOptionsProd} from "../../../constants/gatewayFormOptions";
 
 interface Props {
     isoMessage: ISOMessage;
@@ -25,7 +26,18 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
         content: string;
         title: string;
     } | null>(null);
-    const getBicLabel = useBicLabel();
+    const {config} = useAuthentication();
+    const activeProfile = config?.profile;
+
+    const getBicLabel = (bic?: string) => {
+        if (!bic) return "-";
+
+        const options = activeProfile === "prod" ? bicOptionsProd : bicOptionsDev;
+        const match = options.find((opt) => opt.value === bic);
+
+        return match ? match.label : bic;
+    };
+
 
     const breadcrumbs = [
         {label: "Home", link: "/"},

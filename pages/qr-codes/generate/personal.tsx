@@ -1,7 +1,7 @@
 import QRForm from "../../../component/QRForm/QRForm";
 import {currencyOptions} from "../../../data/currencyOptions";
-import { baseURL } from "../../../constants/constants";
 import RoleGuard from "../../../auth/RoleGuard";
+import {useAuthentication} from "../../../auth/AuthProvider";
 
 const Personal = () => {
     const personalInitialData = {
@@ -50,6 +50,9 @@ const Personal = () => {
             placeholder: 'Enter payment description'
         }
     ];
+
+    const {config} = useAuthentication();
+    const baseURL = config?.api.baseUrl;
 
     return (
             <RoleGuard allowedRoles={['som_qr']}>

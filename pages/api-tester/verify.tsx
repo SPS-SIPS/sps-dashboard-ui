@@ -17,17 +17,18 @@ import sharedStyles from "../../component/RequestForm/SharedStyles.module.css";
 import styles from "../../styles/VerificationRequestPage.module.css";
 import RoleGuard from "../../auth/RoleGuard";
 import { useRouter } from "next/router";
-import { baseURL } from "../../constants/constants";
-import {getAppConfig} from "../../utils/config";
+import {useAuthentication} from "../../auth/AuthProvider";
 
 const VerificationRequestPage: React.FC = () => {
   const [submittedData, setSubmittedData] = useState<Record<
     string,
     string
   > | null>(null);
+  const {config} = useAuthentication();
   const [apiUrl, setApiUrl] = useState<string>(
-    `${baseURL}/api/v1/Gateway/Verify`
+    `${config?.api.baseUrl}/api/v1/Gateway/Verify`
   );
+
   const [urlError, setUrlError] = useState<string>("");
   const [response, setResponse] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,9 +41,9 @@ const VerificationRequestPage: React.FC = () => {
   const handleApiUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setApiUrl(e.target.value);
   };
-  const config = getAppConfig();
+
   const router = useRouter();
-  const activeProfile = config.profile;
+  const activeProfile =  config?.profile;
 
   useEffect(() => {
     if (activeProfile === "prod") {

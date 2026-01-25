@@ -2,7 +2,9 @@ import React from "react";
 import styles from "./TransactionDetailsModal.module.css";
 import { Transaction, TransactionType } from "../../types/types";
 import { AiOutlineClose } from "react-icons/ai";
-import { useBicLabel } from "../../api/hooks/useBicLable";
+import {useAuthentication} from "../../auth/AuthProvider";
+import {bicOptionsDev, bicOptionsProd} from "../../constants/gatewayFormOptions";
+
 
 interface Props {
   transaction: Transaction | null;
@@ -40,7 +42,17 @@ const getTransactionTypeClass = (type: TransactionType) => {
 };
 
 const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
-  const getBicLabel = useBicLabel();
+  const {config} = useAuthentication();
+  const activeProfile = config?.profile;
+
+  const getBicLabel = (bic?: string) => {
+    if (!bic) return "-";
+
+    const options = activeProfile === "prod" ? bicOptionsProd : bicOptionsDev;
+    const match = options.find((opt) => opt.value === bic);
+
+    return match ? match.label : bic;
+  };
 
   if (!transaction) return null;
 
@@ -65,7 +77,7 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
         { label: "Account Type", value: transaction.debtorAccountType },
         {
           label: "Agent BIC",
-          value: getBicLabel(transaction.debtorAgentBIC),
+          value: transaction.debtorAgentBIC,
         },
         { label: "Issuer", value: transaction.debtorIssuer },
       ],
@@ -78,7 +90,7 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
         { label: "Account Type", value: transaction.creditorAccountType },
         {
           label: "Agent BIC",
-          value: getBicLabel(transaction.creditorAgentBIC),
+          value: transaction.creditorAgentBIC,
         },
         { label: "Issuer", value: transaction.creditorIssuer },
       ],
@@ -86,7 +98,7 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
     {
       title: "Payment Details",
       fields: [
-        { label: "From BIC", value: getBicLabel(transaction.fromBIC) },
+        { label: "From BIC", value: transaction.fromBIC },
         { label: "Local Instrument", value: transaction.localInstrument },
         { label: "Category Purpose", value: transaction.categoryPurpose },
         { label: "End To End ID", value: transaction.endToEndId },

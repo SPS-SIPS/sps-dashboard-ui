@@ -10,19 +10,19 @@ import sharedStyles from "../../component/RequestForm/SharedStyles.module.css";
 import styles from "../../styles/VerificationRequestPage.module.css";
 import { validateUrl } from "../../utils/validation";
 import { useApiRequest } from "../../utils/apiService";
-import { baseURL } from "../../constants/constants";
-import {getAppConfig} from "../../utils/config";
+import {useAuthentication} from "../../auth/AuthProvider";
 
 const PaymentPage = () => {
   const router = useRouter();
   const [internalData, setInternalData] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const {config} = useAuthentication();
   const [submittedData, setSubmittedData] = useState<Record<
     string,
     string
   > | null>(null);
   const [apiUrl, setApiUrl] = useState<string>(
-    `${baseURL}/api/v1/Gateway/Payment`
+    `${config?.api.baseUrl}/api/v1/Gateway/Payment`
   );
   const [response, setResponse] = useState<unknown>(null);
   const [urlError, setUrlError] = useState<string>("");
@@ -57,8 +57,8 @@ const PaymentPage = () => {
     setSubmittedData(formValues);
     setLoading(false);
   };
-  const config = getAppConfig();
-  const activeProfile = config.profile;
+
+  const activeProfile = config?.profile;
 
   useEffect(() => {
     if (activeProfile === "prod") {

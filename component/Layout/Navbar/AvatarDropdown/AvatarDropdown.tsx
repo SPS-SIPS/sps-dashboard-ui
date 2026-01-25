@@ -3,28 +3,22 @@ import {FiChevronDown, FiLogOut, FiSettings, FiUser} from 'react-icons/fi';
 import styles from '../Navbar.module.css';
 import {useAuthentication} from "../../../../auth/AuthProvider";
 import {useRouter} from "next/router";
+import {AppConfig} from "../../../../utils/config";
 import ConfigUpdateModal from "../../../ConfigUpdateModal/ConfigUpdateModal";
-import {getAppConfig} from "../../../../utils/config";
+
 
 interface AvatarDropdownProps {
     firstName: string;
+    config: AppConfig | null;
+    roles: string[];
 }
 
-export const AvatarDropdown: React.FC<AvatarDropdownProps> = ({firstName}) => {
+export const AvatarDropdown: React.FC<AvatarDropdownProps> = ({firstName, roles, config}) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showConfigModal, setShowConfigModal] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const {logout} = useAuthentication();
-    const config = getAppConfig();
-
-    const initialValues = {
-        baseUrl: config.api.baseUrl,
-        keycloakUrl: config.keycloak.url,
-        keycloakRealm: config.keycloak.realm,
-        keycloakClientId: config.keycloak.clientId,
-        profile: config.profile,
-    };
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -43,6 +37,21 @@ export const AvatarDropdown: React.FC<AvatarDropdownProps> = ({firstName}) => {
 
     const getFirstLetter = (name: string) => name.charAt(0).toUpperCase();
     const getDisplayName = (name: string) => name.length > 10 ? `${name.substring(0, 8)}...` : name;
+
+    const initialValues = config
+        ? {
+            baseUrl: config.api.baseUrl,
+            keycloakUrl: config.keycloak.url,
+            keycloakRealm: config.keycloak.realm,
+            keycloakClientId: config.keycloak.clientId,
+            profile: config.profile,
+        }
+        : undefined;
+
+    const canManageIntegrationConfig = roles.some(
+        role => role.toLowerCase() === "ui_admin"
+    );
+
 
     return (
         <div className={styles.avatarDropdown} ref={dropdownRef}>
@@ -67,16 +76,20 @@ export const AvatarDropdown: React.FC<AvatarDropdownProps> = ({firstName}) => {
                         <FiUser className={styles.dropdownIcon}/>
                         <span>Profile</span>
                     </button>
-                    <button
-                        className={styles.dropdownItem}
-                        onClick={() => {
-                            setShowConfigModal(true);
-                            setIsDropdownOpen(false);
-                        }}
-                    >
-                        <FiSettings className={styles.dropdownIcon} />
-                        <span>Integration Config</span>
-                    </button>
+                    {canManageIntegrationConfig}
+                    {canManageIntegrationConfig && (
+                        <button
+                            className={styles.dropdownItem}
+                            onClick={() => {
+                                setShowConfigModal(true);
+                                setIsDropdownOpen(false);
+                            }}
+                        >
+                            <FiSettings className={styles.dropdownIcon} />
+                            <span>Integration Config</span>
+                        </button>
+                    )}
+
                     <button className={styles.dropdownItem} onClick={logout}>
                         <FiLogOut className={styles.dropdownIcon}/>
                         <span>Logout</span>
@@ -90,6 +103,13 @@ export const AvatarDropdown: React.FC<AvatarDropdownProps> = ({firstName}) => {
                     initialValues={initialValues}
                     showCloseButton={true}
                     onClose={() => setShowConfigModal(false)}
+                    onUpdate={() => {
+                        // setShowConfigModal(false);
+                        // refresh page after 1.5 seconds
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    }}
                 />
             )}
         </div>
