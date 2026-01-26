@@ -14,7 +14,7 @@ import ActionButton from "../component/common/ActionButton/ActionButton";
 import RoleGuard from "../auth/RoleGuard";
 import { TiInfo } from "react-icons/ti";
 import TransactionDetailsModal from "../component/TransactionDetailsModal/TransactionDetailsModal";
-import ExcelExport from "./excel-export";
+import ExcelExport from "../component/ExcelExport/excel-export";
 
 const allColumns = [
   { id: "txId", label: "Transaction ID" },
