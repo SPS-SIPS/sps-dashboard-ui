@@ -1,0 +1,4 @@
+# Ensure scripts always have LF endings
+*.sh text eol=lf
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf
