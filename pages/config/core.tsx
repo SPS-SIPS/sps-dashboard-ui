@@ -144,6 +144,16 @@ const ISO20022ConfigForm = () => {
                 placeholder="Login Endpoint"
                 required
               />
+
+              <Input
+                  label="HTTP Timeout (seconds)"
+                  type="number"
+                  name="httpTimeoutSeconds"
+                  value={cfg.httpTimeoutSeconds.toString()}
+                  onChange={onChange}
+                  placeholder="Enter HTTP Timeout in seconds"
+                  min={1}
+              />
             </div>
 
             <div className={styles.section}>
@@ -178,6 +188,13 @@ const ISO20022ConfigForm = () => {
                 value={cfg.bic}
                 onChange={onChange}
                 placeholder="Enter BIC"
+              />
+
+              <Checkbox
+                  label="Include Idempotency Headers"
+                  name="includeIdempotencyHeaders"
+                  checked={cfg.includeIdempotencyHeaders}
+                  onChange={onChange}
               />
             </div>
 
@@ -218,36 +235,56 @@ const ISO20022ConfigForm = () => {
                 min={0}
               />
             </div>
+
             <div className={styles.section}>
-              <h2 className={styles.sectionTitle}>Advanced Settings</h2>
+              <h2 className={styles.sectionTitle}>Timeouts</h2>
 
-              <Checkbox
-                label="Include Idempotency Headers"
-                name="includeIdempotencyHeaders"
-                checked={cfg.includeIdempotencyHeaders}
-                onChange={onChange}
+              <Input
+                  label="DB Persist Timeout (seconds)"
+                  type="number"
+                  name="dbPersistTimeoutSeconds"
+                  value={cfg.dbPersistTimeoutSeconds.toString()}
+                  onChange={onChange}
+                  placeholder="Enter DB Persist Timeout"
+                  min={1}
               />
 
               <Input
-                label="HTTP Timeout (seconds)"
-                type="number"
-                name="httpTimeoutSeconds"
-                value={cfg.httpTimeoutSeconds.toString()}
-                onChange={onChange}
-                placeholder="Enter HTTP Timeout in seconds"
-                min={1}
-              />
-
-              <Input
-                label="DB Persist Timeout (seconds)"
-                type="number"
-                name="dbPersistTimeoutSeconds"
-                value={cfg.dbPersistTimeoutSeconds.toString()}
-                onChange={onChange}
-                placeholder="Enter DB Persist Timeout in seconds"
-                min={1}
+                  label="Transaction Timeout (minutes)"
+                  type="number"
+                  name="transactionTimeoutMinutes"
+                  value={cfg.transactionTimeoutMinutes.toString()}
+                  onChange={onChange}
+                  placeholder="Enter Transaction Timeout"
+                  min={1}
               />
             </div>
+
+
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Background Workers</h2>
+
+              <Input
+                  label="Timeout Worker Schedule"
+                  type="text"
+                  name="timeoutWorkerSchedule"
+                  value={cfg.timeoutWorkerSchedule}
+                  onChange={onChange}
+                  placeholder="*/15 * * * *"
+              />
+            </div>
+
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Feature Flags</h2>
+
+              <Checkbox
+                  label="Include Core Bank on Listing"
+                  name="includeCoreBankOnListing"
+                  checked={cfg.includeCoreBankOnListing}
+                  onChange={onChange}
+              />
+            </div>
+
           </>
         )}
         modalProps={{

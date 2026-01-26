@@ -7,7 +7,7 @@ const useAxiosPrivate = () => {
 
     const axiosInstance = useMemo(() => {
         return axios.create({
-            baseURL: config?.api.baseUrl || "https://gemini.google.co", // fallback
+            baseURL: config?.api.baseUrl || "http://localhost:8080", // fallback
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
         });

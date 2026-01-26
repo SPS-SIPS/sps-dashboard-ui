@@ -5,23 +5,25 @@ import {
     FiHome,
     FiChevronRight,
     FiChevronDown,
-    FiX, FiCreditCard, FiActivity, FiCpu,
+    FiX, FiCreditCard, FiActivity,
 } from 'react-icons/fi';
 
 import styles from './Sidebar.module.css'
 import {
     FaCogs, FaEnvelopeOpenText,
-    FaFileAlt,
+    FaFileAlt, FaFolderOpen,
     FaLock,
     FaPlusCircle,
     FaQrcode,
     FaRocket,
     FaTools
 } from "react-icons/fa";
+
 import {useAuthentication} from "../../../auth/AuthProvider";
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRadarChart} from "react-icons/ai";
 import {FaCodeCompare} from "react-icons/fa6";
 import {LuScanBarcode} from "react-icons/lu";
+
 interface NavItem {
     title: string;
     path: string;
@@ -49,7 +51,6 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             title: 'Dashboard',
             path: '/',
             icon: <FiHome className={styles.icon}/>,
-            roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway', "Admin", "recon"]
         },
         {
             title: 'Live Participants',
@@ -60,31 +61,26 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             title: 'Documentation',
             path: '/docs',
             icon: <FaFileAlt className={styles.icon}/>,
-            roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway', "Admin", "recon"],
             items: [
                 {
                     title: 'Getting Started',
                     path: '/docs/getting-started',
                     icon: <FiChevronRight className={styles.icon}/>,
-                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway', "Admin", "recon"],
                 },
                 {
                     title: 'Certificate Generation & Validation',
                     path: '/docs/pki',
                     icon: <FiChevronRight className={styles.icon}/>,
-                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway', "Admin", "recon"],
                 },
                 {
                     title: 'Data Protection Key Security Guide',
                     path: '/docs/data-protection-keys',
                     icon: <FiChevronRight className={styles.icon}/>,
-                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway', "Admin", "recon"],
                 },
                 {
                     title: 'Test Cases & Security Test Scenarios',
                     path: '/docs/test-cases',
                     icon: <FiChevronRight className={styles.icon}/>,
-                    roles: ['transactions', 'iso_messages', 'configuration', 'som_qr', 'offline_access', 'gateway', "Admin", "recon"],
                 }, {
                     title: 'Test Scripts',
                     path: '/docs/TestScripts/',
@@ -137,6 +133,23 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                         },
                     ],
                 },
+                {
+                    title: 'Live Participants',
+                    path: '/docs/live-participants',
+                    icon: <FaCodeCompare className={styles.icon} />,
+                    items: [
+                        {
+                            title: 'API Guide',
+                            path: '/docs/live-participants/API-guide',
+                            icon: <FiChevronRight className={styles.icon} />,
+                        },
+                        {
+                            title: 'Implementation',
+                            path: '/docs/live-participants/implementation',
+                            icon: <FiChevronRight className={styles.icon} />,
+                        },
+                    ],
+                },
             ],
         },
         {
@@ -184,7 +197,7 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                     title: 'XAdES',
                     path: '/config/xades',
                     icon: <FiChevronRight className={styles.icon}/>,
-                },
+                }
             ],
         },
         {
@@ -292,7 +305,14 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             title: 'System Health',
             path: '/health',
             icon: <FiActivity className={styles.icon}/>,
+        },
+        {
+            title: 'Log Files',
+            path: '/logs',
+            icon: <FaFolderOpen  className={styles.icon}/>,
+            roles: ['logs'],
         }
+
     ];
 
     const toggleExpand = (title: string) => {
@@ -380,13 +400,13 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                 {/* For non-mobile devices the toggleButton is rendered within the sidebar */}
                 {!isMobile && isOpen && (
                     <>
-                        <div className={styles.productBadge}>
-                            <FiCpu className={styles.badgeIcon} />
-                            <div className={styles.badgeText}>
-                                <span className={styles.brandName}>Shaam</span>
-                                <span className={styles.versionTag}>v1.5.0-stable</span>
-                            </div>
-                        </div>
+                        {/*<div className={styles.productBadge}>*/}
+                        {/*    <FiCpu className={styles.badgeIcon} />*/}
+                        {/*    <div className={styles.badgeText}>*/}
+                        {/*        <span className={styles.brandName}>Shaam</span>*/}
+                        {/*        <span className={styles.versionTag}>v1.5.0-stable</span>*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                         <div
                             className={`${styles.toggleButton} ${isOpen ? styles.openButton : ''}`}
                             aria-label="Toggle sidebar"

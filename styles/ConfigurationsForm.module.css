@@ -107,6 +107,9 @@
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
 .section:hover {
@@ -154,7 +157,6 @@
   flex-direction: column;
   gap: var(--spacing-md);
   padding: var(--spacing-md);
-  background: var(--color-primary-light);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   margin: var(--spacing-md) 0;
