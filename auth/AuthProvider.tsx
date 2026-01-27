@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Keycloak from "keycloak-js";
+import {AppConfig, getAppConfig} from "../utils/config";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -10,6 +11,7 @@ type AuthContextType = {
   userName: string | null;
   authToken: string | null;
   roles: string[];
+  config: AppConfig | null;
 };
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -25,13 +27,17 @@ export const KeycloakAuthProvider = ({
   const [userName, setUserName] = useState<string | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
+  const [config, setConfig] = useState<AppConfig | null>(null);
 
   useEffect(() => {
     const initKeycloak = async () => {
+      const cfg = await getAppConfig();
+      setConfig(cfg);
+
       const keycloakInstance = new Keycloak({
-        url: process.env.NEXT_PUBLIC_KEYCLOAK_URL!,
-        realm: process.env.NEXT_PUBLIC_KEYCLOAK_REALM!,
-        clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID!,
+        url: cfg.keycloak.url,
+        realm: cfg.keycloak.realm,
+        clientId: cfg.keycloak.clientId,
       });
 
       try {
@@ -86,6 +92,7 @@ export const KeycloakAuthProvider = ({
         userName,
         authToken,
         roles,
+        config,
       }}
     >
       {children}

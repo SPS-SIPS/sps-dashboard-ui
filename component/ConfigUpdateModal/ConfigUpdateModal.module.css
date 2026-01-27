@@ -1,0 +1,102 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Specific styles when used as a Modal popup */
+.popupContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-overlay);
+    z-index: var(--z-index-modal);
+    backdrop-filter: blur(5px);
+    padding: var(--spacing-md);
+}
+
+/* Scoped scrolling ONLY for popup mode */
+.popupContainer .formContainer {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.formContainer {
+    position: relative; /* For positioning internal elements if needed */
+    background-color: var(--color-background);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 550px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    border: 1px solid var(--color-border);
+}
+
+/* New Header Layout */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
+}
+
+.formTitle {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    flex: 1; /* Title takes available space */
+}
+
+/* Close Button Styling */
+.closeButton {
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.closeButton:hover {
+    background-color: var(--color-background-tertiary);
+    color: var(--color-error); /* Feedback when hovering the close button */
+}
+
+.formSubtitle {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+}
+
+/* Scrollbar styling for popups */
+.formContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+.formContainer::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-hover);
+    border-radius: var(--radius-sm);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .formContainer {
+        padding: var(--spacing-lg);
+    }
+    .formTitle {
+        font-size: var(--font-size-lg);
+    }
+}

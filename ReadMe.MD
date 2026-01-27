@@ -1,150 +1,208 @@
-# SPS Dashboard UI - Local Development Guide
+# SPS / SIPS Dashboard UI - Local Development Guide
 
-This guide will help you set up and run the SPS Dashboard UI locally with HTTPS enabled using a self-signed SSL certificate.
+This guide will help you set up and run the **SPS / SIPS Dashboard UI** locally, with HTTPS enabled using a self-signed SSL certificate, and runtime configuration through `db.json`.
+
+---
+
+## Table of Contents
+
+1. [Prerequisites](#prerequisites)
+2. [Directory Structure](#directory-structure)
+3. [Generating a Self-Signed SSL Certificate](#generating-a-self-signed-ssl-certificate)
+4. [Running the App](#running-the-app)
+
+    * [Using Docker Compose](#using-docker-compose)
+    * [Locally Without Docker](#locally-without-docker)
+5. [Runtime Configuration (`db.json`)](#runtime-configuration-dbjson)
+6. [What This Controls](#what-this-controls)
+7. [First-Time Setup (UI Flow)](#first-time-setup-ui-flow)
+8. [Profile-Based Feature Visibility](#profile-based-feature-visibility)
+9. [Why This Dashboard?](#why-this-dashboard)
+
+---
 
 ## Prerequisites
 
-1. **Node.js** (v18+ recommended)
-2. **npm** (comes with Node.js)
-3. **Docker & Docker Compose** (optional, for containerized development)
-4. **OpenSSL** (for generating self-signed certificates)
+* **Node.js** v18+
+* **npm** (comes with Node.js)
+* **Docker & Docker Compose** (optional)
+* **OpenSSL** (for generating self-signed certificates)
+
+---
 
 ## Directory Structure
 
 ```
 sps-dashboard-ui/
 ├── certs/
-│   ├── tls.crt         # SSL certificate (to be generated)
-│   └── tls.key         # SSL private key (to be generated)
-├── components/
-├── pages/
-├── public/
-├── server-https.js
-├── entrypoint-https.sh
+│   ├── tls.crt         # SSL certificate (generated locally)
+│   └── tls.key         # SSL private key (generated locally)
+├── components/         # React components
+├── pages/              # Next.js pages
+├── public/             # Static assets
+├── server-https.js     # HTTPS server entrypoint
+├── entrypoint-https.sh # Docker HTTPS startup script
 ├── Dockerfile
 ├── docker-compose.yml
 ├── package.json
-├── .env.local
+├── db.json             # Default runtime configuration
+├── .gitignore
 └── ...
 ```
 
+---
+
 ## Generating a Self-Signed SSL Certificate
 
-Run these commands inside the `sps-dashboard-ui` directory:
+Inside your project root:
 
-```sh
+```bash
 mkdir -p certs
 cd certs
 
 # 1. Generate a private key
 openssl genrsa -out tls.key 2048
 
-# 2. Generate a self-signed certificate (replace 127.0.0.1 with your local IP or DNS if needed)
+# 2. Generate a self-signed certificate (replace 127.0.0.1 with local IP if needed)
 openssl req -new -x509 -key tls.key -out tls.crt -days 365 -subj "/CN=127.0.0.1"
 ```
 
-This will create `tls.crt` and `tls.key` in the `certs/` directory.
-
-## Running the App with Docker Compose
-
-1. Build and start the app:
-   ```sh
-   docker-compose up --build
-   ```
-2. Visit [https://localhost:3000](https://localhost:3000) in your browser. Accept the self-signed certificate warning.
-
-## Running the App Locally (without Docker)
-
-1. Install dependencies:
-   ```sh
-   npm install
-   ```
-2. Make sure the certs are in `certs/tls.crt` and `certs/tls.key`.
-3. Start the server:
-   ```sh
-   npm run build
-   node server-https.js
-   ```
-4. Visit [https://localhost:3000](https://localhost:3000).
+This generates `tls.key` and `tls.crt` in the `certs/` folder.
 
 ---
 
-**Note:** For production, you must use a valid certificate from a trusted Certificate Authority (CA) or a PKI certificate provided by SPS.
-# SIPS Dashboard UI
+## Running the App
 
-This project provides a dashboard interface for interacting with the **SIPS Connect** platform. The dashboard allows users to manage and utilize SIPS Connect features through a user-friendly web interface.
+### Using Docker Compose
 
-## Prerequisites
-
-- [Docker](https://www.docker.com/products/docker-desktop) installed on your machine.
-- [Docker Compose](https://docs.docker.com/compose/) installed.
-
-## Setup Instructions
-
-### 1. Create the Docker Network
-
-This project requires a Docker network named `sips-network`. If it does not already exist, create it with the following command:
+1. Ensure the Docker network exists:
 
 ```bash
 docker network create --driver bridge sips-network
 ```
 
-### 2. Configure Environment Variables
-
-Copy the provided `.env.local` file or create your own in the project root. Update the variables as needed for your environment:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8081
-NEXT_PUBLIC_KEYCLOAK_URL=https://localhost:8080
-NEXT_PUBLIC_KEYCLOAK_REALM=your_realm
-NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=your_client_id
-
-# Active application profile
-NEXT_PUBLIC_ACTIVE_PROFILE=dev
-# options: dev | test | prod
-```
-
-### Environment Variables Explained
-
-| Variable                         | Description                            |
-| -------------------------------- | -------------------------------------- |
-| `NEXT_PUBLIC_API_URL`            | Base URL for SPS / SIPS backend APIs   |
-| `NEXT_PUBLIC_KEYCLOAK_URL`       | Keycloak authentication server         |
-| `NEXT_PUBLIC_KEYCLOAK_REALM`     | Keycloak realm                         |
-| `NEXT_PUBLIC_KEYCLOAK_CLIENT_ID` | Keycloak client ID                     |
-| `NEXT_PUBLIC_ACTIVE_PROFILE`     | Controls environment-based UI behavior |
-
----
-
-## Environment-Based Feature Visibility
-
-The following **API Tester pages are automatically hidden when**:
-
-```env
-NEXT_PUBLIC_ACTIVE_PROFILE=prod
-```
-
-### Pages Hidden in `prod`
-
-#### 🔒 API Verification Request Tester
-
-#### 🔒 API Payment Request Tester
-
-👉 These tools remain **available in `dev` and `test` profiles only** to prevent misuse in production environments.
-
----
-### 3. Build and Run the Dashboard
-
-Start the dashboard using Docker Compose:
+2. Build and start the app:
 
 ```bash
 docker-compose up --build
 ```
 
-The dashboard will be available at [http://localhost:3000](http://localhost:3000).
+3. Open your browser at: [https://localhost:3000](https://localhost:3000)
+   Accept the self-signed certificate warning.
+
+---
+
+### Locally Without Docker
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Ensure `certs/tls.crt` and `certs/tls.key` exist.
+3. Build and run the server:
+
+```bash
+npm run build
+node server-https.js
+```
+
+4. Visit [https://localhost:3000](https://localhost:3000)
+
+---
+
+## Runtime Configuration (`db.json`)
+
+The application now **uses `db.json` for runtime configuration**, replacing the old `.env` approach.
+
+### Default `db.json`
+
+```json
+{
+  "config": {
+    "api": {
+      "baseUrl": ""
+    },
+    "keycloak": {
+      "url": "",
+      "realm": "",
+      "clientId": ""
+    },
+    "profile": "dev",
+    "uiGuards": {
+      "forceFormCompletion": true,
+      "setupConfirmed": false
+    }
+  }
+}
+```
+
+---
+
+## What This Controls
+
+The `db.json` configuration controls:
+
+* **API base URL** → The backend endpoints the UI interacts with.
+* **Keycloak authentication** → URL, realm, and client ID.
+* **Active profile** → `dev`, `test`, or `prod`. Determines which features are visible.
+* **UI behavior guards** → e.g., forcing setup completion before accessing the dashboard.
+
+**All values can be updated directly from the UI** after startup. Changes are persisted to `db.json` automatically.
+
+---
+
+## First-Time Setup (UI Flow)
+
+When the portal starts for the first time:
+
+1. **Default configuration is loaded** from `db.json`.
+2. **Setup screen is displayed** to the user.
+3. **User enters API & Keycloak details** via the configuration UI.
+4. **Configuration is saved to disk** in `db.json`.
+5. **Portal becomes fully operational**, and all pages are accessible according to the profile and UI guards.
+
+### Example Screenshots
+* Setup Screen:
+  ![Initial Setup](screenshots/190617.png)
+
+> **Note:** If you cannot access the dashboard due to incorrect configuration, you can visit the **Setup Configuration page** (`/setup-config`) to update your settings.  
+> After confirming the setup, the page will no longer be editable. If accessed afterwards, it will display an informational message indicating that the integration setup is already confirmed.
+
+### `/setup-config` Screenshots
+
+* **Update Configuration Modal (if values need correction):**  
+  ![Update Configuration](screenshots/132001.png)
+
+
+
+* **Confirm Setup Modal:**  
+  ![Confirm Setup](screenshots/132836.png)
+
+* **Post-Confirmation `/setup-config` Message:**  
+  ![Setup Confirmed](screenshots/123417.png)
+---
+## Profile-Based Feature Visibility
+
+Certain pages, like API testers, are **hidden in `prod`** to prevent misuse.
+The `profile` in `db.json` controls this:
+
+| Profile | Feature Visibility      |
+| ------- | ----------------------- |
+| dev     | All features visible    |
+| test    | Some tools hidden       |
+| prod    | Admin/test pages hidden |
+
+---
 
 ## Why This Dashboard?
 
-This dashboard was created to provide a convenient and efficient way to interact with the **SIPS Connect** platform. It enables users to manage platform features, monitor activity, and perform administrative tasks through a centralized web interface.
+This dashboard was created to provide a **convenient and efficient way to interact with the SIPS Connect platform**. It allows users to:
 
----
+* **Manage platform features** through a centralized UI.
+* **Monitor system activity** and logs easily.
+* **Perform administrative tasks** efficiently.
+* **Configure runtime settings** dynamically via `db.json`.
+
+It is designed for **both development and production environments**, with profile-based feature visibility to ensure safe operation.

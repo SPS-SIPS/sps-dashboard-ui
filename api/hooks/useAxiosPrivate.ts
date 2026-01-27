@@ -1,14 +1,22 @@
-import { useEffect } from "react";
+import {useEffect, useMemo} from "react";
 import { useAuthentication } from "../../auth/AuthProvider";
-import { axiosPrivate } from "../axios";
+import axios from "axios";
 
 const useAxiosPrivate = () => {
-    const { keycloak } = useAuthentication();
+    const { keycloak ,config, isLoading} = useAuthentication();
+
+    const axiosInstance = useMemo(() => {
+        return axios.create({
+            baseURL: config?.api.baseUrl || "http://localhost:8080", // fallback
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+        });
+    }, [config?.api.baseUrl]);
 
     useEffect(() => {
         if (!keycloak) return;
 
-        const requestIntercept = axiosPrivate.interceptors.request.use(
+        const requestIntercept = axiosInstance.interceptors.request.use(
             async (config) => {
                 if (!keycloak.authenticated || !keycloak.token) {
                     return config;
@@ -29,7 +37,7 @@ const useAxiosPrivate = () => {
             (error) => Promise.reject(error)
         );
 
-        const responseIntercept = axiosPrivate.interceptors.response.use(
+        const responseIntercept = axiosInstance.interceptors.response.use(
             (response) => response,
             async (error) => {
                 const prevRequest = error?.config;
@@ -40,7 +48,7 @@ const useAxiosPrivate = () => {
                     try {
                         await keycloak.updateToken();
                         prevRequest.headers.Authorization = `Bearer ${keycloak.token}`;
-                        return axiosPrivate(prevRequest);
+                        return axiosInstance(prevRequest);
                     } catch (refreshError) {
                         console.error("Token refresh failed:", refreshError);
                         await keycloak.logout();
@@ -53,12 +61,12 @@ const useAxiosPrivate = () => {
         );
 
         return () => {
-            axiosPrivate.interceptors.request.eject(requestIntercept);
-            axiosPrivate.interceptors.response.eject(responseIntercept);
+            axiosInstance.interceptors.request.eject(requestIntercept);
+            axiosInstance.interceptors.response.eject(responseIntercept);
         };
     }, [keycloak]);
 
-    return axiosPrivate;
+    return axiosInstance;
 };
 
 export default useAxiosPrivate;

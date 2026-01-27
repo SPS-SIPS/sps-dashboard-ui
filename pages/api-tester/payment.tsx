@@ -10,18 +10,19 @@ import sharedStyles from "../../component/RequestForm/SharedStyles.module.css";
 import styles from "../../styles/VerificationRequestPage.module.css";
 import { validateUrl } from "../../utils/validation";
 import { useApiRequest } from "../../utils/apiService";
-import { baseURL } from "../../constants/constants";
+import {useAuthentication} from "../../auth/AuthProvider";
 
 const PaymentPage = () => {
   const router = useRouter();
   const [internalData, setInternalData] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const {config} = useAuthentication();
   const [submittedData, setSubmittedData] = useState<Record<
     string,
     string
   > | null>(null);
   const [apiUrl, setApiUrl] = useState<string>(
-    `${baseURL}/api/v1/Gateway/Payment`
+    `${config?.api.baseUrl}/api/v1/Gateway/Payment`
   );
   const [response, setResponse] = useState<unknown>(null);
   const [urlError, setUrlError] = useState<string>("");
@@ -57,11 +58,11 @@ const PaymentPage = () => {
     setLoading(false);
   };
 
-  const activeProfile = process.env.NEXT_PUBLIC_ACTIVE_PROFILE;
+  const activeProfile = config?.profile;
 
   useEffect(() => {
     if (activeProfile === "prod") {
-      void router.replace("/unauthorized");
+      void router.replace("/403");
     }
   }, [activeProfile, router]);
 

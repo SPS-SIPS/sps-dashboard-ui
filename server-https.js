@@ -17,12 +17,14 @@ const httpsOptions = {
     cert: readFileSync(certPath),
 };
 
+const port = process.env.PORT || 3000;
+
 app.prepare().then(() => {
     createServer(httpsOptions, (req, res) => {
         // Pass req.url as-is to Next.js handler to avoid redirect issues
         handle(req, res);
-    }).listen(3000, err => {
+    }).listen(port, err => {
         if (err) throw err;
-        console.log('> Server started on https://localhost:3000');
+        console.log(`> Server started on https://localhost:${port}`);
     });
 });

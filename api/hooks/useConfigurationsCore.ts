@@ -14,6 +14,9 @@ export type ConfigurationsCore = {
   includeIdempotencyHeaders: boolean;
   httpTimeoutSeconds: number;
   dbPersistTimeoutSeconds: number;
+  transactionTimeoutMinutes: number;
+  timeoutWorkerSchedule: string;
+  includeCoreBankOnListing: boolean;
 };
 
 const BASE_URL = "/api/v1/Configurations/Core";
