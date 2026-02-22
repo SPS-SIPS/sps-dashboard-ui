@@ -74,9 +74,7 @@ export function mapToPrefilledValues(data: {
         CreditorAccountType: data.Type,
         CreditorName: data.Name,
         Currency: data.Currency,
-        LocalInstrument: 'p2p',
-        CategoryPurpose: 'c2crt',
-        CreditorIssuer: 'c',
+        CreditorIssuer: 'C',
         ToBIC: data.ToBIC
     };
 }

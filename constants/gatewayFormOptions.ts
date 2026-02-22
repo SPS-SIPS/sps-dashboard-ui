@@ -6,10 +6,16 @@ export const verificationMethods = [
 ];
 
 export const paymentMethods = [
-  { value: "p2p", label: "P2P - (Person to Person)" },
-  { value: "b2m", label: "B2M - (Person to Merchant)" },
-  { value: "p2g", label: "P2G - (Person to Government)" },
-  { value: "g2p", label: "G2P - (Government to Person)" },
+  { value: "P2P", label: "P2P - (Person to Person)" },
+  { value: "P2M", label: "P2M - (Person to Merchant)" },
+  { value: "P2G", label: "P2G - (Person to Government)" },
+  { value: "G2P", label: "G2P - (Government to Person)" },
+];
+
+export const categoryPurposeOptions = [
+  { value: "C2CCRT", label: "C2C Credit Transfer" },
+  { value: "C2BSQR", label: "C2B Static QR Payment" },
+  { value: "C2BDQR", label: "C2B Dynamic QR Payment" },
 ];
 
 export const bicOptionsDev  = [

@@ -47,6 +47,23 @@
     margin-top: var(--spacing-xl);
 }
 
+.generateIdButton {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: transparent;
+    border: none;
+    color: var(--color-primary);
+    font-size: var(--font-size-sm);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: var(--transition-default);
+}
+
+.generateIdButton:hover {
+    color: var(--color-primary-dark);
+    text-underline-offset: 3px;
+}
+
 .submitButton {
     background-color: var(--color-primary);
     color: var(--color-text-on-primary);

@@ -7,9 +7,13 @@ import SelectInput from "../common/SelectInput/SelectInput";
 
 import styles from "../RequestForm/RequestForm.module.css";
 import {
+  bicOptionsDev,
+  bicOptionsProd,
+  categoryPurposeOptions,
   paymentMethods,
   verificationMethods,
 } from "../../constants/gatewayFormOptions";
+import {useAuthentication} from "../../auth/AuthProvider";
 
 export interface FieldMapping {
   internalField: string;
@@ -31,6 +35,9 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const [disabledFields, setDisabledFields] = useState<Set<string>>(new Set());
 
+  const {config} = useAuthentication();
+  const activeProfile = config?.profile;
+
   useEffect(() => {
     if (endpoints) {
       const selectedEndpoint = endpoints["PaymentRequest"];
@@ -45,7 +52,6 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
             if (
               internalField !== "LocalInstrument" &&
               internalField !== "CategoryPurpose" &&
-              internalField !== "ToBIC" &&
               internalField !== "CreditorIssuer"
             ) {
               disabledSet.add(userField);
@@ -60,7 +66,16 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
   }, [endpoints, prefilledValues]);
 
   const generateLocalId = () => {
-    return `${Math.floor(Math.random() * 1000)}`;
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const length = 6;
+
+    const array = new Uint32Array(length);
+    window.crypto.getRandomValues(array);
+
+    const randomPart = Array.from(array, (x) => chars[x % chars.length]).join("");
+    const timestamp = Date.now().toString(36).toUpperCase(); // base36 timestamp
+
+    return `${timestamp}${randomPart}`;
   };
 
   const handleInputChange = (userField: string, value: string) => {
@@ -109,14 +124,28 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
                 internalField === "DebtorAccountType";
 
               const isPaymentType = internalField === "LocalInstrument";
-              const isSelectField = isAccountType || isPaymentType;
+              const isCategoryPurpose = internalField === "CategoryPurpose";
+              const isBicField =
+                  internalField === "CreditorAgentBIC" ||
+                  internalField === "ToBIC";
+
+              const isSelectField =
+                  isAccountType || isPaymentType || isCategoryPurpose || isBicField;
+
+              const bicOptions =
+                  activeProfile === "prod" ? bicOptionsProd : bicOptionsDev;
+
               const selectOptions = isAccountType
-                ? verificationMethods
-                : paymentMethods;
-              const isDisabled =
-                isSelectField === isAccountType
-                  ? disabledFields.has(userField)
-                  : false;
+                  ? verificationMethods
+                  : isPaymentType
+                      ? paymentMethods
+                      : isCategoryPurpose
+                          ? categoryPurposeOptions
+                          : isBicField
+                              ? bicOptions
+                              : [];
+
+              const isDisabled = disabledFields.has(userField);
 
               return (
                 <div key={index} className={styles.mappingItem}>
@@ -152,7 +181,7 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
                             const generatedId = generateLocalId();
                             handleInputChange(userField, generatedId);
                           }}
-                          className="p-1 mt-2  text-green-300 underline hover:cursor-pointer hover:underline-offset-2 "
+                          className={styles.generateIdButton}
                         >
                           Generate Random Local ID
                         </button>
