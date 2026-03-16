@@ -23,6 +23,7 @@ import {useAuthentication} from "../../../auth/AuthProvider";
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRadarChart} from "react-icons/ai";
 import {FaCodeCompare} from "react-icons/fa6";
 import {LuScanBarcode} from "react-icons/lu";
+import {HiOutlineQrCode} from "react-icons/hi2";
 
 interface NavItem {
     title: string;
@@ -292,6 +293,11 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                             icon: <FiChevronRight className={styles.icon}/>
                         }
                     ],
+                },
+                {
+                    title: 'SOMQR End-to-End Test',
+                    path: '/qr-codes/scan-pay',
+                    icon: <HiOutlineQrCode   className={styles.icon}/>
                 }
             ],
         },

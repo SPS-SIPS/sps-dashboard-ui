@@ -1,0 +1,219 @@
+/* ValidationSteps.module.css */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-index-modal);
+    animation: fadeIn var(--transition-fast);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal {
+    background-color: var(--color-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xl);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp var(--transition-normal);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.closeButton {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background: none;
+    border: none;
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.closeButton:hover {
+    color: var(--color-error);
+    background-color: var(--color-error-background);
+}
+
+.closeButton:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+    padding-right: var(--spacing-xl); /* Space for close button */
+}
+
+/* Steps chain container */
+.stepsChain {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding-left: var(--spacing-xl);
+}
+
+/* Individual step */
+.step {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    position: relative;
+    padding-bottom: var(--spacing-xl);
+}
+
+.step.lastStep {
+    padding-bottom: 0;
+}
+
+.iconWrapper {
+    position: relative;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.passIcon {
+    color: var(--color-success);
+    font-size: 24px;
+}
+
+.failIcon {
+    color: var(--color-error);
+    font-size: 24px;
+}
+
+.iconWrapper::before {
+    content: '';
+    position: absolute;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: calc(100% + var(--spacing-xl) - 32px);
+    background: var(--color-border);
+    z-index: var(--z-index-base);
+}
+
+.step.lastStep .iconWrapper::before {
+    display: none;
+}
+
+.content {
+    flex: 1;
+}
+
+.stepName {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stepMessage {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.step:hover .stepName {
+    color: var(--color-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal {
+        padding: var(--spacing-lg);
+        width: 95%;
+    }
+
+    .stepsChain {
+        padding-left: var(--spacing-lg);
+    }
+
+    .iconWrapper {
+        width: 28px;
+        height: 28px;
+    }
+
+    .passIcon,
+    .failIcon {
+        font-size: 20px;
+    }
+}
+
+
+.title,
+.subtitle,
+.stepName,
+.stepMessage {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+
+.subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin-top: calc(var(--spacing-xs) * -1);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+
+.title + .subtitle {
+    margin-top: calc(var(--spacing-xs) * -1);
+}
+
+
+.modal {
+
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+

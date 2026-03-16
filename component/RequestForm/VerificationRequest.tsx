@@ -4,19 +4,14 @@ import SpinLoading from "../Loading/SpinLoading/SpinLoading";
 import Input from "../common/Input/Input";
 import ActionButton from "../common/ActionButton/ActionButton";
 import SelectInput from "../common/SelectInput/SelectInput";
-import { verificationMethods } from "../../constants/gatewayFormOptions";
+import {bicOptionsDev, verificationMethods} from "../../constants/gatewayFormOptions";
 import styles from "./RequestForm.module.css";
-import useParticipants from "../../api/hooks/useParticipants";
 
 export interface FieldMapping {
   internalField: string;
   userField: string;
   type: string;
 }
-type Option = {
-  value: string;
-  label: string;
-};
 
 interface VerificationRequestProps {
   onSubmit: (
@@ -31,8 +26,6 @@ const VerificationRequest: React.FC<VerificationRequestProps> = ({
   const { endpoints, loading, error } = useEndpoints();
   const [fieldMappings, setFieldMappings] = useState<FieldMapping[]>([]);
   const [formValues, setFormValues] = useState<Record<string, string>>({});
-
-  const { bicOptions } = useParticipants();
 
   const handleInputChange = (userField: string, value: string) => {
     setFormValues((prev) => ({
@@ -106,7 +99,7 @@ const VerificationRequest: React.FC<VerificationRequestProps> = ({
                       options={
                         mapping.internalField === "Type"
                           ? verificationMethods
-                          : bicOptions
+                          : bicOptionsDev
                       }
                       required={true}
                       name={mapping.userField}

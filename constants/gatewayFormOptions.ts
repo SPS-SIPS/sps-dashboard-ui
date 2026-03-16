@@ -50,3 +50,56 @@ export const bicOptionsProd  = [
   { value: "SOMNSOSM", label: "SomBank Ltd" },
   { value: "AMBKSOSM", label: "Amana Bank" },
 ];
+
+export const getBicFromAcqId = (
+    acqId: string,
+    env: "dev" | "prod"
+) => {
+  return env === "dev"
+      ? acqIdToBicDev[acqId]
+      : acqIdToBicProd[acqId];
+};
+
+export const extractBankCodeFromIBAN = (iban: string): string | null => {
+
+  if (!iban.startsWith("SO") || iban.length < 23) {
+    return null;
+  }
+
+  return iban.substring(4, 8);
+};
+
+export const acqIdToBicDev: Record<string, string> = {
+  "0001": "SSBMSOS0",
+  "0002": "DAHISOS0",
+  "0003": "AALLSOS0",
+  "0004": "IBOSSOS0",
+  "0005": "PBSMSOS0",
+  "0006": "DARYSOS0",
+  "0007": "SOMNSOS0",
+  "0008": "MYBASOS0",
+  "0009": "AMBKSOS0",
+  "0010": "AGROSOS0",
+  "0011": "GLXYSOS0",
+  "0012": "IDMNSOS0",
+  "0013": "BUHBSOS0",
+  "0014": "ZKBASOS0"
+};
+
+export const acqIdToBicProd: Record<string, string> = {
+  "0001": "SSBMSOSM",
+  "0002": "DAHISOSM",
+  "0003": "AALLSOSG",
+  "0004": "IBOSSOSM",
+  "0005": "PBSMSOSM",
+  "0006": "DARYSOSG",
+  "0007": "SOMNSOSM",
+  "0008": "MYBASOSM",
+  "0009": "AMBKSOSM",
+  "0010": "AGROSOSM",
+  "0011": "GLXYSOSM",
+  "0012": "IDMNSOSM",
+  "0013": "BUHBSOSM",
+  "0014": "ZKBASOS0"
+};
+

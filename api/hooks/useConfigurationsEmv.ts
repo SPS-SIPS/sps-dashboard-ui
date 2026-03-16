@@ -1,5 +1,11 @@
 import useAxiosPrivate from "./useAxiosPrivate";
 
+export type Acquirer = {
+    id: string;
+    name: string;
+    bic: string;
+};
+
 export type ConfigurationsEmv = {
     acquirerId: string;
     fiType: string;
@@ -11,6 +17,7 @@ export type ConfigurationsEmv = {
         acquirerTag: string;
         merchantIdTag: string;
     };
+    acquirers: Acquirer[];
 };
 
 const BASE_URL = "api/v1/Configurations/Emv";

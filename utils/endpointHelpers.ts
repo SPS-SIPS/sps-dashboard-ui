@@ -59,10 +59,11 @@ export function remapToInternalFields(
 
 export function mapToPrefilledValues(data: {
     ToBIC: string;
-    Id: string;
-    Type: string;
+    AccountNo: string;
+    AccountType: string;
     Name: string;
     Currency: string;
+    Address: string;
     LocalInstrument: string;
     CategoryPurpose: string;
    CreditorIssuer: string;
@@ -70,10 +71,11 @@ export function mapToPrefilledValues(data: {
     return {
         
         CreditorAgentBIC: data.ToBIC,
-        CreditorAccount: data.Id,
-        CreditorAccountType: data.Type,
+        CreditorAccount: data.AccountNo,
+        CreditorAccountType: data.AccountType,
         CreditorName: data.Name,
         Currency: data.Currency,
+        CreditorAddress: data.Address,
         CreditorIssuer: 'C',
         ToBIC: data.ToBIC
     };

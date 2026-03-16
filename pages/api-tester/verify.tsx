@@ -88,7 +88,7 @@ const VerificationRequestPage: React.FC = () => {
       const verificationResponseFields = getUserFieldsFromEndpoint(
         endpointsData,
         "VerificationResponse",
-        ["Id", "Type", "Name", "Currency"]
+        ["AccountNo", "AccountType", "Name", "Currency", "Address"]
       );
       const verificationRequestFields = getUserFieldsFromEndpoint(
         endpointsData,

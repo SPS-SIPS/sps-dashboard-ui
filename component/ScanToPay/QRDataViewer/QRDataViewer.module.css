@@ -1,0 +1,124 @@
+/* QRDataViewer.module.css */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-index-modal);
+    animation: fadeIn var(--transition-fast);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal {
+    background-color: var(--color-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xl);
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    position: relative;
+    animation: slideUp var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.closeButton {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background: none;
+    border: none;
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    z-index: 1;
+}
+
+.closeButton:hover {
+    color: var(--color-error);
+    background-color: var(--color-error-background);
+}
+
+.closeButton:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+    padding-right: var(--spacing-xl);
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin-top: calc(var(--spacing-xs) * -1);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.5;
+    font-weight: 400;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.jsonBlock {
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    overflow: auto;
+    white-space: pre-wrap;       /* Allows wrapping */
+    word-break: break-word;       /* Breaks long strings */
+    overflow-wrap: break-word;    /* Modern equivalent */
+    max-height: 60vh;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal {
+        padding: var(--spacing-lg);
+        width: 95%;
+    }
+
+    .jsonBlock {
+        padding: var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+}

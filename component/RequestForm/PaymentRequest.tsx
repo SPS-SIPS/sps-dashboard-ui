@@ -14,6 +14,7 @@ import {
   verificationMethods,
 } from "../../constants/gatewayFormOptions";
 import {useAuthentication} from "../../auth/AuthProvider";
+import {generateLocalId} from "../../utils/generateLocalId";
 
 export interface FieldMapping {
   internalField: string;
@@ -65,19 +66,6 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
     }
   }, [endpoints, prefilledValues]);
 
-  const generateLocalId = () => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const length = 6;
-
-    const array = new Uint32Array(length);
-    window.crypto.getRandomValues(array);
-
-    const randomPart = Array.from(array, (x) => chars[x % chars.length]).join("");
-    const timestamp = Date.now().toString(36).toUpperCase(); // base36 timestamp
-
-    return `${timestamp}${randomPart}`;
-  };
-
   const handleInputChange = (userField: string, value: string) => {
     setFormValues((prev) => ({
       ...prev,
@@ -98,8 +86,14 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
       .replace(/^./, (str) => str.toUpperCase());
   };
 
+  const OPTIONAL_FIELDS = ["CreditorAddress", "DebtorAddress"];
+
   const isFormValid = () => {
     return fieldMappings.every((mapping) => {
+      if (OPTIONAL_FIELDS.includes(mapping.internalField)) {
+        return true;
+      }
+
       return formValues[mapping.userField]?.trim();
     });
   };
@@ -171,7 +165,7 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
                         }
                         type={type === "double" ? "number" : type}
                         placeholder={`Enter ${userField}`}
-                        required
+                        required={!OPTIONAL_FIELDS.includes(internalField)}
                         disabled={isDisabled}
                       />
                       {internalField === "EndToEndId" && (
