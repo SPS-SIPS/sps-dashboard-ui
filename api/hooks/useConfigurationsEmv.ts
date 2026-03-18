@@ -17,7 +17,7 @@ export type ConfigurationsEmv = {
         acquirerTag: string;
         merchantIdTag: string;
     };
-    acquirers: Acquirer[];
+    acquirers?: Acquirer[] | null;
 };
 
 const BASE_URL = "api/v1/Configurations/Emv";

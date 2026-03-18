@@ -3,7 +3,8 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     padding: var(--spacing-xl);
-    max-width: 500px;
+    /*max-width: 500px;*/
+    width: 100%;
     /*margin: 0 auto;*/
     transition: box-shadow var(--transition-fast);
 }

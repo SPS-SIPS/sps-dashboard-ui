@@ -1,225 +1,386 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
-import { useApiRequest } from "../../utils/apiService";
+import React, {useEffect, useState} from "react";
+import {useApiRequest} from "../../utils/apiService";
 import SpinLoading from "../../component/Loading/SpinLoading/SpinLoading";
-import VerificationRequest from "../../component/RequestForm/VerificationRequest";
 import Input from "../../component/common/Input/Input";
-import { validateUrl } from "../../utils/validation";
 import ActionButton from "../../component/common/ActionButton/ActionButton";
-import { EndpointsData } from "../../api/hooks/useEndpoints";
+import SelectInput from "../../component/common/SelectInput/SelectInput";
+
+import useEndpoints from "../../api/hooks/useEndpoints";
+
 import {
-  extractFieldsFromData,
-  getUserFieldFromEndpoint,
-  getUserFieldsFromEndpoint,
-  remapToInternalFields,
+    extractFieldsFromData,
+    getUserFieldFromEndpoint,
+    getUserFieldsFromEndpoint,
+    remapToInternalFields,
 } from "../../utils/endpointHelpers";
+
+import {
+    verificationMethods,
+    bicOptionsDev,
+} from "../../constants/gatewayFormOptions";
+
+import {validateUrl} from "../../utils/validation";
+
 import sharedStyles from "../../component/RequestForm/SharedStyles.module.css";
 import styles from "../../styles/VerificationRequestPage.module.css";
+
 import RoleGuard from "../../auth/RoleGuard";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import {useAuthentication} from "../../auth/AuthProvider";
+import QRDataViewer from "../../component/ScanToPay/QRDataViewer/QRDataViewer";
+import UploadQRScanner from "../../component/ScanToPay/UploadQRScanner/UploadQRScanner";
+import {SOMQRType} from "../../utils/validateSOMQR";
+import AlertModal from "../../component/common/AlertModal/AlertModal";
 
 const VerificationRequestPage: React.FC = () => {
-  const [submittedData, setSubmittedData] = useState<Record<
-    string,
-    string
-  > | null>(null);
-  const {config} = useAuthentication();
-  const [apiUrl, setApiUrl] = useState<string>(
-    `${config?.api.baseUrl}/api/v1/Gateway/Verify`
-  );
+    const {config} = useAuthentication();
+    const router = useRouter();
+    const {makeApiRequest} = useApiRequest();
+    const {endpoints, loading: endpointsLoading} = useEndpoints();
 
-  const [urlError, setUrlError] = useState<string>("");
-  const [response, setResponse] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [endpointsData, setEndpointsData] = useState<EndpointsData | null>(
-    null
-  );
-  const [processingPayment, setProcessingPayment] = useState(false);
-  const { makeApiRequest } = useApiRequest();
+    const [mode, setMode] = useState<"form" | "qr">("form");
 
-  const handleApiUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setApiUrl(e.target.value);
-  };
+    const [formValues, setFormValues] = useState<Record<string, string>>({});
+    const [fieldMappings, setFieldMappings] = useState<any[]>([]);
 
-  const router = useRouter();
-  const activeProfile =  config?.profile;
+    const [qrCode, setQrCode] = useState("");
 
-  useEffect(() => {
-    if (activeProfile === "prod") {
-      void router.replace("/403");
-    }
-  }, [activeProfile, router]);
+    const [submittedData, setSubmittedData] = useState<any>(null);
+    const [response, setResponse] = useState<any>(null);
 
-  if (activeProfile === "prod") {
-    return null;
-  }
+    const [requestViewerOpen, setRequestViewerOpen] = useState(false);
+    const [responseViewerOpen, setResponseViewerOpen] = useState(false);
 
-  const handleSubmit = async (
-    formValues: Record<string, string>,
-    endpoints: EndpointsData | null
-  ) => {
-    setUrlError("");
-    setLoading(true);
-    if (!validateUrl(apiUrl, { allowLocalhost: true })) {
-      setUrlError("Invalid URL. Please enter a valid API endpoint.");
-      setLoading(false);
-      return;
-    }
-
-    const response = await makeApiRequest({
-      url: apiUrl,
-      method: "post",
-      data: formValues,
-    });
-
-    setResponse(response);
-    setSubmittedData(formValues);
-    setEndpointsData(endpoints);
-    setLoading(false);
-  };
-
-  const handleSendPaymentRequest = async () => {
-    if (!submittedData || !response?.data || !endpointsData) return;
-
-    try {
-      setProcessingPayment(true);
-
-      const verificationResponseFields = getUserFieldsFromEndpoint(
-        endpointsData,
-        "VerificationResponse",
-        ["AccountNo", "AccountType", "Name", "Currency", "Address"]
-      );
-      const verificationRequestFields = getUserFieldsFromEndpoint(
-        endpointsData,
-        "VerificationRequest",
-        ["ToBIC"]
-      );
-
-      const submittedFieldValues = extractFieldsFromData(
-        submittedData,
-        Object.values(verificationRequestFields)
-      );
-      const responseFieldValues = extractFieldsFromData(
-        response.data,
-        Object.values(verificationResponseFields)
-      );
-
-      const combinedFields = {
-        ...submittedFieldValues,
-        ...responseFieldValues,
-      };
-
-      const internalData = remapToInternalFields(combinedFields, {
-        ...verificationResponseFields,
-        ...verificationRequestFields,
-      });
-
-      await router.push({
-        pathname: "/api-tester/payment",
-        query: {
-          data: JSON.stringify(internalData),
-        },
-      });
-    } finally {
-      setProcessingPayment(false);
-    }
-  };
-
-  const isVerified = (() => {
-    const isVerifiedField = getUserFieldFromEndpoint(
-      endpointsData,
-      "VerificationResponse",
-      "IsVerified"
+    const [apiUrl, setApiUrl] = useState(
+        `${config?.api.baseUrl}/api/v1/Gateway/Verify`
     );
-    return isVerifiedField ? response?.data?.[isVerifiedField] : false;
-  })();
 
-  return (
-    <RoleGuard allowedRoles={["gateway"]}>
-      <div className={sharedStyles.container}>
-        <div className={sharedStyles.titleContainer}>
-          <h1 className={sharedStyles.mainTitle}>
-            API Verification Request Tester
-          </h1>
-          <p className={sharedStyles.subTitle}>
-            Validate and test your API endpoints by sending properly formatted
-            status requests
-          </p>
-        </div>
-        <>
-          <Input
-            label="Enter API Endpoint URL"
-            value={apiUrl}
-            onChange={handleApiUrlChange}
-            type="url"
-            placeholder={"https://example.com/api/v1/Gateway/Verify"}
-            errorMessage={urlError}
-            required
-          />
-          <VerificationRequest onSubmit={handleSubmit} />
-        </>
+    const [modal, setModal] = useState<{
+        show: boolean;
+        title?: string;
+        message?: string;
+    }>({show: false});
 
-        {loading && (
-          <div className={styles.loadingContainer}>
-            <SpinLoading />
-            <p className={styles.loadingText}>
-              Submitting your verification request...
-            </p>
-          </div>
-        )}
+    const [loading, setLoading] = useState(false);
+    const [processingPayment, setProcessingPayment] = useState(false);
+    const [urlError, setUrlError] = useState("");
 
-        {submittedData && !loading && (
-          <div>
-            <div className={styles.resultsContainer}>
-              <div className={styles.apiUrlSection}>
-                <h2 className={styles.apiUrlTitle}>API Endpoint URL</h2>
-                <pre className={styles.apiUrlBlock}>{apiUrl}</pre>
-              </div>
+    const activeProfile = config?.profile;
 
-              <div className={styles.resultSection}>
-                <h2 className={styles.sectionTitle}>Submitted Form Data</h2>
-                <pre className={styles.jsonBlock}>
-                  {JSON.stringify(submittedData, null, 2)}
-                </pre>
-              </div>
+    // ================= AUTH =================
+    useEffect(() => {
+        if (activeProfile === "prod") {
+            void router.replace("/403");
+        }
+    }, [activeProfile, router]);
 
-              <div className={styles.resultSection}>
-                <h2 className={styles.sectionTitle}>API Response</h2>
-                <pre className={styles.jsonBlock}>
-                  {JSON.stringify(response, null, 2)}
-                </pre>
-              </div>
-            </div>
+    if (activeProfile === "prod") return null;
 
-            <div className={styles.buttonGroup}>
-              <ActionButton
-                type="button"
-                className={styles.clearButton}
-                onClick={() => setSubmittedData(null)}
-                disabled={loading || processingPayment}
-              >
-                Clear & Retry
-              </ActionButton>
+    // ================= LOAD MAPPINGS =================
+    useEffect(() => {
+        if (endpoints) {
+            const endpoint = endpoints["VerificationRequest"];
+            if (endpoint) {
+                const filtered = endpoint.fieldMappings.filter(
+                    (f: any) => f.internalField !== "Code"
+                );
+                setFieldMappings(filtered);
+            }
+        }
+    }, [endpoints]);
 
-              {response?.success && isVerified && (
+    // ================= INPUT =================
+    const handleInputChange = (field: string, value: string) => {
+        setFormValues((prev) => ({...prev, [field]: value}));
+    };
+
+    // ================= VALIDATION =================
+    const isFormValid = () => {
+        return fieldMappings.every((m) => {
+            return formValues[m.userField]?.trim();
+        });
+    };
+
+    // ================= SUBMIT =================
+    const handleSubmit = async () => {
+        setUrlError("");
+
+        if (!validateUrl(apiUrl, {allowLocalhost: true})) {
+            setUrlError("Please enter a valid API endpoint URL");
+            return;
+        }
+
+      setSubmittedData(null);
+      setResponse(null);
+
+        const payload = mode === "qr" ? {QRCode: qrCode} : formValues;
+
+        try {
+            setLoading(true);
+
+            const res = await makeApiRequest({
+                url: apiUrl,
+                method: "post",
+                data: payload,
+            });
+
+            setResponse(res);
+            setSubmittedData(payload);
+        } catch (error: any) {
+            showError(error?.message || "Verification request failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // ================= PAYMENT =================
+    const handleSendPaymentRequest = async () => {
+        if (!submittedData || !response?.data || !endpoints) return;
+
+        try {
+            setProcessingPayment(true);
+
+            const verificationResponseFields = getUserFieldsFromEndpoint(
+                endpoints,
+                "VerificationResponse",
+                ["AccountNo", "AccountType", "Name", "Currency", "Address"]
+            );
+
+            const verificationRequestFields = getUserFieldsFromEndpoint(
+                endpoints,
+                "VerificationRequest",
+                ["ToBIC"]
+            );
+
+            const combined = {
+                ...extractFieldsFromData(
+                    submittedData,
+                    Object.values(verificationRequestFields)
+                ),
+                ...extractFieldsFromData(
+                    response.data,
+                    Object.values(verificationResponseFields)
+                ),
+            };
+
+            const internal = remapToInternalFields(combined, {
+                ...verificationResponseFields,
+                ...verificationRequestFields,
+            });
+
+            await router.push({
+                pathname: "/api-tester/payment",
+                query: {data: JSON.stringify(internal)},
+            });
+        } finally {
+            setProcessingPayment(false);
+        }
+    };
+
+    const isVerified = (() => {
+        const field = getUserFieldFromEndpoint(
+            endpoints,
+            "VerificationResponse",
+            "IsVerified"
+        );
+        return field ? response?.data?.[field] : false;
+    })();
+
+    // ================= QR =================
+    const handleQRSuccess = (result: { data: string; type: SOMQRType }) => {
+        setQrCode(result.data);
+        setMode("qr");
+    };
+
+    const showError = (message: string) => {
+        setModal({show: true, title: "Error", message});
+    };
+
+    const handleModeChange = (newMode: "form" | "qr") => {
+        setMode(newMode);
+        setSubmittedData(null);
+        setResponse(null);
+        setQrCode("");
+        setFormValues({});
+        setRequestViewerOpen(false);
+        setResponseViewerOpen(false);
+    };
+
+    return (
+        <RoleGuard allowedRoles={["gateway"]}>
+            <div className={sharedStyles.container}>
+                {/* HEADER */}
+                <div className={sharedStyles.titleContainer}>
+                    <h1 className={sharedStyles.mainTitle}>
+                        Verification Request Tester
+                    </h1>
+                    <p className={sharedStyles.subTitle}>
+                        Send verification requests using form input or QR code scanning.
+                    </p>
+                </div>
+
+                {/* API URL */}
+                <Input
+                    label="Verification API Endpoint"
+                    value={apiUrl}
+                    onChange={(e) => setApiUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com/api/v1/Gateway/Verify"
+                    errorMessage={urlError}
+                    required
+                />
+
+                {/* MODE SWITCH */}
+                <div className={styles.modeSwitch}>
+                    <ActionButton
+                        onClick={() => handleModeChange("form")}
+                        className={`${styles.modeButton} ${
+                            mode === "form" ? styles.activeMode : ""
+                        }`}
+                    >
+                        Manual Form
+                    </ActionButton>
+
+                    <ActionButton
+                        onClick={() => handleModeChange("qr")}
+                        className={`${styles.modeButton} ${
+                            mode === "qr" ? styles.activeMode : ""
+                        }`}
+                    >
+                        QR Code Scan
+                    </ActionButton>
+                </div>
+
+                {/* FORM */}
+              {endpointsLoading ? (
+                  <div className={styles.loadingContainer}>
+                    <SpinLoading />
+                    <p className={styles.loadingText}>Loading endpoint configurations...</p>
+                  </div>
+              ) : mode === "form" ? (
+                    <div className={styles.formContainer}>
+                        {fieldMappings.map((m, i) => (
+                            <div key={i} className={styles.formField}>
+                                {["Type", "ToBIC"].includes(m.internalField) ? (
+                                    <SelectInput
+                                        label={m.userField}
+                                        value={formValues[m.userField] || ""}
+                                        onChange={(e) =>
+                                            handleInputChange(m.userField, e.target.value)
+                                        }
+                                        options={
+                                            m.internalField === "Type"
+                                                ? verificationMethods
+                                                : bicOptionsDev
+                                        }
+                                    />
+                                ) : (
+                                    <Input
+                                        label={m.userField}
+                                        value={formValues[m.userField] || ""}
+                                        onChange={(e) =>
+                                            handleInputChange(m.userField, e.target.value)
+                                        }
+                                        type="text"
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className={styles.qrSection}>
+                        {qrCode && (
+                            <div className={styles.qrPreview}>
+                                <p className={styles.qrLabel}>Scanned QR Data</p>
+                                <pre className={styles.qrText}>{qrCode}</pre>
+                            </div>
+                        )}
+                        <UploadQRScanner
+                            onScanSuccess={handleQRSuccess}
+                            onScanError={showError}
+                        />
+                    </div>
+                )}
+
+                {/* SUBMIT */}
                 <ActionButton
-                  type="button"
-                  className={styles.sendPaymentButton}
-                  onClick={handleSendPaymentRequest}
-                  disabled={processingPayment}
+                    onClick={handleSubmit}
+                    className={styles.submitButton}
+                    disabled={
+                        loading ||
+                        endpointsLoading ||
+                        (mode === "form" ? !isFormValid() : !qrCode.trim())
+                    }
                 >
-                  {processingPayment
-                    ? "Processing Payment..."
-                    : "Process Payment"}
+                    {loading ? "Sending..." : "Send Verification Request"}
                 </ActionButton>
-              )}
+
+                {loading && (
+                    <div className={styles.loadingContainer}>
+                        <SpinLoading/>
+                        <p className={styles.loadingText}>Sending verification request...</p>
+                    </div>
+                )}
+
+                {/* VIEWERS */}
+                {submittedData && response && (
+                    <div className={styles.viewerButtons}>
+                        <ActionButton
+                            className={styles.viewerBtn}
+                            onClick={() => setRequestViewerOpen(true)}
+                        >
+                            View Request Payload
+                        </ActionButton>
+
+                        <ActionButton
+                            className={styles.viewerBtn}
+                            onClick={() => setResponseViewerOpen(true)}
+                        >
+                            View Response Payload
+                        </ActionButton>
+                    </div>
+                )}
+
+                {/* PAYMENT */}
+                {response?.success && isVerified && (
+                    <ActionButton
+                        onClick={handleSendPaymentRequest}
+                        className={styles.paymentButton}
+                        disabled={processingPayment}
+                    >
+                        {processingPayment
+                            ? "Processing Payment..."
+                            : "Proceed to Payment"}
+                    </ActionButton>
+                )}
             </div>
-          </div>
-        )}
-      </div>
-    </RoleGuard>
-  );
+
+            {/* MODALS */}
+            <QRDataViewer
+                data={submittedData}
+                isOpen={requestViewerOpen}
+                onClose={() => setRequestViewerOpen(false)}
+                title="Verification Request"
+            />
+
+            <QRDataViewer
+                data={response}
+                isOpen={responseViewerOpen}
+                onClose={() => setResponseViewerOpen(false)}
+                title="Verification Response"
+            />
+
+            {modal.show && (
+                <AlertModal
+                    title={modal.title!}
+                    message={modal.message!}
+                    onConfirm={() => setModal({show: false})}
+                    onClose={() => setModal({show: false})}
+                    error
+                />
+            )}
+        </RoleGuard>
+    );
 };
 
 export default VerificationRequestPage;

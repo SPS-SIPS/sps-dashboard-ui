@@ -1,134 +1,230 @@
-.loadingContainer {
+/* VerificationRequestPage.module.css */
+
+.modeSwitch {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-xl) 0;
     justify-content: center;
-    gap: var(--spacing-md);
-    margin: var(--spacing-xxl) 0;
+    flex-wrap: wrap;
+}
+
+.modeButton {
+    flex: 1;
+    min-width: 160px;
+    padding: var(--spacing-md) var(--spacing-xl);
+    background-color: var(--color-background-secondary);
     color: var(--color-text-secondary);
-}
-
-.loadingText {
-    font-size: var(--font-size-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
     font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
 }
 
-.resultsContainer {
+.modeButton:hover {
+    background-color: var(--color-background-tertiary);
+    border-color: var(--color-border-hover);
+}
+
+.modeButton.activeMode {
+    background-color: var(--color-primary);
+    color: var(--color-text-on-primary);
+    border-color: var(--color-primary);
+}
+
+.modeButton.activeMode:hover {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+}
+
+.loadingContainer{
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xl);
-    background: var(--color-background-secondary);
-    padding: var(--spacing-xl);
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+/* Form Container */
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    /*margin: var(--spacing-xl) 0;*/
+    max-width: 800px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.formField {
+    width: 100%;
+}
+
+/* QR Section */
+.qrSection {
+    margin:  0 auto;
+    max-width: 600px;
+    width: 100%;
+}
+
+.qrPreview {
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-}
-
-.apiUrlSection {
-    padding: var(--spacing-md);
-    background: var(--color-background-accent);
-    border-radius: var(--radius-md);
-}
-
-.apiUrlTitle {
-    color: var(--color-text-primary);
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-sm);
-}
-
-.apiUrlBlock {
-    font-family: var(--font-mono);
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    padding: var(--spacing-sm);
-    background: var(--color-background);
-    border-radius: var(--radius-sm);
-    overflow-x: auto;
-}
-
-.resultSection {
     padding: var(--spacing-lg);
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-xl);
 }
 
-.sectionTitle {
-    color: var(--color-text-primary);
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-md);
+.qrLabel {
+    font-size: var(--font-size-sm);
     font-weight: 600;
+    color: var(--color-text-label);
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.jsonBlock {
+.qrText {
     font-family: var(--font-mono);
     font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
+    background-color: var(--color-background);
     padding: var(--spacing-md);
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    white-space: pre-wrap;
+    border: 1px solid var(--color-border);
     overflow-x: auto;
-    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0;
 }
 
-.buttonGroup {
+/* Submit Button */
+.submitButton {
+    width: 100%;
+    max-width: 400px;
+    margin: var(--spacing-sm) auto !important;
+    display: block !important;
+    padding: var(--spacing-md) var(--spacing-xl) !important;
+    font-size: var(--font-size-md) !important;
+    font-weight: 600 !important;
+    background-color: var(--color-primary) !important;
+    color: var(--color-text-on-primary) !important;
+    border: none !important;
+    border-radius: var(--radius-md) !important;
+    cursor: pointer;
+    transition: all var(--transition-fast) !important;
+}
+
+.submitButton:hover:not(:disabled) {
+    background-color: var(--color-primary-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.submitButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--color-background-disabled) !important;
+    color: var(--color-text-secondary) !important;
+}
+
+/* Viewer Buttons */
+.viewerButtons {
     display: flex;
     gap: var(--spacing-md);
-    margin-top: var(--spacing-xl);
-    justify-content: flex-end;
+    margin:  0 auto;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
-.clearButton {
-    background: var(--color-error-background);
-    color: var(--color-error);
-    border: 1px solid var(--color-error-border);
+.viewerBtn {
+    min-width: 200px;
+    padding: var(--spacing-md) var(--spacing-xl) !important;
+    background-color: var(--color-background-secondary) !important;
+    color: var(--color-text-primary) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--radius-md) !important;
+    font-size: var(--font-size-base) !important;
+    font-weight: 500 !important;
+    transition: all var(--transition-fast) !important;
 }
 
-.clearButton:hover {
-    background: var(--color-error);
-    color: var(--color-text-light);
+.viewerBtn:hover {
+    background-color: var(--color-background-tertiary) !important;
+    border-color: var(--color-border-hover) !important;
+    transform: translateY(-1px);
 }
 
-.sendPaymentButton {
-    background: var(--color-success-background);
-    color: var(--color-success);
-    border: 1px solid var(--color-success);
+/* Payment Button */
+.paymentButton {
+    width: 100%;
+    max-width: 400px;
+    margin: var(--spacing-sm) auto !important;
+    display: block !important;
+    padding: var(--spacing-md) var(--spacing-xl) !important;
+    background-color: var(--color-success) !important;
+    color: var(--color-text-on-primary) !important;
+    border: none !important;
+    border-radius: var(--radius-md) !important;
+    font-size: var(--font-size-md) !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    transition: all var(--transition-fast) !important;
 }
 
-.sendPaymentButton:hover {
-    background: var(--color-success);
-    color: var(--color-text-light);
+.paymentButton:hover:not(:disabled) {
+    background-color: var(--color-success) !important;
+    filter: brightness(0.9);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
-@media (max-width: var(--breakpoint-mobile)) {
-    .container {
-        padding: var(--spacing-md);
-        gap: var(--spacing-lg);
-    }
+.paymentButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--color-background-disabled) !important;
+    color: var(--color-text-secondary) !important;
+}
 
-    .titleContainer {
-        padding-bottom: var(--spacing-lg);
-    }
-
-    .mainTitle {
-        font-size: var(--font-size-xl);
-    }
-
-    .subTitle {
-        font-size: var(--font-size-base);
-    }
-
-    .resultsContainer {
-        padding: var(--spacing-md);
-    }
-
-    .buttonGroup {
+/* Responsive */
+@media (max-width: 768px) {
+    .modeSwitch {
         flex-direction: column;
-        gap: var(--spacing-sm);
+        align-items: stretch;
     }
 
-    .jsonBlock {
+    .modeButton {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .formContainer {
+        padding: 0 var(--spacing-md);
+    }
+
+    .viewerButtons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .viewerBtn {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .submitButton,
+    .paymentButton {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .qrPreview {
+        padding: var(--spacing-md);
+    }
+
+    .qrText {
         font-size: var(--font-size-sm);
     }
 }

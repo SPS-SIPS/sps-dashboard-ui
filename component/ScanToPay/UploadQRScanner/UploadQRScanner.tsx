@@ -100,13 +100,20 @@ export default function UploadQRScanner({
         setManualInput('');
     };
 
+    const switchMode = (newMode: Mode) => {
+        setMode(newMode);
+        setFileName(null);
+        setManualInput('');
+        setIsLoading(false);
+    };
+
     return (
         <div className={styles.container}>
             {/* Mode Toggle */}
             <div className={styles.toggleContainer} role="tablist">
                 <button
                     className={`${styles.toggleButton} ${mode === 'upload' ? styles.activeToggle : ''}`}
-                    onClick={() => setMode('upload')}
+                    onClick={() => switchMode('upload')}
                     role="tab"
                     aria-selected={mode === 'upload'}
                     aria-controls="upload-panel"
@@ -115,7 +122,7 @@ export default function UploadQRScanner({
                 </button>
                 <button
                     className={`${styles.toggleButton} ${mode === 'manual' ? styles.activeToggle : ''}`}
-                    onClick={() => setMode('manual')}
+                    onClick={() => switchMode('manual')}
                     role="tab"
                     aria-selected={mode === 'manual'}
                     aria-controls="manual-panel"
