@@ -186,7 +186,7 @@
     margin-top: var(--spacing-xs);
 }
 
-@media (max-width: var(769px)) {
+@media (max-width: 769px) {
     .profileContainer {
         margin: var(--spacing-lg);
     }

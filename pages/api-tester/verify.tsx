@@ -16,7 +16,7 @@ import {
 
 import {
     verificationMethods,
-    bicOptionsDev,
+    bicOptionsDev, extractBankCodeFromIBAN, getBicFromAcqId,
 } from "../../constants/gatewayFormOptions";
 
 import {validateUrl} from "../../utils/validation";
@@ -31,6 +31,7 @@ import QRDataViewer from "../../component/ScanToPay/QRDataViewer/QRDataViewer";
 import UploadQRScanner from "../../component/ScanToPay/UploadQRScanner/UploadQRScanner";
 import {SOMQRType} from "../../utils/validateSOMQR";
 import AlertModal from "../../component/common/AlertModal/AlertModal";
+import {extractErrorMessage} from "../../utils/extractErrorMessage";
 
 const VerificationRequestPage: React.FC = () => {
     const {config} = useAuthentication();
@@ -152,25 +153,59 @@ const VerificationRequestPage: React.FC = () => {
                 ["ToBIC"]
             );
 
-            const combined = {
-                ...extractFieldsFromData(
-                    submittedData,
-                    Object.values(verificationRequestFields)
-                ),
-                ...extractFieldsFromData(
-                    response.data,
-                    Object.values(verificationResponseFields)
-                ),
+            const submittedFieldValues = extractFieldsFromData(
+                submittedData,
+                Object.values(verificationRequestFields)
+            );
+
+            const responseFieldValues = extractFieldsFromData(
+                response.data,
+                Object.values(verificationResponseFields)
+            );
+
+            if (mode === "qr") {
+                const accountNoField = verificationResponseFields["AccountNo"];
+                const toBicField = verificationRequestFields["ToBIC"];
+
+                const iban = accountNoField
+                    ? response.data?.[accountNoField]
+                    : null;
+
+                if (iban) {
+                    const acqId = extractBankCodeFromIBAN(iban);
+
+                    if (acqId) {
+                        const bic = getBicFromAcqId(
+                            acqId,
+                            config?.profile === "prod" ? "prod" : "dev"
+                        );
+
+                        if (bic && toBicField) {
+                            submittedFieldValues[toBicField] = bic;
+                        }
+                    }
+                }
+            }
+
+            const combinedFields = {
+                ...submittedFieldValues,
+                ...responseFieldValues,
             };
 
-            const internal = remapToInternalFields(combined, {
+            const internalData = remapToInternalFields(combinedFields, {
                 ...verificationResponseFields,
                 ...verificationRequestFields,
             });
 
             await router.push({
                 pathname: "/api-tester/payment",
-                query: {data: JSON.stringify(internal)},
+                query: {data: JSON.stringify(internalData)},
+            });
+        }catch (error){
+            setModal({
+                show: true,
+                title: "Error",
+                message: extractErrorMessage(error, "Failed to process payment request")
             });
         } finally {
             setProcessingPayment(false);
@@ -273,6 +308,7 @@ const VerificationRequestPage: React.FC = () => {
                                                 ? verificationMethods
                                                 : bicOptionsDev
                                         }
+                                        required
                                     />
                                 ) : (
                                     <Input
@@ -282,6 +318,7 @@ const VerificationRequestPage: React.FC = () => {
                                             handleInputChange(m.userField, e.target.value)
                                         }
                                         type="text"
+                                        required
                                     />
                                 )}
                             </div>

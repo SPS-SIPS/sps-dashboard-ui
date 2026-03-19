@@ -7,7 +7,7 @@ import SpinLoading from "../../component/Loading/SpinLoading/SpinLoading";
 import Input from "../../component/common/Input/Input";
 import ActionButton from "../../component/common/ActionButton/ActionButton";
 import sharedStyles from "../../component/RequestForm/SharedStyles.module.css";
-import styles from "../../styles/VerificationRequestPage.module.css";
+import styles from "../../styles/PaymentRequestPage.module.css";
 import { validateUrl } from "../../utils/validation";
 import { useApiRequest } from "../../utils/apiService";
 import {useAuthentication} from "../../auth/AuthProvider";
@@ -87,7 +87,7 @@ const PaymentPage = () => {
           <div className={styles.loadingContainer}>
             <SpinLoading />
             <p className={styles.loadingText}>
-              Submitting your verification request...
+              Submitting your payment request...
             </p>
           </div>
         ) : (
