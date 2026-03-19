@@ -34,6 +34,7 @@ export const bicOptionsDev = [
     { value: "SSBMSOS0", label: "Salam Somali Bank" },
     { value: "SOMNSOS0", label: "Sombank Ltd" },
     { value: "ZKBASOS0", label: "Ziraat Katilim Bank Somalia" },
+    { value: "ZKPASOS0", label: "Z-Pay" },
 ];
 
 export const bicOptionsProd = [
