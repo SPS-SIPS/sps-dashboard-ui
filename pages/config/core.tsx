@@ -274,17 +274,6 @@ const ISO20022ConfigForm = () => {
               />
             </div>
 
-            <div className={styles.section}>
-              <h2 className={styles.sectionTitle}>Feature Flags</h2>
-
-              <Checkbox
-                  label="Include Core Bank on Listing"
-                  name="includeCoreBankOnListing"
-                  checked={cfg.includeCoreBankOnListing}
-                  onChange={onChange}
-              />
-            </div>
-
           </>
         )}
         modalProps={{
