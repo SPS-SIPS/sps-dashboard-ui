@@ -1,8 +1,15 @@
 import useAxiosPrivate from "./useAxiosPrivate";
 
+export interface PagedResult<T> {
+    items: T[];
+    totalCount: number;
+    page: number;
+    pageSize: number;
+}
+
 export interface LogFileResponse {
     fileName: string;
-    lastWriteTime: string; // ISO string
+    lastWriteTime: string;
     sizeBytes: number;
     size: string;
 }
@@ -13,8 +20,25 @@ const useLogs = () => {
     const axiosPrivate = useAxiosPrivate();
 
     // Fetch log files
-    const getLogFiles = async (): Promise<LogFileResponse[]> => {
-        const response = await axiosPrivate.get<LogFileResponse[]>(`${BASE_URL}/files`);
+    const getLogFiles = async (
+        page: number = 1,
+        pageSize: number = 10,
+        search?: string,
+        sort: "asc" | "desc" = "desc"
+    ): Promise<PagedResult<LogFileResponse>> => {
+
+        const response = await axiosPrivate.get<PagedResult<LogFileResponse>>(
+            `${BASE_URL}/files`,
+            {
+                params: {
+                    page,
+                    pageSize,
+                    search,
+                    sort,
+                },
+            }
+        );
+
         return response.data;
     };
 
