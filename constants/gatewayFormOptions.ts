@@ -64,6 +64,15 @@ export const getBicFromAcqId = (
         : acqIdToBicProd[acqId];
 };
 
+export const getMnoBicFromAcqId = (
+    mnoId: string,
+    env: "dev" | "prod"
+) => {
+   return  env === "dev"
+        ? MnoAcqIdToBicDev[mnoId]
+        : MnoAcqIdToBicProd[mnoId];
+};
+
 export const extractBankCodeFromIBAN = (iban: string): string | null => {
 
     if (!iban.startsWith("SO") || iban.length < 23) {
@@ -109,3 +118,16 @@ export const acqIdToBicProd: Record<string, string> = {
     "0015": "BDBKSOSM",
 };
 
+export const MnoAcqIdToBicDev: Record<string, string> = {
+    "01": "SSBMSOS0",
+    "02": "DAHISOS0",
+    "03": "ZKPASOS0",
+    "04": "EBSASOS0",
+}
+
+export const MnoAcqIdToBicProd: Record<string, string> = {
+    "01": "SSBMSOSM",
+    "02": "DAHISOSM",
+    "03": "ZKPASOSM",
+    "04": "EBSASOSM",
+}

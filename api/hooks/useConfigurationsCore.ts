@@ -7,15 +7,25 @@ export type ConfigurationsCore = {
   username: string;
   password: string;
   bic: string;
+
   safExpression: string;
   safPage: number;
   safTimeZoneInfo: string;
   safMaxRetries: number;
+
   includeIdempotencyHeaders: boolean;
+  includeCoreBankOnListing: boolean;
+
   httpTimeoutSeconds: number;
+  coreBankTimeoutSeconds: number;
   dbPersistTimeoutSeconds: number;
+
   transactionTimeoutMinutes: number;
   timeoutWorkerSchedule: string;
+  callbackSlaSeconds: number;
+  callbackInternalBudgetSeconds: number;
+
+  verificationOnlyMode: boolean;
 };
 
 const BASE_URL = "/api/v1/Configurations/Core";

@@ -27,7 +27,7 @@ import {mapRequestToUserFields} from "../../types/mapRequestToUserFields";
 import useEndpoints from "../../api/hooks/useEndpoints";
 import useGatewayApi from "../../api/hooks/useGatewayApiWithTypes";
 import {mapResponseToInternalFields} from "../../types/mapResponseToInternalFields";
-import {extractBankCodeFromIBAN, getBicFromAcqId} from "../../constants/gatewayFormOptions";
+import {extractBankCodeFromIBAN, getBicFromAcqId, getMnoBicFromAcqId} from "../../constants/gatewayFormOptions";
 import {useAuthentication} from "../../auth/AuthProvider";
 import {FiCheckCircle, FiCreditCard, FiDatabase, FiEye, FiFileText, FiRefreshCw, FiShield} from "react-icons/fi";
 
@@ -259,27 +259,53 @@ export default function ScanPayPage() {
                 alias = accountNumber;
 
             } else {
-                const merchantId =
-                    qrParsedData.data.merchantAccount?.["26"]
-                        ?.paymentNetworkSpecific?.["44"];
-                const acqId =
-                    qrParsedData.data.merchantAccount?.["26"]
-                        ?.paymentNetworkSpecific?.["1"];
+                // ✅ Support both Bank (26) and MNO (31)
+                const merchantAccount =
+                    qrParsedData.data.merchantAccount?.["26"] ||
+                    qrParsedData.data.merchantAccount?.["31"];
 
-                if (!merchantId || !acqId) {
+                const merchantId =
+                    merchantAccount?.paymentNetworkSpecific?.["44"];
+
+                const acqIdRaw =
+                    merchantAccount?.paymentNetworkSpecific?.["1"];
+
+                const isMNO = !!qrParsedData.data.merchantAccount?.["31"];
+
+                if (!merchantId || !acqIdRaw) {
                     showError("Invalid merchant QR.");
                     return null;
                 }
 
-                bicCode = getBicFromAcqId(acqId.substring(2), activeProfile);
-                if (!bicCode) {
-                    showError("Unable to determine merchant bank.");
-                    return null;
-                }
+                if (isMNO) {
+                    // ✅ MNO FLOW
+                    bicCode = getMnoBicFromAcqId(acqIdRaw, activeProfile);
 
-                const isIBAN = merchantId.startsWith("SO") && merchantId.length < 23;
-                type = isIBAN ? "IBAN" : "ACCT";
-                alias = merchantId;
+                    if (!bicCode) {
+                        showError("MNO not supported.");
+                        return null;
+                    }
+
+                    type = "EWLT"; // Wallet
+                    alias = merchantId;
+
+                } else {
+                    // ✅ BANK FLOW
+                    const acqId = acqIdRaw.substring(2);
+
+                    bicCode = getBicFromAcqId(acqId, activeProfile);
+
+                    if (!bicCode) {
+                        showError("Unable to determine merchant bank.");
+                        return null;
+                    }
+
+                    const isIBAN =
+                        merchantId.startsWith("SO") && merchantId.length < 23;
+
+                    type = isIBAN ? "IBAN" : "ACCT";
+                    alias = merchantId;
+                }
             }
 
             const payload: VerifyPayeePayload = {
@@ -292,6 +318,7 @@ export default function ScanPayPage() {
 
             const response = await verifyPayeeWithGateway(payload);
             setVerificationResponse(response || null);
+
             let verification: QRValidationResult | null = null;
 
             if (response) {
@@ -307,6 +334,7 @@ export default function ScanPayPage() {
                     );
                 }
             }
+
             if (verification) {
                 setValidation(verification);
             }

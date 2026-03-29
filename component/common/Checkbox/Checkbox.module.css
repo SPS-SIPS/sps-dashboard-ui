@@ -39,3 +39,27 @@
 .checkbox:checked::before {
     transform: scale(1);
 }
+
+.checkbox:disabled {
+    cursor: not-allowed;
+    border-color: var(--color-border);
+    background-color: var(--color-background-disabled);
+    opacity: 0.7;
+}
+
+.checkbox:disabled::before {
+    background-color: var(--color-border);
+}
+
+/* Label styling when checkbox is disabled */
+.checkbox:disabled + span,
+.checkbox:disabled + * {
+    color: var(--color-text-secondary);
+    cursor: not-allowed;
+}
+
+/* Optional: disable whole label interaction */
+.checkboxLabel:has(.checkbox:disabled) {
+    cursor: not-allowed;
+    opacity: 0.8;
+}

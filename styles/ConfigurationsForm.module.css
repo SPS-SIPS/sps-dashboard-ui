@@ -148,6 +148,34 @@
   background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
 }
 
+/* Wrapper */
+.fieldWithNote {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Note box */
+.fieldNote {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+
+  background-color: var(--color-warning-background);
+  border-left: 4px solid var(--color-degraded);
+
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+
+  box-shadow: var(--shadow-sm);
+}
+
+/* Highlight field name */
+.fieldNote strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
 /* ==================================
    Input Groups (for children components)
 ================================== */
