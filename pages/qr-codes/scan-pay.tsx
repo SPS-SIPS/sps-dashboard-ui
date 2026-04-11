@@ -382,7 +382,7 @@ export default function ScanPayPage() {
 
         const isPersonal = qrParsedData.type === "personal";
 
-        const localInstrument = isPersonal ? "P2P" : "P2M";
+        const localInstrument = "CRTRM";
 
         let categoryPurpose: string;
 

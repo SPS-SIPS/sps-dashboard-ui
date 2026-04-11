@@ -10,7 +10,6 @@ import {
   bicOptionsDev,
   bicOptionsProd,
   categoryPurposeOptions,
-  paymentMethods,
   verificationMethods,
 } from "../../constants/gatewayFormOptions";
 import {useAuthentication} from "../../auth/AuthProvider";
@@ -48,10 +47,15 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
         const initialValues: Record<string, string> = {};
         const disabledSet = new Set<string>();
         mappings.forEach(({ internalField, userField }) => {
+          if (internalField === "LocalInstrument") {
+            initialValues[userField] = "CRTRM";
+            disabledSet.add(userField);
+            return;
+          }
+
           if (prefilledValues && internalField in prefilledValues) {
             initialValues[userField] = prefilledValues[internalField];
             if (
-              internalField !== "LocalInstrument" &&
               internalField !== "CategoryPurpose" &&
               internalField !== "CreditorIssuer"
             ) {
@@ -117,22 +121,22 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
                 internalField === "CreditorAccountType" ||
                 internalField === "DebtorAccountType";
 
-              const isPaymentType = internalField === "LocalInstrument";
+              // const isPaymentType = internalField === "LocalInstrument";
               const isCategoryPurpose = internalField === "CategoryPurpose";
               const isBicField =
                   internalField === "CreditorAgentBIC" ||
                   internalField === "ToBIC";
 
               const isSelectField =
-                  isAccountType || isPaymentType || isCategoryPurpose || isBicField;
+                  isAccountType  || isCategoryPurpose || isBicField;
 
               const bicOptions =
                   activeProfile === "prod" ? bicOptionsProd : bicOptionsDev;
 
               const selectOptions = isAccountType
                   ? verificationMethods
-                  : isPaymentType
-                      ? paymentMethods
+                  // : isPaymentType
+                  //     ? paymentMethods
                       : isCategoryPurpose
                           ? categoryPurposeOptions
                           : isBicField

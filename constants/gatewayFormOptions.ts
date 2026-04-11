@@ -13,9 +13,18 @@ export const paymentMethods = [
 ];
 
 export const categoryPurposeOptions = [
-    {value: "C2CCRT", label: "C2C Credit Transfer"},
-    {value: "C2BSQR", label: "C2B Static QR Payment"},
-    {value: "C2BDQR", label: "C2B Dynamic QR Payment"},
+    {
+        value: "C2CCRT",
+        label: "P2P Transfer (Static/Dynamic) (C2CCRT)"
+    },
+    {
+        value: "C2BSQR",
+        label: "P2M Static QR (C2BSQR)"
+    },
+    {
+        value: "C2BDQR",
+        label: "P2M Dynamic QR (C2BDQR)"
+    }
 ];
 
 export const bicOptionsDev = [
@@ -34,8 +43,9 @@ export const bicOptionsDev = [
     { value: "SSBMSOS0", label: "Salam Somali Bank" },
     { value: "SOMNSOS0", label: "Sombank Ltd" },
     { value: "ZKBASOS0", label: "Ziraat Katilim Bank Somalia" },
-    { value: "ZKPASOS0", label: "Z-Pay" },
     { value: "EBSASOS0", label: "eBesa" },
+    { value: "PBSWSOS0", label: "Premier Wallet" },
+    { value: "ZKPASOS0", label: "Z-Pay" },
 ];
 
 export const bicOptionsProd = [
@@ -123,6 +133,7 @@ export const MnoAcqIdToBicDev: Record<string, string> = {
     "02": "DAHISOS0",
     "03": "ZKPASOS0",
     "04": "EBSASOS0",
+    "05": "PBSWSOS0",
 }
 
 export const MnoAcqIdToBicProd: Record<string, string> = {
@@ -130,4 +141,5 @@ export const MnoAcqIdToBicProd: Record<string, string> = {
     "02": "DAHISOSM",
     "03": "ZKPASOSM",
     "04": "EBSASOSM",
+    "05": "PBSWSOSM",
 }
