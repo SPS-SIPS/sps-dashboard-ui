@@ -46,6 +46,7 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
         setFieldMappings(mappings);
         const initialValues: Record<string, string> = {};
         const disabledSet = new Set<string>();
+
         mappings.forEach(({ internalField, userField }) => {
           if (internalField === "LocalInstrument") {
             initialValues[userField] = "CRTRM";
@@ -55,12 +56,14 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
 
           if (prefilledValues && internalField in prefilledValues) {
             initialValues[userField] = prefilledValues[internalField];
-            if (
-              internalField !== "CategoryPurpose" &&
-              internalField !== "CreditorIssuer"
-            ) {
-              disabledSet.add(userField);
-            }
+
+            // Always disable if prefilled OR if CategoryPurpose
+            disabledSet.add(userField);
+          }
+
+          // ALWAYS disable CategoryPurpose no matter what
+          if (internalField === "CategoryPurpose") {
+            disabledSet.add(userField);
           }
         });
 
@@ -98,7 +101,11 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
         return true;
       }
 
-      return formValues[mapping.userField]?.trim();
+      const value = formValues[mapping.userField];
+
+      return typeof value === "string"
+          ? value.trim().length > 0
+          : value !== null && value !== undefined && value !== "";
     });
   };
 

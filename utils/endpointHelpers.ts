@@ -67,9 +67,10 @@ export function mapToPrefilledValues(data: {
     LocalInstrument: string;
     CategoryPurpose: string;
    CreditorIssuer: string;
+   Amount: string;
 }) {
     return {
-        
+
         CreditorAgentBIC: data.ToBIC,
         CreditorAccount: data.AccountNo,
         CreditorAccountType: data.AccountType,
@@ -77,6 +78,10 @@ export function mapToPrefilledValues(data: {
         Currency: data.Currency,
         CreditorAddress: data.Address,
         CreditorIssuer: 'C',
-        ToBIC: data.ToBIC
+        ToBIC: data.ToBIC,
+        CategoryPurpose: data.CategoryPurpose,
+        ...(data.Amount != null && data.Amount !== ""
+            ? { Amount: data.Amount }
+            : {}),
     };
 }

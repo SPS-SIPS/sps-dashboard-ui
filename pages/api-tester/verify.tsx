@@ -163,27 +163,31 @@ const VerificationRequestPage: React.FC = () => {
                 Object.values(verificationResponseFields)
             );
 
+            submittedFieldValues["CategoryPurpose"] = "C2CCRT";
+
             if (mode === "qr") {
-                const accountNoField = verificationResponseFields["AccountNo"];
+                const parsed = response?.data?.parsed;
+
                 const toBicField = verificationRequestFields["ToBIC"];
 
-                const iban = accountNoField
-                    ? response.data?.[accountNoField]
-                    : null;
+                if (parsed?.bankBICCode && toBicField) {
+                    submittedFieldValues[toBicField] = parsed.bankBICCode;
+                }
 
-                if (iban) {
-                    const acqId = extractBankCodeFromIBAN(iban);
+                // ================= CATEGORY PURPOSE RULES =================
+                const payloadFormat = parsed?.payloadFormatIndicator;
+                const initMethod = parsed?.pointOfInitializationMethod;
 
-                    if (acqId) {
-                        const bic = getBicFromAcqId(
-                            acqId,
-                            config?.profile === "prod" ? "prod" : "dev"
-                        );
-
-                        if (bic && toBicField) {
-                            submittedFieldValues[toBicField] = bic;
-                        }
+                if (payloadFormat === "01") {
+                    if (initMethod === "11") {
+                        submittedFieldValues["CategoryPurpose"] = "C2BSQR";
+                    } else if (initMethod === "12") {
+                        submittedFieldValues["CategoryPurpose"] = "C2BDQR";
                     }
+                }
+
+                if (initMethod === "12" && parsed?.amount != null) {
+                    submittedFieldValues["Amount"] = parsed.amount;
                 }
             }
 
