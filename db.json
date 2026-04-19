@@ -1,16 +1,16 @@
 {
   "config": {
     "api": {
-      "baseUrl": "https://10.128.200.244:9020"
+      "baseUrl": ""
     },
     "keycloak": {
-      "url": "https://10.128.200.244:9021",
-      "realm": "mgt",
-      "clientId": "sc-portal"
+      "url": "",
+      "realm": "",
+      "clientId": ""
     },
     "profile": "dev",
     "uiGuards": {
-      "forceFormCompletion": false,
+      "forceFormCompletion": true,
       "setupConfirmed": false
     }
   }
