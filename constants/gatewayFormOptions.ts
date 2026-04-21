@@ -108,6 +108,7 @@ export const acqIdToBicDev: Record<string, string> = {
     "0013": "BUHBSOS0",
     "0014": "ZKBASOS0",
     "0015": "BDBKSOS0",
+    "BUL1": "BDBKSOS0",
 };
 
 export const acqIdToBicProd: Record<string, string> = {
