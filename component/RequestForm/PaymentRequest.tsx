@@ -60,9 +60,11 @@ const PaymentRequest: React.FC<PaymentRequestProps> = ({
             // Always disable if prefilled OR if CategoryPurpose
             disabledSet.add(userField);
           }
-
-          // ALWAYS disable CategoryPurpose no matter what
-          if (internalField === "CategoryPurpose") {
+          if (
+              internalField === "CategoryPurpose" &&
+              prefilledValues &&
+              internalField in prefilledValues
+          ) {
             disabledSet.add(userField);
           }
         });
