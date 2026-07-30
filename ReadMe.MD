@@ -1,32 +1,44 @@
-# SPS / SIPS Dashboard UI - Local Development Guide
+# SPS / SIPS Dashboard UI (SIPS Connect Portal)
 
-This guide will help you set up and run the **SPS / SIPS Dashboard UI** locally, with HTTPS enabled using a self-signed SSL certificate, and runtime configuration through `db.json`.
+The **SPS / SIPS Dashboard UI** (Docker image: [`abdoulhakim/sips-connect-portal`](https://hub.docker.com/r/abdoulhakim/sips-connect-portal)) is the official web management portal for the **Somali Instant Payment System (SIPS) Connect** ecosystem, developed and maintained by **SOMALI PAYMENT SWITCH (SPS) LTD**.
+
+It enables financial institutions, participants, and system administrators to manage platform integrations, configure runtime settings via `db.json`, monitor ISO 20022 message streams, and manage PKI / Data Protection Keys securely.
 
 ---
 
 ## Table of Contents
 
-1. [Prerequisites](#prerequisites)
-2. [Directory Structure](#directory-structure)
-3. [Generating a Self-Signed SSL Certificate](#generating-a-self-signed-ssl-certificate)
-4. [Running the App](#running-the-app)
+1. [Features](#features)
+2. [Prerequisites](#prerequisites)
+3. [Directory Structure](#directory-structure)
+4. [Generating SSL Certificates](#generating-a-self-signed-ssl-certificate)
+5. [Running the App](#running-the-app)
+    - [Using Docker](#using-docker-compose)
+    - [Locally Without Docker](#locally-without-docker)
+6. [Runtime Configuration (`db.json`)](#runtime-configuration-dbjson)
+7. [Profile-Based Feature Visibility](#profile-based-feature-visibility)
+8. [First-Time Setup (UI Flow)](#first-time-setup-ui-flow)
+9. [Contributing](#contributing)
+10. [Security Policy](#security-policy)
 
-    * [Using Docker Compose](#using-docker-compose)
-    * [Locally Without Docker](#locally-without-docker)
-5. [Runtime Configuration (`db.json`)](#runtime-configuration-dbjson)
-6. [What This Controls](#what-this-controls)
-7. [First-Time Setup (UI Flow)](#first-time-setup-ui-flow)
-8. [Profile-Based Feature Visibility](#profile-based-feature-visibility)
-9. [Why This Dashboard?](#why-this-dashboard)
+---
+
+## Features
+
+- **Integration Management**: Centralized management portal for `sips-connect` backend services.
+- **ISO 20022 Message Inspector**: Live transaction logs, raw XML viewers, and message status tracking.
+- **Dynamic Configuration (`db.json`)**: Runtime API and Keycloak authentication settings configurable directly via UI.
+- **PKI & Key Management**: Display and management of Certificate Authority (CA) chains and Data Protection keys.
+- **Profile Guards**: Environmental profile feature filtering (`dev`, `test`, `prod`) to enforce production safety.
 
 ---
 
 ## Prerequisites
 
-* **Node.js** v18+
-* **npm** (comes with Node.js)
-* **Docker & Docker Compose** (optional)
-* **OpenSSL** (for generating self-signed certificates)
+* **Node.js**: v18+
+* **npm**: (included with Node.js)
+* **Docker & Docker Compose**: (optional for containerized execution)
+* **OpenSSL**: (for generating local SSL/TLS certificates)
 
 ---
 
@@ -35,88 +47,88 @@ This guide will help you set up and run the **SPS / SIPS Dashboard UI** locally,
 ```
 sps-dashboard-ui/
 ├── certs/
-│   ├── tls.crt         # SSL certificate (generated locally)
-│   └── tls.key         # SSL private key (generated locally)
-├── components/         # React components
-├── pages/              # Next.js pages
+│   ├── tls.crt         # SSL certificate (generated locally, gitignored)
+│   └── tls.key         # SSL private key (generated locally, gitignored)
+├── component/          # React layout and UI components
+├── pages/              # Next.js pages and documentation routes
 ├── public/             # Static assets
-├── server-https.js     # HTTPS server entrypoint
+├── server-https.js     # Custom HTTPS server entrypoint
 ├── entrypoint-https.sh # Docker HTTPS startup script
-├── Dockerfile
-├── docker-compose.yml
-├── package.json
-├── db.json             # Default runtime configuration
-├── .gitignore
-└── ...
+├── Dockerfile          # Docker image build specification
+├── docker-compose.yml  # Local multi-container compose file
+├── package.json        # Project dependencies and npm scripts
+├── db.json             # Runtime configuration file (gitignored)
+├── CONTRIBUTING.md     # Development & contribution guidelines
+├── SECURITY.md         # Vulnerability reporting & security policy
+└── README.md
 ```
 
 ---
 
 ## Generating a Self-Signed SSL Certificate
 
-Inside your project root:
+Inside the project root:
 
 ```bash
 mkdir -p certs
 cd certs
 
-# 1. Generate a private key
+# 1. Generate private key
 openssl genrsa -out tls.key 2048
 
-# 2. Generate a self-signed certificate (replace 127.0.0.1 with local IP if needed)
+# 2. Generate self-signed certificate (replace 127.0.0.1 with local IP if needed)
 openssl req -new -x509 -key tls.key -out tls.crt -days 365 -subj "/CN=127.0.0.1"
 ```
 
-This generates `tls.key` and `tls.crt` in the `certs/` folder.
+This generates `tls.key` and `tls.crt` inside `certs/` (which are excluded from git via `.gitignore`).
 
 ---
 
 ## Running the App
 
-### Using Docker Compose
-
-1. Ensure the Docker network exists:
+### Using Docker Hub Image
 
 ```bash
-docker network create --driver bridge sips-network
+docker pull abdoulhakim/sips-connect-portal:latest
 ```
 
-2. Build and start the app:
+### Using Docker Compose Locally
 
-```bash
-docker-compose up --build
-```
+1. Create the Docker bridge network:
+   ```bash
+   docker network create --driver bridge sips-network
+   ```
 
-3. Open your browser at: [https://localhost:3000](https://localhost:3000)
-   Accept the self-signed certificate warning.
+2. Build and run:
+   ```bash
+   docker-compose up --build
+   ```
+
+3. Open [https://localhost:3000](https://localhost:3000) in your browser.
 
 ---
 
-### Locally Without Docker
+### Running Locally Without Docker
 
 1. Install dependencies:
-
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 2. Ensure `certs/tls.crt` and `certs/tls.key` exist.
 3. Build and run the server:
+   ```bash
+   npm run build
+   node server-https.js
+   ```
 
-```bash
-npm run build
-node server-https.js
-```
-
-4. Visit [https://localhost:3000](https://localhost:3000)
+4. Visit [https://localhost:3000](https://localhost:3000).
 
 ---
 
 ## Runtime Configuration (`db.json`)
 
-The application now **uses `db.json` for runtime configuration**, replacing the old `.env` approach.
-
-### Default `db.json`
+Runtime configuration is stored in `db.json` and loaded dynamically by the application:
 
 ```json
 {
@@ -138,71 +150,54 @@ The application now **uses `db.json` for runtime configuration**, replacing the 
 }
 ```
 
+Configuration values can be updated directly from the UI via `/setup-config`.
+
 ---
 
-## What This Controls
+## Profile-Based Feature Visibility
 
-The `db.json` configuration controls:
+Feature visibility is dynamically controlled based on the active `profile` set in `db.json`:
 
-* **API base URL** → The backend endpoints the UI interacts with.
-* **Keycloak authentication** → URL, realm, and client ID.
-* **Active profile** → `dev`, `test`, or `prod`. Determines which features are visible.
-* **UI behavior guards** → e.g., forcing setup completion before accessing the dashboard.
-
-**All values can be updated directly from the UI** after startup. Changes are persisted to `db.json` automatically.
+| Profile | Feature Visibility |
+| ------- | ------------------ |
+| `dev`   | All features, debug screens, and testing tools visible |
+| `test`  | Testing tools visible; administrative options restricted |
+| `prod`  | API test tools, raw message builders, and debug pages hidden |
 
 ---
 
 ## First-Time Setup (UI Flow)
 
-When the portal starts for the first time:
+When starting the application for the first time:
 
-1. **Default configuration is loaded** from `db.json`.
-2. **Setup screen is displayed** to the user.
-3. **User enters API & Keycloak details** via the configuration UI.
-4. **Configuration is saved to disk** in `db.json`.
-5. **Portal becomes fully operational**, and all pages are accessible according to the profile and UI guards.
+1. Default settings load from `db.json`.
+2. The user is presented with the setup screen at `/setup-config`.
+3. The user inputs API and Keycloak connection details.
+4. Settings are saved to `db.json`.
+5. Dashboard features activate based on the configured profile.
 
-### Example Screenshots
-* Setup Screen:
+### Setup Screenshots
+
+* **Initial Setup Screen:**
   ![Initial Setup](screenshots/190617.png)
 
-> **Note:** If you cannot access the dashboard due to incorrect configuration, you can visit the **Setup Configuration page** (`/setup-config`) to update your settings.  
-> After confirming the setup, the page will no longer be editable. If accessed afterwards, it will display an informational message indicating that the integration setup is already confirmed.
-
-### `/setup-config` Screenshots
-
-* **Update Configuration Modal (if values need correction):**  
+* **Update Configuration Modal:**
   ![Update Configuration](screenshots/132001.png)
 
-
-
-* **Confirm Setup Modal:**  
+* **Confirm Setup Modal:**
   ![Confirm Setup](screenshots/132836.png)
 
-* **Post-Confirmation `/setup-config` Message:**  
+* **Confirmed Setup View:**
   ![Setup Confirmed](screenshots/123417.png)
----
-## Profile-Based Feature Visibility
-
-Certain pages, like API testers, are **hidden in `prod`** to prevent misuse.
-The `profile` in `db.json` controls this:
-
-| Profile | Feature Visibility      |
-| ------- | ----------------------- |
-| dev     | All features visible    |
-| test    | Some tools hidden       |
-| prod    | Admin/test pages hidden |
 
 ---
 
-## Why This Dashboard?
+## Contributing
 
-This dashboard was created to provide a **convenient and efficient way to interact with the SIPS Connect platform**. It allows users to:
+Please review [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests or contributing code to this repository. All contributions are covered under the Apache License 2.0.
 
-* **Manage platform features** through a centralized UI.
-* **Monitor system activity** and logs easily.
-* **Perform administrative tasks** efficiently.
-* **Configure runtime settings** dynamically via `db.json`.
+---
 
-It is designed for **both development and production environments**, with profile-based feature visibility to ensure safe operation.
+## Security Policy
+
+Security vulnerabilities should be reported privately to **SOMALI PAYMENT SWITCH (SPS) LTD** according to the procedures outlined in [SECURITY.md](SECURITY.md). Please do not open public GitHub issues for security vulnerabilities.
