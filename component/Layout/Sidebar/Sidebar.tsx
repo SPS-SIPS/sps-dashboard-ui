@@ -79,6 +79,16 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                     icon: <FiChevronRight className={styles.icon}/>,
                 },
                 {
+                    title: 'Contributing Guidelines',
+                    path: '/docs/contributing',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+                {
+                    title: 'Security Policy',
+                    path: '/docs/security',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+                {
                     title: 'Test Cases & Security Test Scenarios',
                     path: '/docs/test-cases',
                     icon: <FiChevronRight className={styles.icon}/>,
