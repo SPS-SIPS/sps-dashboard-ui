@@ -2,20 +2,43 @@ import MarkdownRenderer from "../../component/MarkdownRenderer";
 
 const markdown = `# Security Policy
 
-## Reporting Security Vulnerabilities
+## Supported Versions
 
-Please **do not** report security vulnerabilities or security-related flaws through public GitHub issues.
+The following table indicates which versions of **SIPS Connect Portal** (\`abdoulhakim/sips-connect-portal\`) are currently supported with security updates:
+
+| Version | Docker Tag / Image | Supported |
+| ------- | ------------------ | --------- |
+| 1.5.x   | \`abdoulhakim/sips-connect-portal:1.5.5\`, \`latest\` | :white_check_mark: |
+| 1.4.x   | \`abdoulhakim/sips-connect-portal:1.4.x\` | :x: |
+| 1.0.x - 1.3.x | legacy releases | :x: |
+| < 1.0   | pre-release builds | :x: |
+
+Official Docker Hub Repository: [abdoulhakim/sips-connect-portal](https://hub.docker.com/r/abdoulhakim/sips-connect-portal)
+
+---
+
+## Reporting a Vulnerability
+
+Please **do not** report security vulnerabilities or security-related flaws through public GitHub issues or public forums.
 
 Report suspected vulnerabilities privately to the institutional maintainers of **SOMALI PAYMENT SWITCH (SPS) LTD** through approved SPS security-reporting channels.
 
-When reporting a vulnerability, please include as much detail as possible:
+### How to Report
 
-- **Component / Route**: Affected UI component, page route (e.g., \`/setup-config\`, \`/admin\`), or API route handler.
-- **Impact Summary**: Explanation of the security risk and potential impact.
-- **Reproduction Steps**: Step-by-step instructions or proof-of-concept (PoC).
-- **Environment Context**: Browser details, UI profile configuration (\`dev\`, \`test\`, \`prod\`), and version.
-- **Logs & Network Payloads**: Relevant browser console logs or network requests (with any sensitive credentials, tokens, or live transaction data scrubbed out).
+When submitting a security vulnerability report, please include:
+- **Affected Component / Route**: UI page route (e.g., \`/setup-config\`, \`/admin\`), API endpoint, or Docker container tag (\`abdoulhakim/sips-connect-portal:latest\`).
+- **Impact Summary**: Detailed description of the potential security risk and business impact.
+- **Reproduction Steps**: Clear step-by-step instructions or Proof-of-Concept (PoC).
+- **Environment Context**: Browser details, UI profile configuration (\`dev\`, \`test\`, \`prod\`), and container version.
+- **Logs & Payloads**: Relevant browser console logs or network payloads with sensitive credentials, tokens, or live transaction data scrubbed.
 - **Suggested Fix / Mitigation**: If available.
+
+### What to Expect
+
+- **Acknowledgment**: You will receive an initial acknowledgment of your report within 48 hours.
+- **Assessment & Status Updates**: The SPS security team will evaluate the finding and provide progress updates every 5 business days until resolution.
+- **Accepted Vulnerabilities**: If accepted, a patch will be prepared, tested, and released as a patch update to \`abdoulhakim/sips-connect-portal\` (e.g., version incremented on Docker Hub). You will be credited privately or publicly according to your preference.
+- **Declined Reports**: If the report is determined to be invalid, out of scope, or working as designed (e.g., standard dev profile features), you will receive a clear explanation.
 
 ---
 
