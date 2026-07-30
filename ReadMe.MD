@@ -2,24 +2,45 @@
 
 The **SPS / SIPS Dashboard UI** (Docker image: [`abdoulhakim/sips-connect-portal`](https://hub.docker.com/r/abdoulhakim/sips-connect-portal)) is the official web management portal for the **Somali Instant Payment System (SIPS) Connect** ecosystem, developed and maintained by **SOMALI PAYMENT SWITCH (SPS) LTD**.
 
-It enables financial institutions, participants, and system administrators to manage platform integrations, configure runtime settings via `db.json`, monitor ISO 20022 message streams, and manage PKI / Data Protection Keys securely.
+It enables financial institutions, participants, and system administrators to manage platform integrations, configure runtime settings via `db.json`, and monitor ISO 20022 message streams.
+
+---
+
+## Ownership, Authorship & Licensing
+
+This repository is owned by **SOMALI PAYMENT SWITCH (SPS) LTD**.
+
+### Technical Leadership & Developers
+
+- **Abdihakim Mohamed** ([@Abdoul-Hakim101](https://github.com/Abdoul-Hakim101)): Lead UI Portal Developer and Docker Container Maintainer (`abdoulhakim/sips-connect-portal`).
+- **Abdulshakur Ahmed Aided** ([@hanadderia](https://github.com/hanadderia)): SIPS System Architect and Technical Lead.
+- **Abdi-nasir** ([@Abdi-nasir](https://github.com/Abdi-nasir)): UI Portal Developer and Contributor.
+
+This repository is released under the **Apache License 2.0**. See [LICENSE](LICENSE).
+
+Release governance is documented through:
+
+- [SECURITY.md](SECURITY.md) - vulnerability reporting and sensitive-material policy.
+- [CONTRIBUTING.md](CONTRIBUTING.md) - contribution rules and high-risk review areas.
 
 ---
 
 ## Table of Contents
 
-1. [Features](#features)
-2. [Prerequisites](#prerequisites)
-3. [Directory Structure](#directory-structure)
-4. [Generating SSL Certificates](#generating-a-self-signed-ssl-certificate)
-5. [Running the App](#running-the-app)
+1. [Ownership, Authorship & Licensing](#ownership-authorship--licensing)
+2. [Features](#features)
+3. [Configuration Modules](#configuration-modules)
+4. [Prerequisites](#prerequisites)
+5. [Directory Structure](#directory-structure)
+6. [Generating SSL Certificates](#generating-a-self-signed-ssl-certificate)
+7. [Running the App](#running-the-app)
     - [Using Docker](#using-docker-compose)
     - [Locally Without Docker](#locally-without-docker)
-6. [Runtime Configuration (`db.json`)](#runtime-configuration-dbjson)
-7. [Profile-Based Feature Visibility](#profile-based-feature-visibility)
-8. [First-Time Setup (UI Flow)](#first-time-setup-ui-flow)
-9. [Contributing](#contributing)
-10. [Security Policy](#security-policy)
+8. [Runtime Configuration (`db.json`)](#runtime-configuration-dbjson)
+9. [Profile-Based Feature Visibility](#profile-based-feature-visibility)
+10. [First-Time Setup (UI Flow)](#first-time-setup-ui-flow)
+11. [Contributing](#contributing)
+12. [Security Policy](#security-policy)
 
 ---
 
@@ -28,8 +49,22 @@ It enables financial institutions, participants, and system administrators to ma
 - **Integration Management**: Centralized management portal for `sips-connect` backend services.
 - **ISO 20022 Message Inspector**: Live transaction logs, raw XML viewers, and message status tracking.
 - **Dynamic Configuration (`db.json`)**: Runtime API and Keycloak authentication settings configurable directly via UI.
-- **PKI & Key Management**: Display and management of Certificate Authority (CA) chains and Data Protection keys.
 - **Profile Guards**: Environmental profile feature filtering (`dev`, `test`, `prod`) to enforce production safety.
+
+---
+
+## Configuration Modules
+
+The portal provides configuration forms for all underlying `sips-connect` platform modules:
+
+- **API Adapters (`/config/endpoint`)**: Configure gateway endpoint mappings for Core Bank, BPC / SmartVista, and ISO 20022 channels.
+- **API Keys (`/config/apiKeys`)**: Secure management of API keys and client credentials.
+- **Core Banking Integration (`/config/core`)**: Core banking callback URLs, connection timeouts, retry counts, and basic/token auth settings.
+- **EMV & SomQR (`/config/emv`)**: EMV QR code specs, merchant category codes, and Person-to-Person (P2P) QR parameters.
+- **Host Configurations (`/config/hosts`)**: Configure SIPS switch host addresses, BPC host ports, and network timeout settings.
+- **ISO 20022 Messaging (`/config/iso20022`)**: Participant BICs, Member IDs, SIPS queue names, and message routing keys.
+- **Allowed Origins (`/config/origins`)**: Maintain allowed CORS origin domains for browser API requests.
+- **XAdES Digital Signatures (`/config/xades`)**: Configure digital signature certificates (`certificatePath`, `privateKeyPath`, `chainPath`), private key passphrases, signature algorithms, timestamping, and verification window minutes.
 
 ---
 
@@ -51,6 +86,8 @@ sps-dashboard-ui/
 │   └── tls.key         # SSL private key (generated locally, gitignored)
 ├── component/          # React layout and UI components
 ├── pages/              # Next.js pages and documentation routes
+│   ├── config/         # Platform configuration forms (XAdES, Core, ISO 20022, EMV, etc.)
+│   └── docs/           # Documentation routes
 ├── public/             # Static assets
 ├── server-https.js     # Custom HTTPS server entrypoint
 ├── entrypoint-https.sh # Docker HTTPS startup script
