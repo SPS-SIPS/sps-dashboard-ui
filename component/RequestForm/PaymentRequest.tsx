@@ -1,226 +1,153 @@
-import useEndpoints from "../../api/hooks/useEndpoints";
-import React, { useEffect, useState } from "react";
-import SpinLoading from "../Loading/SpinLoading/SpinLoading";
-import Input from "../common/Input/Input";
-import ActionButton from "../common/ActionButton/ActionButton";
-import SelectInput from "../common/SelectInput/SelectInput";
+import React, {useEffect, useState} from 'react';
+import {createPortal} from 'react-dom';
+import headerStyles from '../../styles/VerificationRequestPage.module.css';
+import useEndpoints from '../../api/hooks/useEndpoints';
+import Input from '../common/Input/Input';
+import SelectInput from '../common/SelectInput/SelectInput';
+import ActionButton from '../common/ActionButton/ActionButton';
+import QRDataViewer from '../ScanToPay/QRDataViewer/QRDataViewer';
+import {fieldsFor, buildPaymentPayload, groups, isOptional, paymentDefaults, paymentTypes, type PaymentType} from '../../utils/paymentForms';
+import {generateLocalId} from '../../utils/generateLocalId';
+import styles from './PaymentTester.module.css';
+import PaymentFormSettings from './PaymentFormSettings';
+import {createDefaultPaymentForms, configuredDefaults, validatePaymentForms, validatePaymentPreset, type PaymentPreset} from '../../utils/paymentFormConfig';
+import {useAuthentication} from '../../auth/AuthProvider';
+import useAxiosPrivate from '../../api/hooks/useAxiosPrivate';
+import type {FieldMapping} from '../../api/hooks/useEndpoints';
+import AlertModal from '../common/AlertModal/AlertModal';
+import {MdSettings} from 'react-icons/md';
+import AccountTransferSteps from './AccountTransferSteps';
+import P2GPaymentSteps from './P2GPaymentSteps';
 
-import styles from "../RequestForm/RequestForm.module.css";
-import {
-  bicOptionsDev,
-  bicOptionsProd,
-  categoryPurposeOptions,
-  verificationMethods,
-} from "../../constants/gatewayFormOptions";
-import {useAuthentication} from "../../auth/AuthProvider";
-import {generateLocalId} from "../../utils/generateLocalId";
-
-export interface FieldMapping {
-  internalField: string;
-  userField: string;
-  type: string;
-}
-
-interface PaymentRequestProps {
-  onSubmit: (data: Record<string, string>) => void;
-  prefilledValues?: Record<string, string> | null;
-}
-
-const PaymentRequest: React.FC<PaymentRequestProps> = ({
-  onSubmit,
-  prefilledValues = null,
-}) => {
-  const { endpoints, loading, error } = useEndpoints();
-  const [fieldMappings, setFieldMappings] = useState<FieldMapping[]>([]);
-  const [formValues, setFormValues] = useState<Record<string, string>>({});
-  const [disabledFields, setDisabledFields] = useState<Set<string>>(new Set());
-
-  const {config} = useAuthentication();
-  const activeProfile = config?.profile;
-
-  useEffect(() => {
-    if (endpoints) {
-      const selectedEndpoint = endpoints["PaymentRequest"];
-      if (selectedEndpoint) {
-        const mappings = selectedEndpoint.fieldMappings;
-        setFieldMappings(mappings);
-        const initialValues: Record<string, string> = {};
-        const disabledSet = new Set<string>();
-
-        mappings.forEach(({ internalField, userField }) => {
-          if (internalField === "LocalInstrument") {
-            initialValues[userField] = "CRTRM";
-            disabledSet.add(userField);
-            return;
-          }
-
-          if (prefilledValues && internalField in prefilledValues) {
-            initialValues[userField] = prefilledValues[internalField];
-
-            // Always disable if prefilled OR if CategoryPurpose
-            disabledSet.add(userField);
-          }
-          if (
-              internalField === "CategoryPurpose" &&
-              prefilledValues &&
-              internalField in prefilledValues
-          ) {
-            disabledSet.add(userField);
-          }
-        });
-
-        setFormValues(initialValues);
-        setDisabledFields(disabledSet);
-      }
-    }
-  }, [endpoints, prefilledValues]);
-
-  const handleInputChange = (userField: string, value: string) => {
-    setFormValues((prev) => ({
-      ...prev,
-      [userField]: value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (endpoints) {
-      onSubmit(formValues);
-    }
-  };
-
-  const formatUserField = (userField: string) => {
-    return userField
-      .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (str) => str.toUpperCase());
-  };
-
-  const OPTIONAL_FIELDS = ["CreditorAddress", "DebtorAddress"];
-
-  const isFormValid = () => {
-    return fieldMappings.every((mapping) => {
-      if (OPTIONAL_FIELDS.includes(mapping.internalField)) {
-        return true;
-      }
-
-      const value = formValues[mapping.userField];
-
-      return typeof value === "string"
-          ? value.trim().length > 0
-          : value !== null && value !== undefined && value !== "";
+export default function PaymentRequest({onSubmit, prefilledValues = null, busy = false, settingsContainerId, family = 'domestic', onPaymentTypeChange, paymentSent = false, onStartNewPayment}: {
+    onSubmit: (payload: Record<string, unknown>, paymentType?: PaymentType) => void;
+    prefilledValues?: Record<string, string> | null;
+    busy?: boolean;
+    settingsContainerId?: string;
+    family?: 'domestic' | 'p2g' | 'papss';
+    onPaymentTypeChange?: (type: PaymentType) => void;
+    paymentSent?: boolean;
+    onStartNewPayment?: () => void;
+}) {
+    const {endpoints, loading, error} = useEndpoints();
+    const [type, setType] = useState<PaymentType>('account');
+    const [activePrefill, setActivePrefill] = useState<Record<string, string> | null>(prefilledValues);
+    const [paymentSession, setPaymentSession] = useState(0);
+    const [values, setValues] = useState<Record<string, string>>({});
+    const [preview, setPreview] = useState(false);
+    const {roles, keycloak} = useAuthentication();
+    const axios = useAxiosPrivate();
+    const [forms, setForms] = useState(createDefaultPaymentForms);
+    const [revision, setRevision] = useState('');
+    const [configLoading, setConfigLoading] = useState(true);
+    const [configError, setConfigError] = useState('');
+    const [invalid, setInvalid] = useState(false);
+    const [settings, setSettings] = useState(false);
+    const [confirmReset, setConfirmReset] = useState(false);
+    const [reloadedMappings, setReloadedMappings] = useState<FieldMapping[] | null>(null);
+    const initialValues = (next: PaymentType, source = activePrefill) => ({...configuredDefaults(forms.presets[next]), ...source, ...paymentDefaults(next),
+        ...(['account', 'staticQr', 'dynamicQr', 'p2g'].includes(next) ? {Currency: 'USD'} : {}),
+        ...(['account', 'staticQr', 'dynamicQr', 'p2g'].includes(next) ? {CreditorIssuer: 'C', EndToEndId: generateLocalId()} : {})});
+    const loadSettings = async () => {
+        setConfigLoading(true); setConfigError('');
+        try {
+            const result = await fetch('/api/payment-forms', {cache: 'no-store'});
+            const data = await result.json();
+            setRevision(data.revision ?? ''); setInvalid(data.code === 'INVALID_CONFIG');
+            if (!result.ok || !validatePaymentForms(data.forms)) throw new Error(data.message || 'Invalid payment settings.');
+            setForms(data.forms);
+        } catch (e) {setConfigError(e instanceof Error ? e.message : 'Unable to load settings.');}
+        finally {setConfigLoading(false);}
+    };
+    useEffect(() => {void loadSettings();}, []);
+    useEffect(() => {
+        setActivePrefill(prefilledValues);
+        const next = (prefilledValues?.PaymentType ?? (family !== 'domestic' ? family : ['p2g', 'papss'].includes(type) ? 'account' : type)) as PaymentType;
+        setType(next); setValues(initialValues(next, prefilledValues));
+    }, [prefilledValues, forms, family]);
+    const all = reloadedMappings ?? endpoints?.PaymentRequest?.fieldMappings ?? [];
+    const preset = forms.presets[type];
+    const configErrors = validatePaymentPreset(type, preset, all);
+    const mappings = preset.fields.flatMap(field => {
+        const mapping = all.find(m => m.internalField === field.internalField && (!field.userField || m.userField === field.userField));
+        return mapping ? [mapping] : [];
     });
-  };
-
-  return (
-    <div className={styles.formContainer}>
-      {loading ? (
-        <div className={styles.loading}>
-          <SpinLoading />
-        </div>
-      ) : error ? (
-        <div>Error: {error || "An unknown error occurred."}</div>
-      ) : fieldMappings.length > 0 ? (
-        <>
-          <div className={styles.header}>
-            <h2 className={styles.formTitle}>PaymentRequest</h2>
-          </div>
-          <form onSubmit={handleSubmit} className={styles.requestForm}>
-            {fieldMappings.map(({ internalField, userField, type }, index) => {
-              const isAccountType =
-                internalField === "CreditorAccountType" ||
-                internalField === "DebtorAccountType";
-
-              // const isPaymentType = internalField === "LocalInstrument";
-              const isCategoryPurpose = internalField === "CategoryPurpose";
-              const isBicField =
-                  internalField === "CreditorAgentBIC" ||
-                  internalField === "ToBIC";
-
-              const isSelectField =
-                  isAccountType  || isCategoryPurpose || isBicField;
-
-              const bicOptions =
-                  activeProfile === "prod" ? bicOptionsProd : bicOptionsDev;
-
-              const selectOptions = isAccountType
-                  ? verificationMethods
-                  // : isPaymentType
-                  //     ? paymentMethods
-                      : isCategoryPurpose
-                          ? categoryPurposeOptions
-                          : isBicField
-                              ? bicOptions
-                              : [];
-
-              const isDisabled = disabledFields.has(userField);
-
-              return (
-                <div key={index} className={styles.mappingItem}>
-                  {isSelectField ? (
-                    <SelectInput
-                      label={`${formatUserField(userField)} (${type})`}
-                      value={formValues[userField] || ""}
-                      onChange={(e) =>
-                        handleInputChange(userField, e.target.value)
-                      }
-                      options={selectOptions}
-                      required
-                      name={userField}
-                      disabled={isDisabled}
-                    />
-                  ) : (
-                    <>
-                      <Input
-                        label={`${userField} (${type})`}
-                        value={formValues[userField] || ""}
-                        onChange={(e) =>
-                          handleInputChange(userField, e.target.value)
-                        }
-                        type={type === "double" ? "number" : type}
-                        placeholder={`Enter ${userField}`}
-                        required={!OPTIONAL_FIELDS.includes(internalField)}
-                        disabled={isDisabled}
-                      />
-                      {internalField === "EndToEndId" && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const generatedId = generateLocalId();
-                            handleInputChange(userField, generatedId);
-                          }}
-                          className={styles.generateIdButton}
-                        >
-                          Generate Random Local ID
-                        </button>
-                      )}
-                    </>
-                  )}
-                </div>
-              );
-            })}
-            <div className={styles.buttonGroup}>
-              <ActionButton
-                type="button"
-                className={styles.clearButton}
-                onClick={() => setFormValues({})}
-              >
-                Clear
-              </ActionButton>
-              <ActionButton
-                type="submit"
-                className={styles.submitButton}
-                disabled={!isFormValid()}
-              >
-                Send Payment
-              </ActionButton>
+    const automatic = {...paymentDefaults(type), ...(['account', 'staticQr', 'dynamicQr', 'p2g'].includes(type) ? {Currency: 'USD', CreditorIssuer: 'C', EndToEndId: values.EndToEndId} : {})};
+    const locked = (field: string) => field in automatic || Boolean(activePrefill?.[field]?.trim());
+    const payloadValues = Object.fromEntries(Object.entries(values).filter(([field]) => preset.fields.find(f => f.internalField === field)?.visible || locked(field)));
+    const built = buildPaymentPayload(payloadValues, mappings, type);
+    built.errors.push(...configErrors);
+    const mutateSettings = async (method: 'PUT' | 'POST', body: object) => {
+        if (!keycloak || !roles.includes('configuration')) throw new Error('Configuration permission is required.');
+        await keycloak.updateToken(30);
+        const result = await fetch('/api/payment-forms', {method, headers: {'Content-Type': 'application/json', Authorization: `Bearer ${keycloak.token}`}, body: JSON.stringify({...body, revision})});
+        const data = await result.json();
+        if (!result.ok || !validatePaymentForms(data.forms)) throw new Error(data.message || 'Unable to save settings.');
+        setForms(data.forms); setRevision(data.revision); setInvalid(false); setConfigError(''); setSettings(false);
+    };
+    const change = (field: string, value: string) => setValues(previous => ({...previous, [field]: value, ...(type === 'p2g' && field === 'Amount' ? {AmountPayable: value} : {})}));
+    const changePaymentType = (next: PaymentType) => {
+        setType(next);
+        setValues(initialValues(next));
+        setPreview(false);
+        onPaymentTypeChange?.(next);
+    };
+    const startNewPayment = () => {
+        setActivePrefill(null);
+        setValues(initialValues(type, null));
+        setPreview(false);
+        setPaymentSession(value => value + 1);
+        onStartNewPayment?.();
+    };
+    if (loading) return <p role="status">Loading payment adapter…</p>;
+    if (error) return <p role="alert">Unable to load payment adapter: {error}</p>;
+    if (configLoading) return <p role="status">Loading payment settings…</p>;
+    if (configError) return <>
+        <p role="alert">{configError}</p><ActionButton onClick={() => void loadSettings()}>Reload Settings</ActionButton>
+        {invalid && roles.includes('configuration') && <ActionButton onClick={() => setConfirmReset(true)}>Back up & Reset Payment Settings</ActionButton>}
+        {confirmReset && <AlertModal title="Reset payment settings" message="Back up the invalid file and restore defaults?" warning buttonText="Back up & Reset" onClose={() => setConfirmReset(false)} onConfirm={() => {setConfirmReset(false); void mutateSettings('POST', {action: 'reset', confirmed: true}).catch(e => setConfigError(e.message));}}/>}
+    </>;
+    return <>
+        {roles.includes('configuration') && settingsContainerId && typeof document !== 'undefined' && document.getElementById(settingsContainerId) && createPortal(
+            <span title="Configure payment form"><ActionButton className={headerStyles.headerIconButton} disabled={busy} onClick={() => setSettings(true)}><MdSettings size={22} aria-hidden="true"/><span className={headerStyles.srOnly}>Configure payment form</span></ActionButton></span>,
+            document.getElementById(settingsContainerId)!
+        )}
+        {settings && <PaymentFormSettings type={type} preset={preset} mappings={all} onClose={() => setSettings(false)} onSave={(updated: PaymentPreset) => mutateSettings('PUT', {presetId: type, preset: updated})} onReload={async () => {
+            const result = await axios.get('/api/v1/Adapter');
+            const mappings = result.data?.PaymentRequest?.fieldMappings;
+            if (!Array.isArray(mappings) || mappings.some(m => typeof m.internalField !== 'string' || typeof m.userField !== 'string' || typeof m.type !== 'string')) throw new Error('Invalid payment adapter mappings.');
+            setReloadedMappings(mappings);
+        }}/>}
+        <fieldset disabled={busy || settings} className={styles.fieldset}>
+            <div className={styles.grid}>
+                {family === 'domestic' && <SelectInput label="Payment Type" value={type} options={paymentTypes} disabled={Boolean(activePrefill) || paymentSent} onChange={event => {
+                    const next = event.target.value as PaymentType; changePaymentType(next);
+                }}/>}
             </div>
-          </form>
-        </>
-      ) : (
-        <div>No field mappings available.</div>
-      )}
-    </div>
-  );
-};
-
-export default PaymentRequest;
+            {family === 'domestic' && ['account', 'staticQr', 'dynamicQr'].includes(type) ? <AccountTransferSteps key={`${revision}-${type}-${paymentSession}`} paymentType={type as 'account' | 'staticQr' | 'dynamicQr'} values={values} mappings={mappings} preset={preset} locked={locked} change={change} errors={built.errors} busy={busy || settings} verified={Boolean(activePrefill)} paymentSent={paymentSent} onStartNewPayment={startNewPayment} onPreview={() => setPreview(true)} onSubmit={() => {if (!busy && !settings && !paymentSent && !built.errors.length) onSubmit(built.payload, type);}}/> : family === 'p2g' ? <P2GPaymentSteps key={`${revision}-${type}-${paymentSession}`} values={values} mappings={mappings} preset={preset} locked={locked} change={change} errors={built.errors} busy={busy || settings} verified={Boolean(activePrefill)} paymentSent={paymentSent} onStartNewPayment={startNewPayment} onPreview={() => setPreview(true)} onSubmit={() => {if (!busy && !settings && !paymentSent && !built.errors.length) onSubmit(built.payload, type);}}/> : <form onSubmit={event => {event.preventDefault(); if (!busy && !built.errors.length) onSubmit(built.payload, type);}}>
+                {Object.entries(groups).filter(([, fields]) => fields.some(field => mappings.some(m => m.internalField === field))).map(([group, fields]) => <section className={styles.section} key={group}>
+                    <h2>{group}</h2><div className={styles.grid}>
+                        {mappings.filter(m => fields.includes(m.internalField) && (preset.fields.find(f => f.internalField === m.internalField)?.visible || locked(m.internalField))).map(mapping => {
+                            const field = mapping.internalField;
+                            return <div key={field}>
+                                <Input label={`${preset.fields.find(f => f.internalField === field)?.label} · ${mapping.userField} (${mapping.type})`} value={values[field] ?? ''} type="text"
+                                    required={!isOptional(field, type)} disabled={locked(field)} onChange={event => change(field, event.target.value)}/>
+                                <small className={styles.note}>{field} · {field in automatic ? 'Automatically set' : activePrefill?.[field]?.trim() ? 'From verification' : isOptional(field, type) ? 'Optional' : 'Required'}{isOptional(field, type) && locked(field) ? ' · Optional' : ''}</small>
+                                {['EndToEndId', 'TxId'].includes(field) && <ActionButton className={styles.secondary} onClick={() => change(field, generateLocalId())}>Generate ID</ActionButton>}
+                            </div>;
+                        })}
+                    </div>
+                </section>)}
+                <details className={styles.validation}><summary>{built.errors.length ? `${built.errors.length} items to complete before sending` : 'Request is ready to send'}</summary>
+                    {built.errors.length > 0 && <ul>{built.errors.map(message => <li key={message}>{message}</li>)}</ul>}
+                </details>
+                <div className={styles.actions}>
+                    <ActionButton className={styles.secondary} onClick={() => setPreview(true)}>View Request</ActionButton>
+                    <ActionButton className={styles.secondary} onClick={() => setValues(previous => Object.fromEntries(Object.entries(previous).filter(([field]) => fieldsFor(type).includes(field) && locked(field))))}>Clear Editable Fields</ActionButton>
+                    <ActionButton type="submit" disabled={busy || built.errors.length > 0}>{busy ? 'Sending payment…' : 'Send Payment'}</ActionButton>
+                </div>
+            </form>}
+        </fieldset>
+        <QRDataViewer isOpen={preview} data={built.payload} title="Payment Request Preview" subtitle={built.errors.length ? 'Incomplete request — complete required fields before sending.' : 'This JSON will be sent to the payment endpoint.'} onClose={() => setPreview(false)}/>
+    </>;
+}
