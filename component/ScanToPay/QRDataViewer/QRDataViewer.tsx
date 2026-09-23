@@ -11,6 +11,7 @@ interface QRDataViewerProps {
     onClose?: () => void;
     title?: string;
     subtitle?: string;
+    rawResponse?: boolean;
 }
 
 export default function QRDataViewer({
@@ -18,7 +19,8 @@ export default function QRDataViewer({
                                          isOpen,
                                          onClose,
                                          title = "Decoded QR Data (JSON)",
-                                         subtitle
+                                         subtitle,
+                                         rawResponse = false
                                      }: QRDataViewerProps) {
     // Handle ESC key to close
     useEffect(() => {
@@ -35,7 +37,7 @@ export default function QRDataViewer({
         };
     }, [isOpen, onClose]);
 
-    if (!isOpen || !data) return null;
+    if (!isOpen || (!rawResponse && !data)) return null;
 
     const modalContent = (
         <div className={styles.overlay} onClick={onClose}>
@@ -57,7 +59,7 @@ export default function QRDataViewer({
                 )}
 
                 <pre className={styles.jsonBlock}>
-                    {JSON.stringify(data, null, 2)}
+                    {rawResponse && typeof data === 'string' ? data : JSON.stringify(data, null, 2)}
                 </pre>
             </div>
         </div>
