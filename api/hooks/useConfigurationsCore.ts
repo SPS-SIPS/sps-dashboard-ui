@@ -26,6 +26,13 @@ export type ConfigurationsCore = {
   callbackInternalBudgetSeconds: number;
 
   verificationOnlyMode: boolean;
+
+  callbackAuthEnabled: boolean;
+  callbackTokenEndpoint: string;
+  callbackClientId: string;
+  callbackClientSecret: string;
+  callbackScope: string;
+  callbackAudience: string;
 };
 
 const BASE_URL = "/api/v1/Configurations/Core";

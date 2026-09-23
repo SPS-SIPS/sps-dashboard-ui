@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useState} from "react";
+import {useRouter} from "next/router";
 import UploadQRScanner from "../../component/ScanToPay/UploadQRScanner/UploadQRScanner";
 import {SOMQRType} from "../../utils/validateSOMQR";
 import AlertModal from "../../component/common/AlertModal/AlertModal";
@@ -58,6 +59,7 @@ type QRValidationResult = {
 };
 
 export default function ScanPayPage() {
+    const router = useRouter();
     const {parseMerchantQR, parsePersonQR} = useSomQRParser();
     const [qrData, setQrData] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -181,7 +183,8 @@ export default function ScanPayPage() {
     };
 
     const {config} = useAuthentication();
-    const activeProfile = config?.profile === "prod" ? "prod" : "dev";
+    React.useEffect(() => {if (config?.profile === "prod") void router.replace("/403");}, [config?.profile, router]);
+    const activeProfile = config?.profile === "prod" ? "prod" : config?.profile === "sit" ? "sit" : "uat";
 
     const verifyPayeeWithGateway = async (
         payload: VerifyPayeePayload
@@ -480,6 +483,7 @@ export default function ScanPayPage() {
 
         }
     }
+    if (config?.profile === "prod") return null;
     return (
 
         <div className={sharedStyles.container}>

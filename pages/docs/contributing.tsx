@@ -12,10 +12,10 @@ By contributing to this repository, you agree that your contributions are submit
 
 - **Integration Alignment**: The UI must strictly align with \`sips-connect\` backend specs (ISO 20022 messaging, participant management, health/status metrics, and PKI security management).
 - **Security & Secret Protection**:
-  - **NEVER** commit real API credentials, Keycloak secrets, TLS private keys, certificates (\`certs/\`), or production environment files (\`.env\`, custom \`db.json\`).
+  - **NEVER** commit real API credentials, Keycloak secrets, TLS private keys, certificates (\`certs/\`), or production environment files (\`.env\`, custom \`app-config.json\`).
   - Keep sensitive data out of client-side bundles, static mock assets, and screenshots.
 - **Profile-Based Feature Visibility**:
-  - Maintain and respect environmental profile guards (\`dev\`, \`test\`, \`prod\`) configured via runtime settings (\`db.json\`).
+  - Maintain and respect environmental profile guards (\`uat\`, \`sit\`, \`prod\`) configured via runtime settings (\`app-config.json\`).
   - Administrative endpoints, raw API testing tools, and debug screens must be properly restricted or hidden in the \`prod\` profile.
 - **Code Quality & Testing**:
   - Ensure all changes compile cleanly (\`npm run build\`) and pass linting (\`npm run lint\`).
@@ -40,8 +40,8 @@ By contributing to this repository, you agree that your contributions are submit
    # Start local development server
    npm run dev
    \`\`\`
-3. **Runtime Configuration (\`db.json\`)**:
-   - Runtime configuration is read from \`db.json\`. Ensure any new configurable properties are safely defaulted and exposed via \`/setup-config\` when appropriate.
+3. **Runtime Configuration (\`app-config.json\`)**:
+   - Runtime configuration is read from \`app-config.json\`. Ensure any new configurable properties are safely defaulted and exposed via \`/setup-config\` when appropriate.
 
 ---
 
@@ -51,7 +51,7 @@ Changes in the following critical areas require senior architecture and security
 
 - **Authentication & Setup Flow**:
   - Keycloak integration (\`keycloak-js\`, session handlers, token management).
-  - Setup screen and initial configuration persistence (\`/setup-config\`, \`db.json\` runtime updates).
+  - Setup screen and initial configuration persistence (\`/setup-config\`, \`app-config.json\` runtime updates).
   - UI guards (\`forceFormCompletion\`, \`setupConfirmed\`).
 - **Security & PKI Management**:
   - Data protection key management pages and certificate display (\`/docs/data-protection-keys\`, \`/docs/pki\`).

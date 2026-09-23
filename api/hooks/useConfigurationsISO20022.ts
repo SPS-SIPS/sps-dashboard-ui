@@ -9,6 +9,8 @@ export type ConfigurationsISO20022 = {
   sips: string;
   bic: string;
   agent: string;
+  payerBankCode: string;
+  payerChannel: string;
   key: string;
   secret: string;
 };

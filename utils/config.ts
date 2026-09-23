@@ -1,3 +1,4 @@
+export type AppProfile = "uat" | "sit" | "prod";
 export type AppConfig = {
     api: {
         baseUrl: string;
@@ -7,7 +8,7 @@ export type AppConfig = {
         realm: string;
         clientId: string;
     };
-    profile: string;
+    profile: AppProfile;
     uiGuards: {
         forceFormCompletion: boolean;
         setupConfirmed: boolean;
@@ -22,7 +23,7 @@ function isAppConfig(value: unknown): value is AppConfig {
         typeof (value as any).keycloak?.url === "string" &&
         typeof (value as any).keycloak?.realm === "string" &&
         typeof (value as any).keycloak?.clientId === "string" &&
-        ["dev", "test", "prod"].includes((value as any).profile) &&
+        ["uat", "sit", "prod"].includes((value as any).profile) &&
         typeof (value as any).uiGuards?.forceFormCompletion === "boolean" &&
         typeof (value as any).uiGuards?.setupConfirmed === "boolean"
     );

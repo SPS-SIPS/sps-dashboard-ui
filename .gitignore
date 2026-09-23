@@ -1,6 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-db.json
+app-config.json
+/runtime-config/*
+!/runtime-config/.gitkeep
 
 # dependencies
 /node_modules

@@ -26,7 +26,7 @@ const SetupConfig = () => {
         keycloakUrl: "",
         keycloakRealm: "",
         keycloakClientId: "",
-        profile: "dev",
+        profile: "uat",
     });
 
     const router = useRouter();

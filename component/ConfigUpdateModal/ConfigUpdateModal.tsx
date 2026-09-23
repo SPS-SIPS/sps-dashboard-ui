@@ -34,7 +34,7 @@ const ConfigUpdateModal: React.FC<ConfigFormProps> = ({
         keycloakUrl: initialValues.keycloakUrl || "",
         keycloakRealm: initialValues.keycloakRealm || "",
         keycloakClientId: initialValues.keycloakClientId || "",
-        profile: initialValues.profile || "dev",
+        profile: initialValues.profile || "uat",
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -177,8 +177,8 @@ const ConfigUpdateModal: React.FC<ConfigFormProps> = ({
                     value={values.profile}
                     onChange={handleChange}
                     options={[
-                        {value: "dev", label: "Development"},
-                        {value: "test", label: "Testing"},
+                        {value: "uat", label: "UAT"},
+                        {value: "sit", label: "SIT"},
                         {value: "prod", label: "Production"},
                     ]}
                     required

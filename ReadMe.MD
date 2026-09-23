@@ -2,7 +2,7 @@
 
 The **SPS / SIPS Dashboard UI** (Docker image: [`abdoulhakim/sips-connect-portal`](https://hub.docker.com/r/abdoulhakim/sips-connect-portal)) is the official web management portal for the **Somali Instant Payment System (SIPS) Connect** ecosystem, developed and maintained by **SOMALI PAYMENT SWITCH (SPS) LTD**.
 
-It enables financial institutions, participants, and system administrators to manage platform integrations, configure runtime settings via `db.json`, and monitor ISO 20022 message streams.
+It enables financial institutions, participants, and system administrators to manage platform integrations, configure runtime settings via `app-config.json`, and monitor ISO 20022 message streams.
 
 ---
 
@@ -36,7 +36,7 @@ Release governance is documented through:
 7. [Running the App](#running-the-app)
     - [Using Docker](#using-docker-compose)
     - [Locally Without Docker](#locally-without-docker)
-8. [Runtime Configuration (`db.json`)](#runtime-configuration-dbjson)
+8. [Runtime Configuration (`app-config.json`)](#runtime-configuration-dbjson)
 9. [Profile-Based Feature Visibility](#profile-based-feature-visibility)
 10. [First-Time Setup (UI Flow)](#first-time-setup-ui-flow)
 11. [Contributing](#contributing)
@@ -48,8 +48,8 @@ Release governance is documented through:
 
 - **Integration Management**: Centralized management portal for `sips-connect` backend services.
 - **ISO 20022 Message Inspector**: Live transaction logs, raw XML viewers, and message status tracking.
-- **Dynamic Configuration (`db.json`)**: Runtime API and Keycloak authentication settings configurable directly via UI.
-- **Profile Guards**: Environmental profile feature filtering (`dev`, `test`, `prod`) to enforce production safety.
+- **Dynamic Configuration (`app-config.json`)**: Runtime API and Keycloak authentication settings configurable directly via UI.
+- **Profile Guards**: Environmental profile feature filtering (`uat`, `sit`, `prod`) to enforce production safety.
 
 ---
 
@@ -94,7 +94,7 @@ sps-dashboard-ui/
 ├── Dockerfile          # Docker image build specification
 ├── docker-compose.yml  # Local multi-container compose file
 ├── package.json        # Project dependencies and npm scripts
-├── db.json             # Runtime configuration file (gitignored)
+├── app-config.json             # Runtime configuration file (gitignored)
 ├── CONTRIBUTING.md     # Development & contribution guidelines
 ├── SECURITY.md         # Vulnerability reporting & security policy
 └── README.md
@@ -163,9 +163,9 @@ docker pull abdoulhakim/sips-connect-portal:latest
 
 ---
 
-## Runtime Configuration (`db.json`)
+## Runtime Configuration (`app-config.json`)
 
-Runtime configuration is stored in `db.json` and loaded dynamically by the application:
+Runtime configuration is stored in `app-config.json` and loaded dynamically by the application:
 
 ```json
 {
@@ -193,7 +193,7 @@ Configuration values can be updated directly from the UI via `/setup-config`.
 
 ## Profile-Based Feature Visibility
 
-Feature visibility is dynamically controlled based on the active `profile` set in `db.json`:
+Feature visibility is dynamically controlled based on the active `profile` set in `app-config.json`:
 
 | Profile | Feature Visibility |
 | ------- | ------------------ |
@@ -207,10 +207,10 @@ Feature visibility is dynamically controlled based on the active `profile` set i
 
 When starting the application for the first time:
 
-1. Default settings load from `db.json`.
+1. Default settings load from `app-config.json`.
 2. The user is presented with the setup screen at `/setup-config`.
 3. The user inputs API and Keycloak connection details.
-4. Settings are saved to `db.json`.
+4. Settings are saved to `app-config.json`.
 5. Dashboard features activate based on the configured profile.
 
 ### Setup Screenshots

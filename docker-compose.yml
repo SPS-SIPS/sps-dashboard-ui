@@ -10,10 +10,13 @@ services:
     environment:
       - NEXTJS_TLS_CERT=/app/certs/tls.crt
       - NEXTJS_TLS_KEY=/app/certs/tls.key
+      # Only honored for UAT/SIT profiles by the verification settings API.
+      - SIPS_BACKEND_ALLOW_SELF_SIGNED=true
     restart: always
     volumes:
       - ./certs:/app/certs:ro
-      - ./db.json:/app/db.json:rw
+      - ./app-config.json:/app/app-config.json:rw
+      - ./runtime-config:/app/runtime-config:rw
     entrypoint: ["/bin/sh", "/app/entrypoint-https.sh"]
     networks:
       - sips-network

@@ -12,12 +12,19 @@ import ConfigFormWrapper from "../../component/ConfigFormWrapper/ConfigFormWrapp
 import {AxiosError} from "axios";
 import RoleGuard from "../../auth/RoleGuard";
 
+type CoreFormConfig = {
+    [Key in keyof ConfigurationsCore]: ConfigurationsCore[Key] extends number
+        ? number | ""
+        : ConfigurationsCore[Key];
+};
+
 const ISO20022ConfigForm = () => {
     const {getConfigurations, updateConfigurations} = useConfigurationsCore();
 
-    const [config, setConfig] = useState<ConfigurationsCore | null>(null);
+    const [config, setConfig] = useState<CoreFormConfig | null>(null);
     const [loading, setLoading] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
+    const [showCallbackSecret, setShowCallbackSecret] = useState(false);
     const [modal, setModal] = useState({
         show: false,
         title: "",
@@ -62,7 +69,8 @@ const ISO20022ConfigForm = () => {
 
         setConfig({
             ...config,
-            [name]: type === "checkbox" ? checked : value,
+            [name]: type === "checkbox" ? checked
+                : type === "number" && value !== "" ? Number(value) : value,
         });
     };
 
@@ -84,7 +92,17 @@ const ISO20022ConfigForm = () => {
         if (!config) return;
         setLoading(true);
         try {
-            const response = await updateConfigurations(config);
+            const response = await updateConfigurations({
+                ...config,
+                safPage: Number(config.safPage),
+                safMaxRetries: Number(config.safMaxRetries),
+                httpTimeoutSeconds: Number(config.httpTimeoutSeconds),
+                coreBankTimeoutSeconds: Number(config.coreBankTimeoutSeconds),
+                dbPersistTimeoutSeconds: Number(config.dbPersistTimeoutSeconds),
+                transactionTimeoutMinutes: Number(config.transactionTimeoutMinutes),
+                callbackSlaSeconds: Number(config.callbackSlaSeconds),
+                callbackInternalBudgetSeconds: Number(config.callbackInternalBudgetSeconds),
+            });
             showModalWithProps(true, "Success", response, false);
         } catch (error) {
             showModalWithProps(
@@ -205,6 +223,61 @@ const ISO20022ConfigForm = () => {
                         </div>
 
                         <div className={styles.section}>
+                            <h2 className={styles.sectionTitle}>Callback Authentication</h2>
+                            <Checkbox
+                                label="Enable Callback Authentication"
+                                name="callbackAuthEnabled"
+                                checked={cfg.callbackAuthEnabled ?? false}
+                                onChange={onChange}
+                            />
+                            <Input
+                                label="Callback Token Endpoint"
+                                type="url"
+                                name="callbackTokenEndpoint"
+                                value={cfg.callbackTokenEndpoint ?? ""}
+                                onChange={onChange}
+                                required={cfg.callbackAuthEnabled}
+                            />
+                            <Input
+                                label="Callback Client ID"
+                                type="text"
+                                name="callbackClientId"
+                                value={cfg.callbackClientId ?? ""}
+                                onChange={onChange}
+                                required={cfg.callbackAuthEnabled}
+                            />
+                            <div className={styles.passwordSection}>
+                                <Input
+                                    label="Callback Client Secret"
+                                    type={showCallbackSecret ? "text" : "password"}
+                                    name="callbackClientSecret"
+                                    value={cfg.callbackClientSecret ?? ""}
+                                    onChange={onChange}
+                                    autoComplete="new-password"
+                                />
+                                <Checkbox
+                                    label="Show Client Secret"
+                                    checked={showCallbackSecret}
+                                    onChange={(e) => setShowCallbackSecret(e.target.checked)}
+                                />
+                            </div>
+                            <Input
+                                label="Callback Scope (optional)"
+                                type="text"
+                                name="callbackScope"
+                                value={cfg.callbackScope ?? ""}
+                                onChange={onChange}
+                            />
+                            <Input
+                                label="Callback Audience"
+                                type="text"
+                                name="callbackAudience"
+                                value={cfg.callbackAudience ?? ""}
+                                onChange={onChange}
+                            />
+                        </div>
+
+                        <div className={styles.section}>
                             <h2 className={styles.sectionTitle}>SAF Settings</h2>
                             <Input
                                 label="SAF Expression (Cron)"
@@ -217,6 +290,7 @@ const ISO20022ConfigForm = () => {
                             <Input
                                 label="SAF Page Size"
                                 type="number"
+                                required
                                 name="safPage"
                                 value={cfg.safPage.toString()}
                                 onChange={onChange}
@@ -234,6 +308,7 @@ const ISO20022ConfigForm = () => {
                             <Input
                                 label="SAF Max Retries"
                                 type="number"
+                                required
                                 name="safMaxRetries"
                                 value={cfg.safMaxRetries.toString()}
                                 onChange={onChange}
@@ -247,6 +322,7 @@ const ISO20022ConfigForm = () => {
                             <Input
                                 label="HTTP Timeout (seconds)"
                                 type="number"
+                                required
                                 name="httpTimeoutSeconds"
                                 value={cfg.httpTimeoutSeconds.toString()}
                                 onChange={onChange}
@@ -257,6 +333,7 @@ const ISO20022ConfigForm = () => {
                             <Input
                                 label="Core Bank Timeout (seconds)"
                                 type="number"
+                                required
                                 name="coreBankTimeoutSeconds"
                                 value={cfg.coreBankTimeoutSeconds.toString()}
                                 onChange={onChange}
@@ -265,6 +342,7 @@ const ISO20022ConfigForm = () => {
                             <Input
                                 label="DB Persist Timeout (seconds)"
                                 type="number"
+                                required
                                 name="dbPersistTimeoutSeconds"
                                 value={cfg.dbPersistTimeoutSeconds.toString()}
                                 onChange={onChange}
@@ -275,6 +353,7 @@ const ISO20022ConfigForm = () => {
                             <Input
                                 label="Transaction Timeout (minutes)"
                                 type="number"
+                                required
                                 name="transactionTimeoutMinutes"
                                 value={cfg.transactionTimeoutMinutes.toString()}
                                 onChange={onChange}
@@ -285,6 +364,7 @@ const ISO20022ConfigForm = () => {
                             <Input
                                 label="Callback SLA (seconds)"
                                 type="number"
+                                required
                                 name="callbackSlaSeconds"
                                 value={cfg.callbackSlaSeconds.toString()}
                                 onChange={onChange}
@@ -294,6 +374,7 @@ const ISO20022ConfigForm = () => {
                             <Input
                                 label="Callback Internal Budget (seconds)"
                                 type="number"
+                                required
                                 name="callbackInternalBudgetSeconds"
                                 value={cfg.callbackInternalBudgetSeconds.toString()}
                                 onChange={onChange}

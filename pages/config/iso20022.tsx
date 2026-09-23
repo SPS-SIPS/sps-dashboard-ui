@@ -177,6 +177,22 @@ const ISO20022ConfigForm = () => {
               onChange={onChange}
               placeholder="Enter agent"
             />
+            <Input
+              label="Payer Bank Code"
+              name="payerBankCode"
+              type="text"
+              value={cfg.payerBankCode ?? ""}
+              onChange={onChange}
+              placeholder="Enter payer bank code"
+            />
+            <Input
+              label="Payer Channel"
+              name="payerChannel"
+              type="text"
+              value={cfg.payerChannel ?? ""}
+              onChange={onChange}
+              placeholder="e.g. MOBILE"
+            />
 
             <div className={styles.passwordSection}>
               <Input

@@ -43,7 +43,7 @@ When submitting a security vulnerability report, please include:
 ## Sensitive Material & Secrets Management
 
 - **Zero Credentials Policy**: Do not commit any sensitive credentials, API tokens, Keycloak client secrets, private keys, SSL/TLS private keys, production configuration files, participant secrets, or production ISO 20022 transaction data.
-- **Local Certificates & Config**: The `certs/` directory and runtime configuration file (`db.json`) are explicitly ignored by `.gitignore`. Do not override ignore rules to force-commit local certificates or sensitive runtime state.
+- **Local Certificates & Config**: The `certs/` directory and runtime configuration file (`app-config.json`) are explicitly ignored by `.gitignore`. Do not override ignore rules to force-commit local certificates or sensitive runtime state.
 - **Proprietary Vendor Material**: Do not include BPC / SmartVista proprietary code, internal configuration details, or sensitive infrastructure specifications in UI mock data or assets.
 - **Credential Rotation Procedure**: If any sensitive material or private key is accidentally committed to this repository:
   1. Immediately rotate or revoke the affected credential/certificate in all applicable environments.

@@ -67,20 +67,20 @@ export const bicOptionsProd = [
 
 export const getBicFromAcqId = (
     acqId: string,
-    env: "dev" | "prod"
+    env: "uat" | "sit" | "prod"
 ) => {
-    return env === "dev"
-        ? acqIdToBicDev[acqId]
-        : acqIdToBicProd[acqId];
+    return env === "prod"
+        ? acqIdToBicProd[acqId]
+        : acqIdToBicDev[acqId];
 };
 
 export const getMnoBicFromAcqId = (
     mnoId: string,
-    env: "dev" | "prod"
+    env: "uat" | "sit" | "prod"
 ) => {
-   return  env === "dev"
-        ? MnoAcqIdToBicDev[mnoId]
-        : MnoAcqIdToBicProd[mnoId];
+   return env === "prod"
+        ? MnoAcqIdToBicProd[mnoId]
+        : MnoAcqIdToBicDev[mnoId];
 };
 
 export const extractBankCodeFromIBAN = (iban: string): string | null => {

@@ -9,7 +9,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     try {
-        const filePath = path.join(process.cwd(), "db.json");
+        const filePath = path.join(process.cwd(), "app-config.json");
 
         const rawData = fs.readFileSync(filePath, "utf-8");
         const currentData = JSON.parse(rawData);

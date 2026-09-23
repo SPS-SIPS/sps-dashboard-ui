@@ -33,7 +33,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const body = req.body;
 
-    if (!["dev", "test", "prod"].includes(body.profile)) {
+    if (!["uat", "sit", "prod"].includes(body.profile)) {
         return sendResponse(res, 400, "BadRequest", "Invalid profile");
     }
 
@@ -46,7 +46,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     try {
-        const filePath = path.join(process.cwd(), "db.json");
+        const filePath = path.join(process.cwd(), "app-config.json");
 
         const rawData = fs.readFileSync(filePath, "utf-8");
         const currentData = JSON.parse(rawData);
@@ -55,7 +55,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         currentData.config.keycloak.url = body.keycloakUrl;
         currentData.config.keycloak.realm = body.keycloakRealm || "";
         currentData.config.keycloak.clientId = body.keycloakClientId || "";
-        currentData.config.profile = body.profile as "dev" | "test" | "prod";
+        currentData.config.profile = body.profile as "uat" | "sit" | "prod";
         currentData.config.uiGuards.forceFormCompletion = false;
 
         fs.writeFileSync(filePath, JSON.stringify(currentData, null, 2), "utf-8");
