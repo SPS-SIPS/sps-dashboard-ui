@@ -17,14 +17,13 @@ WORKDIR /app
 # Production environment
 ENV NODE_ENV=production
 
-# Copy built files from builder
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/package-lock.json ./package-lock.json
-COPY --from=builder /app/.next ./.next
+# Copy only the traced production server and static assets.
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-
-# Install only runtime dependencies in the published image.
-RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+# The custom HTTPS server loads Next directly and needs its compiled runtime
+# modules, which are not always included by standalone tracing.
+COPY --from=builder /app/node_modules/next/dist/compiled ./node_modules/next/dist/compiled
 
 # Copy server scripts
 COPY server-https.js ./server-https.js

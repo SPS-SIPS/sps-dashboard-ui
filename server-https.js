@@ -1,6 +1,3 @@
-// Load environment variables from .env.local
-import dotenv from 'dotenv';
-dotenv.config({ path: '.env.local' });
 // Custom HTTPS server for Next.js (ESM)
 import { createServer } from 'https';
 import next from 'next';
