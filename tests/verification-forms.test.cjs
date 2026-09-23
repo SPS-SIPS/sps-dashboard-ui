@@ -234,10 +234,10 @@ test('backend TLS and connection failures explain the cause and never write sett
     assert.equal(api.writes, 0);
 });
 
-test('certificate bypass requires explicit opt-in and a dev/test profile', async () => {
+test('certificate bypass requires explicit opt-in and a UAT/SIT profile', async () => {
     const previous = process.env.SIPS_BACKEND_ALLOW_SELF_SIGNED;
     try {
-        for (const [flag, profile, bypass] of [['true', 'test', true], ['true', 'dev', true], ['false', 'test', false], ['true', 'unknown', false]]) {
+        for (const [flag, profile, bypass] of [['true', 'sit', true], ['true', 'uat', true], ['false', 'sit', false], ['true', 'unknown', false]]) {
             process.env.SIPS_BACKEND_ALLOW_SELF_SIGNED = flag;
             const api = apiHarness(); api.setProfile(profile);
             const loaded = await api.request('GET');
