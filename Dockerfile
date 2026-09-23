@@ -19,9 +19,12 @@ ENV NODE_ENV=production
 
 # Copy built files from builder
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package-lock.json ./package-lock.json
 COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/public ./public
+
+# Install only runtime dependencies in the published image.
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 # Copy server scripts
 COPY server-https.js ./server-https.js
