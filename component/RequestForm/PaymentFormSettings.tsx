@@ -6,7 +6,7 @@ import Input from '../common/Input/Input';
 import SelectInput from '../common/SelectInput/SelectInput';
 import Checkbox from '../common/Checkbox/Checkbox';
 import ActionButton from '../common/ActionButton/ActionButton';
-import {MdClose, MdArrowUpward, MdArrowDownward} from 'react-icons/md';
+import {MdClose} from 'react-icons/md';
 import styles from './VerificationFormSettings.module.css';
 export default function PaymentFormSettings({type, preset, mappings, onSave, onReload, onClose}: {
     type: PaymentType; preset: PaymentPreset; mappings: FieldMapping[]; onSave: (preset: PaymentPreset) => Promise<void>; onReload: () => Promise<void>; onClose: () => void;
@@ -15,7 +15,6 @@ export default function PaymentFormSettings({type, preset, mappings, onSave, onR
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState('');
     const dialog = useRef<HTMLDialogElement>(null);
-    const canReorder = type === 'papss';
     useEffect(() => {
         const previous = document.activeElement as HTMLElement | null;
         const overflow = document.body.style.overflow;
@@ -29,7 +28,6 @@ export default function PaymentFormSettings({type, preset, mappings, onSave, onR
         const fallback = enabled.includes(current.default) ? current.default : enabled[0] ?? current.default;
         return {...previous, referenceTypes: {enabled, default: fallback}};
     });
-    const move = (index: number, offset: number) => setDraft(previous => {const fields = [...previous.fields]; [fields[index], fields[index + offset]] = [fields[index + offset], fields[index]]; return {fields};});
     const run = async (action: () => Promise<void>) => {setBusy(true); setError(''); try {await action();} catch (e) {setError(e instanceof Error ? e.message : 'Unable to update settings.');} finally {setBusy(false);}};
     const errors = validatePaymentPreset(type, draft, mappings);
     return <dialog ref={dialog} className={styles.panel} aria-labelledby="payment-settings-title" onCancel={event => {event.preventDefault(); if (!busy) onClose();}}>
@@ -48,7 +46,6 @@ export default function PaymentFormSettings({type, preset, mappings, onSave, onR
                         {defaultableFields.has(field.internalField) && <Input label="Default" type="text" value={field.defaultValue ?? ''} onChange={event => update(index, {defaultValue: event.target.value || undefined})}/>}
                     </div>
                     <Checkbox label="Show optional field" checked={field.visible} disabled={!isOptional(field.internalField, type) || field.internalField in paymentDefaults(type)} onChange={event => update(index, {visible: event.target.checked})}/>
-                    {canReorder && <div className={styles.actions}><ActionButton className={`${styles.reorderButton} ${styles.moveUpButton}`} disabled={index === 0} onClick={() => move(index, -1)}><MdArrowUpward/> Move up</ActionButton><ActionButton className={`${styles.reorderButton} ${styles.moveDownButton}`} disabled={index === draft.fields.length - 1} onClick={() => move(index, 1)}><MdArrowDownward/> Move down</ActionButton></div>}
                 </section>)}
             </fieldset>
             {(error || errors.length > 0) && <p role="alert">{error || errors.join(' ')}</p>}

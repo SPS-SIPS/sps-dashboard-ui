@@ -18,13 +18,16 @@ import AlertModal from '../common/AlertModal/AlertModal';
 import {MdSettings} from 'react-icons/md';
 import AccountTransferSteps from './AccountTransferSteps';
 import P2GPaymentSteps from './P2GPaymentSteps';
+import PapssPaymentSteps from './PapssPaymentSteps';
 
-export default function PaymentRequest({onSubmit, prefilledValues = null, busy = false, settingsContainerId, family = 'domestic', onPaymentTypeChange, paymentSent = false, onStartNewPayment}: {
+export default function PaymentRequest({onSubmit, onPapssStatusRequest, prefilledValues = null, busy = false, settingsContainerId, family = 'domestic', paymentEndpoint = '', onPaymentTypeChange, paymentSent = false, onStartNewPayment}: {
     onSubmit: (payload: Record<string, unknown>, paymentType?: PaymentType) => void;
+    onPapssStatusRequest?: (body: Record<string, unknown>) => void;
     prefilledValues?: Record<string, string> | null;
     busy?: boolean;
     settingsContainerId?: string;
     family?: 'domestic' | 'p2g' | 'papss';
+    paymentEndpoint?: string;
     onPaymentTypeChange?: (type: PaymentType) => void;
     paymentSent?: boolean;
     onStartNewPayment?: () => void;
@@ -45,9 +48,10 @@ export default function PaymentRequest({onSubmit, prefilledValues = null, busy =
     const [settings, setSettings] = useState(false);
     const [confirmReset, setConfirmReset] = useState(false);
     const [reloadedMappings, setReloadedMappings] = useState<FieldMapping[] | null>(null);
-    const initialValues = (next: PaymentType, source = activePrefill) => ({...configuredDefaults(forms.presets[next]), ...source, ...paymentDefaults(next),
-        ...(['account', 'staticQr', 'dynamicQr', 'p2g'].includes(next) ? {Currency: 'USD'} : {}),
-        ...(['account', 'staticQr', 'dynamicQr', 'p2g'].includes(next) ? {CreditorIssuer: 'C', EndToEndId: generateLocalId()} : {})});
+    const initialValues = (next: PaymentType, source = activePrefill) => ({...paymentDefaults(next), ...configuredDefaults(forms.presets[next]), ...source,
+        ...(['account', 'staticQr', 'dynamicQr', 'p2g', 'papss'].includes(next) ? {Currency: 'USD'} : {}),
+        ...(next === 'papss' ? {CreditorIssuer: 'C', DebtorIssuer: 'C', EndToEndId: generateLocalId(), TxId: generateLocalId()} :
+            ['account', 'staticQr', 'dynamicQr', 'p2g'].includes(next) ? {CreditorIssuer: 'C', EndToEndId: generateLocalId()} : {})});
     const loadSettings = async () => {
         setConfigLoading(true); setConfigError('');
         try {
@@ -72,10 +76,17 @@ export default function PaymentRequest({onSubmit, prefilledValues = null, busy =
         const mapping = all.find(m => m.internalField === field.internalField && (!field.userField || m.userField === field.userField));
         return mapping ? [mapping] : [];
     });
-    const automatic = {...paymentDefaults(type), ...(['account', 'staticQr', 'dynamicQr', 'p2g'].includes(type) ? {Currency: 'USD', CreditorIssuer: 'C', EndToEndId: values.EndToEndId} : {})};
+    const automatic = {...paymentDefaults(type), ...(type === 'papss' ? configuredDefaults(preset) : {}),
+        ...(['account', 'staticQr', 'dynamicQr', 'p2g'].includes(type) ? {Currency: 'USD', CreditorIssuer: 'C', EndToEndId: values.EndToEndId} : {}),
+        ...(type === 'papss' ? {CreditorIssuer: 'C', DebtorIssuer: 'C', EndToEndId: values.EndToEndId, TxId: values.TxId} : {})};
     const locked = (field: string) => field in automatic || Boolean(activePrefill?.[field]?.trim());
-    const payloadValues = Object.fromEntries(Object.entries(values).filter(([field]) => preset.fields.find(f => f.internalField === field)?.visible || locked(field)));
+    const configuredPayloadValues = Object.fromEntries(Object.entries(values).filter(([field]) => preset.fields.find(f => f.internalField === field)?.visible || locked(field)));
+    const payloadValues = type === 'papss' && values.ToBIC ? {...configuredPayloadValues, CreditorAgentBIC: values.ToBIC} : configuredPayloadValues;
     const built = buildPaymentPayload(payloadValues, mappings, type);
+    const statusRequestBody = Object.fromEntries((endpoints?.StatusRequest?.fieldMappings ?? []).flatMap(mapping => {
+        const value = ({Rail: 'PAPSS', EndToEnd: values.EndToEndId, TxId: values.TxId, ToBIC: values.ToBIC} as Record<string, string | undefined>)[mapping.internalField];
+        return value ? [[mapping.userField, value]] : [];
+    }));
     built.errors.push(...configErrors);
     const mutateSettings = async (method: 'PUT' | 'POST', body: object) => {
         if (!keycloak || !roles.includes('configuration')) throw new Error('Configuration permission is required.');
@@ -124,7 +135,7 @@ export default function PaymentRequest({onSubmit, prefilledValues = null, busy =
                     const next = event.target.value as PaymentType; changePaymentType(next);
                 }}/>}
             </div>
-            {family === 'domestic' && ['account', 'staticQr', 'dynamicQr'].includes(type) ? <AccountTransferSteps key={`${revision}-${type}-${paymentSession}`} paymentType={type as 'account' | 'staticQr' | 'dynamicQr'} values={values} mappings={mappings} preset={preset} locked={locked} change={change} errors={built.errors} busy={busy || settings} verified={Boolean(activePrefill)} paymentSent={paymentSent} onStartNewPayment={startNewPayment} onPreview={() => setPreview(true)} onSubmit={() => {if (!busy && !settings && !paymentSent && !built.errors.length) onSubmit(built.payload, type);}}/> : family === 'p2g' ? <P2GPaymentSteps key={`${revision}-${type}-${paymentSession}`} values={values} mappings={mappings} preset={preset} locked={locked} change={change} errors={built.errors} busy={busy || settings} verified={Boolean(activePrefill)} paymentSent={paymentSent} onStartNewPayment={startNewPayment} onPreview={() => setPreview(true)} onSubmit={() => {if (!busy && !settings && !paymentSent && !built.errors.length) onSubmit(built.payload, type);}}/> : <form onSubmit={event => {event.preventDefault(); if (!busy && !built.errors.length) onSubmit(built.payload, type);}}>
+            {family === 'domestic' && ['account', 'staticQr', 'dynamicQr'].includes(type) ? <AccountTransferSteps key={`${revision}-${type}-${paymentSession}`} paymentType={type as 'account' | 'staticQr' | 'dynamicQr'} values={values} mappings={mappings} preset={preset} locked={locked} change={change} errors={built.errors} busy={busy || settings} verified={Boolean(activePrefill)} paymentSent={paymentSent} onStartNewPayment={startNewPayment} onPreview={() => setPreview(true)} onSubmit={() => {if (!busy && !settings && !paymentSent && !built.errors.length) onSubmit(built.payload, type);}}/> : family === 'p2g' ? <P2GPaymentSteps key={`${revision}-${type}-${paymentSession}`} values={values} mappings={mappings} preset={preset} locked={locked} change={change} errors={built.errors} busy={busy || settings} verified={Boolean(activePrefill)} paymentSent={paymentSent} onStartNewPayment={startNewPayment} onPreview={() => setPreview(true)} onSubmit={() => {if (!busy && !settings && !paymentSent && !built.errors.length) onSubmit(built.payload, type);}}/> : family === 'papss' ? <PapssPaymentSteps key={`${revision}-${type}-${paymentSession}`} values={values} mappings={mappings} preset={preset} locked={locked} change={change} errors={built.errors} busy={busy || settings} paymentSent={paymentSent} prefilled={Boolean(activePrefill)} paymentEndpoint={paymentEndpoint} discoveryRequestMappings={endpoints?.ParticipantDiscoveryRequest?.fieldMappings ?? []} discoveryResponseMappings={endpoints?.ParticipantDiscoveryResponse?.fieldMappings ?? []} axiosPrivate={axios} onStartNewPayment={startNewPayment} onPreview={() => setPreview(true)} onSubmit={() => {if (!busy && !settings && !paymentSent && !built.errors.length) {onPapssStatusRequest?.(statusRequestBody); onSubmit(built.payload, type);}}}/> : <form onSubmit={event => {event.preventDefault(); if (!busy && !built.errors.length) onSubmit(built.payload, type);}}>
                 {Object.entries(groups).filter(([, fields]) => fields.some(field => mappings.some(m => m.internalField === field))).map(([group, fields]) => <section className={styles.section} key={group}>
                     <h2>{group}</h2><div className={styles.grid}>
                         {mappings.filter(m => fields.includes(m.internalField) && (preset.fields.find(f => f.internalField === m.internalField)?.visible || locked(m.internalField))).map(mapping => {

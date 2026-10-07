@@ -4,8 +4,16 @@ const MAX_AGE = 30 * 60 * 1000;
 export function paymentPrefill(data: Record<string, unknown>): Record<string, string> {
     if (!data || Array.isArray(data) || typeof data !== 'object') throw new Error('Invalid payment details. Verify the recipient again.');
     const paymentType = data.PaymentType ?? (data.CategoryPurpose === 'C2BDQR' ? 'dynamicQr' : data.CategoryPurpose === 'C2BSQR' ? 'staticQr' : 'account');
-    if ((data.Rail && data.Rail !== 'SIPS') || !['account', 'staticQr', 'dynamicQr', 'p2g'].includes(String(paymentType))) throw new Error('This payment flow is not supported yet.');
-    const fields: Record<string, string> = paymentType === 'p2g' ? {
+    if (!['account', 'staticQr', 'dynamicQr', 'p2g', 'papss'].includes(String(paymentType)) ||
+        (data.Rail && data.Rail !== 'SIPS' && data.Rail !== 'PAPSS') ||
+        (String(paymentType) === 'papss' && data.Rail !== 'PAPSS') ||
+        (String(paymentType) !== 'papss' && data.Rail === 'PAPSS')) throw new Error('This payment flow is not supported yet.');
+    const fields: Record<string, string> = paymentType === 'papss' ? {
+        ToBIC: 'ToBIC', CreditorAgentBIC: 'CreditorAgentBIC', CreditorAccount: 'CreditorAccount',
+        CreditorAccountType: 'CreditorAccountType', CreditorName: 'CreditorName', CreditorAddress: 'CreditorAddress',
+        Currency: 'Currency', ReceiverCountry: 'ReceiverCountry', ReceiverCurrency: 'ReceiverCurrency',
+        SenderCountry: 'SenderCountry', SenderCurrency: 'SenderCurrency', CategoryPurpose: 'CategoryPurpose',
+    } : paymentType === 'p2g' ? {
         ToBIC: 'ToBIC', CreditorAgentBIC: 'ToBIC', CreditorAccount: 'CreditorAccount',
         CreditorAccountType: 'CreditorAccountType', CreditorName: 'CreditorName', CreditorAddress: 'CreditorAddress',
         Currency: 'Currency', Amount: 'Amount', CategoryPurpose: 'CategoryPurpose',
@@ -23,7 +31,9 @@ export function paymentPrefill(data: Record<string, unknown>): Record<string, st
         if ((typeof value === 'string' || typeof value === 'number') && String(value).trim()) result[target] = String(value).trim();
     }
     if (paymentType !== 'dynamicQr' && paymentType !== 'p2g') delete result.Amount;
-    return {...result, PaymentType: String(paymentType), Rail: 'SIPS', LocalInstrument: 'CRTRM', CreditorIssuer: 'C', ...(paymentType === 'p2g' ? {CategoryPurpose: 'C2GCRT'} : {})};
+    return {...result, PaymentType: String(paymentType), Rail: paymentType === 'papss' ? 'PAPSS' : 'SIPS',
+        ...(paymentType === 'papss' ? {} : {LocalInstrument: 'CRTRM', CreditorIssuer: 'C'}),
+        ...(paymentType === 'p2g' ? {CategoryPurpose: 'C2GCRT'} : {})};
 }
 
 export function readPaymentDraft(raw: string | null, id: string, now = Date.now()): Record<string, string> {

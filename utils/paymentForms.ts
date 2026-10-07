@@ -14,10 +14,11 @@ export const optionalFields = new Set(['Rail', 'CreditorAddress', 'DebtorAddress
 export const applicableFields = Object.entries(groups).filter(([name]) => !['Bill references', 'PAPSS corridor'].includes(name)).flatMap(([, fields]) => fields);
 export function fieldsFor(type: PaymentType) {return [...applicableFields, ...(type === 'p2g' ? groups['Bill references'] : type === 'papss' ? groups['PAPSS corridor'] : [])];}
 export function isOptional(field: string, type: PaymentType) {
-    if (['account', 'staticQr', 'dynamicQr'].includes(type) && field === 'RemittanceInformation') return false;
+    if (field === 'RemittanceInformation' && ['account', 'staticQr', 'dynamicQr', 'papss'].includes(type)) return false;
+    if (type === 'papss' && field === 'DebtorAgentBIC') return true;
     return type === 'papss' && ['Rail', 'TxId'].includes(field) ? false : optionalFields.has(field);
 }
-export function paymentDefaults(type: PaymentType): Record<string, string> {return type === 'papss' ? {Rail: 'PAPSS'} : type === 'p2g' ? {Rail: 'SIPS', LocalInstrument: 'CRTRM', CategoryPurpose: 'C2GCRT'} : {Rail: 'SIPS', LocalInstrument: 'CRTRM', CategoryPurpose: purposes[type]};}
+export function paymentDefaults(type: PaymentType): Record<string, string> {return type === 'papss' ? {Rail: 'PAPSS', LocalInstrument: 'USDP', CategoryPurpose: 'CASH'} : type === 'p2g' ? {Rail: 'SIPS', LocalInstrument: 'CRTRM', CategoryPurpose: 'C2GCRT'} : {Rail: 'SIPS', LocalInstrument: 'CRTRM', CategoryPurpose: purposes[type]};}
 export function paymentMappings(mappings: FieldMapping[], paymentType: PaymentType = 'account') {
     return fieldsFor(paymentType).flatMap(field => {const mapping = mappings.find(m => m.internalField === field); return mapping ? [mapping] : [];});
 }

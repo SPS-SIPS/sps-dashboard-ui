@@ -8,9 +8,18 @@ export type P2GReferenceSettings = {enabled: P2GReferenceType[]; default: P2GRef
 export type PaymentFieldConfig = {internalField: string; label: string; userField?: string; visible: boolean; defaultValue?: string};
 export type PaymentPreset = {fields: PaymentFieldConfig[]; referenceTypes?: P2GReferenceSettings};
 export type PaymentForms = {version: 1; presets: Record<PaymentType, PaymentPreset>};
-export const defaultableFields = new Set(['Currency', 'CreditorIssuer', 'DebtorIssuer']);
+export const defaultableFields = new Set(['Currency', 'CreditorIssuer', 'DebtorIssuer', 'LocalInstrument', 'CategoryPurpose', 'SenderCountry', 'SenderCurrency', 'ReceiverCurrency']);
 export function createDefaultPaymentForms(): PaymentForms {
-    return {version: 1, presets: Object.fromEntries(presetIds.map(id => [id, {fields: fieldsFor(id).map(internalField => ({internalField, label: internalField, visible: true})), ...(id === 'p2g' ? {referenceTypes: {enabled: [...p2gReferenceTypes], default: 'BillReference'}} : {})}])) as PaymentForms['presets']};
+    return {version: 1, presets: Object.fromEntries(presetIds.map(id => [id, {fields: fieldsFor(id).map(internalField => ({
+        internalField,
+        label: internalField,
+        visible: !(id === 'papss' && ['DebtorAgentBIC', 'CreditorAgentBIC', 'SenderCountry', 'SenderCurrency'].includes(internalField)),
+        ...(id === 'papss' && internalField === 'LocalInstrument' ? {defaultValue: 'USDP'} : {}),
+        ...(id === 'papss' && internalField === 'CategoryPurpose' ? {defaultValue: 'CASH'} : {}),
+        ...(id === 'papss' && internalField === 'SenderCountry' ? {defaultValue: 'SO'} : {}),
+        ...(id === 'papss' && internalField === 'SenderCurrency' ? {defaultValue: 'USD'} : {}),
+        ...(id === 'papss' && internalField === 'ReceiverCurrency' ? {defaultValue: 'USD'} : {}),
+    })), ...(id === 'p2g' ? {referenceTypes: {enabled: [...p2gReferenceTypes], default: 'BillReference'}} : {})}])) as PaymentForms['presets']};
 }
 export function validatePaymentPreset(id: PaymentType, value: unknown, mappings?: FieldMapping[]): string[] {
     const errors: string[] = [];
@@ -29,7 +38,8 @@ export function validatePaymentPreset(id: PaymentType, value: unknown, mappings?
         seen.add(field.internalField);
         if (Object.keys(field).some(key => !['internalField', 'label', 'userField', 'visible', 'defaultValue'].includes(key))) errors.push('Unknown field setting.');
         if (typeof field.label !== 'string' || !field.label.trim() || field.label.length > 100) errors.push('Labels must contain 1–100 characters.');
-        if (typeof field.visible !== 'boolean' || (!field.visible && (!isOptional(field.internalField, id) || field.internalField in paymentDefaults(id)))) errors.push(`${field.internalField} must remain available.`);
+        const hiddenAutomatic = id === 'papss' && ['CreditorAgentBIC', 'DebtorAgentBIC'].includes(field.internalField);
+        if (typeof field.visible !== 'boolean' || (!field.visible && (!isOptional(field.internalField, id) || field.internalField in paymentDefaults(id)) && !hiddenAutomatic)) errors.push(`${field.internalField} must remain available.`);
         if (field.userField !== undefined && (typeof field.userField !== 'string' || !field.userField.trim() || field.userField.length > 128)) errors.push('Invalid JSON alias.');
         if (field.defaultValue !== undefined && (!defaultableFields.has(field.internalField) || typeof field.defaultValue !== 'string' || field.defaultValue.length > 64)) errors.push(`Defaults are not permitted for ${field.internalField}.`);
         if (mappings && field.userField && !mappings.some(m => m.internalField === field.internalField && m.userField === field.userField)) errors.push(`Reload adapter: ${field.userField} is no longer mapped to ${field.internalField}.`);
@@ -41,7 +51,7 @@ export function validatePaymentForms(value: unknown): value is PaymentForms {
     return !!forms && forms.version === 1 && Object.keys(forms).every(key => ['version', 'presets'].includes(key)) && !!forms.presets && Object.keys(forms.presets).length === 5 && presetIds.every(id => !validatePaymentPreset(id, forms.presets[id]).length);
 }
 export function configuredDefaults(preset: PaymentPreset) {
-    return Object.fromEntries(preset.fields.filter(field => field.visible && field.defaultValue?.trim()).map(field => [field.internalField, field.defaultValue!.trim()]));
+    return Object.fromEntries(preset.fields.filter(field => field.defaultValue?.trim()).map(field => [field.internalField, field.defaultValue!.trim()]));
 }
 
 

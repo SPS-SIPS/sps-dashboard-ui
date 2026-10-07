@@ -3,6 +3,7 @@ export const verificationMethods = [
     {value: "EWLT", label: "Wallet"},
     {value: "MSIS", label: "Phone Number"},
     {value: "IBAN", label: "IBAN"},
+    {value: "BBAN", label: "BBAN"},
 ];
 
 export const paymentMethods = [
