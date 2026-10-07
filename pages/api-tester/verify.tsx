@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {isAxiosError} from "axios";
 import {MdRefresh, MdSettings} from "react-icons/md";
 import useAxiosPrivate from "../../api/hooks/useAxiosPrivate";
@@ -36,6 +36,7 @@ import {PAYMENT_DRAFT_KEY} from "../../utils/paymentDraft";
 import AlertModal from "../../component/common/AlertModal/AlertModal";
 import {extractErrorMessage} from "../../utils/extractErrorMessage";
 import VerificationFormSettings from "../../component/RequestForm/VerificationFormSettings";
+import PapssVerificationStatus from "../../component/RequestForm/PapssVerificationStatus";
 import {buildVerificationPayload, presetLabels, validatePreset, validateRequestForms, type PresetId, type RequestForms, type VerificationPreset} from "../../utils/verificationForms";
 
 const VerificationRequestPage: React.FC = () => {
@@ -63,7 +64,7 @@ const VerificationRequestPage: React.FC = () => {
     const adapterMappings = endpoints?.VerificationRequest?.fieldMappings ?? [];
     const presetErrors = preset ? validatePreset(presetId, preset, adapterMappings) : [];
     const pending = useRef(false);
-    const [participants, setParticipants] = useState<{value: string; label: string; country: string}[]>([]);
+    const [participants, setParticipants] = useState<{value: string; label: string; country: string; currencies: string[]}[]>([]);
     const [discoveryLoaded, setDiscoveryLoaded] = useState(false);
     const [discoveryError, setDiscoveryError] = useState("");
     const [discoveryRequest, setDiscoveryRequest] = useState<{url: string; method: string; body: Record<string, string | boolean>} | null>(null);
@@ -71,16 +72,21 @@ const VerificationRequestPage: React.FC = () => {
     const [discoveryViewer, setDiscoveryViewer] = useState<"request" | "response" | null>(null);
     const [destinationCountry, setDestinationCountry] = useState("");
     const [destinationBic, setDestinationBic] = useState("");
+    const [destinationCurrency, setDestinationCurrency] = useState("");
     const [discovering, setDiscovering] = useState(false);
     const countryNames = new Intl.DisplayNames(["en"], {type: "region"});
     const countryOptions = [...new Set(participants.map(bank => bank.country))]
         .map(value => ({value, label: `${countryNames.of(value) ?? value} (${value})`}))
         .sort((a, b) => a.label.localeCompare(b.label));
     const destinationBanks = participants.filter(bank => bank.country === destinationCountry);
+    const selectedDestinationBank = participants.find(bank => bank.value === destinationBic);
+    const destinationCurrencyOptions = (selectedDestinationBank?.currencies?.length ? selectedDestinationBank.currencies : ["USD"])
+        .map(value => ({value, label: value === "USD" ? "USD - US Dollar" : value}));
     const papssReady = discoveryLoaded && destinationBanks.some(bank => bank.value === destinationBic);
+    const papssSelectionReady = papssReady && destinationCurrency === "USD";
     const resetDiscovery = () => {
         setParticipants([]); setDiscoveryLoaded(false); setDiscoveryError("");
-        setDestinationCountry(""); setDestinationBic("");
+        setDestinationCountry(""); setDestinationBic(""); setDestinationCurrency("");
         setDiscoveryRequest(null); setDiscoveryResponse(null); setDiscoveryViewer(null);
     };
 
@@ -93,6 +99,8 @@ const VerificationRequestPage: React.FC = () => {
 
     const [submittedData, setSubmittedData] = useState<any>(null);
     const [response, setResponse] = useState<any>(null);
+    const [papssVerificationResult, setPapssVerificationResult] = useState<Record<string, unknown> | null>(null);
+    const [papssPolling, setPapssPolling] = useState(false);
 
     const [requestViewerOpen, setRequestViewerOpen] = useState(false);
     const [responseViewerOpen, setResponseViewerOpen] = useState(false);
@@ -123,7 +131,7 @@ const VerificationRequestPage: React.FC = () => {
             setForms(data.forms); setFormsRevision(data.revision);
             setUsingDefaults(data.source === "defaults");
             resetDiscovery();
-            setFormValues({}); setQrCode(""); setSubmittedData(null); setResponse(null);
+            setFormValues({}); setQrCode(""); setSubmittedData(null); setResponse(null); setPapssVerificationResult(null);
             setSettingsOpen(false);
         } catch (error) {
             setForms(null); setFormsRevision(""); setSettingsOpen(false);
@@ -153,10 +161,14 @@ const VerificationRequestPage: React.FC = () => {
     };
     const p2gLookup = presetId === "domesticP2g";
     const isP2G = p2gLookup || responseValue("IsP2G") === true;
+    const papssVerificationId = rail === "PAPSS" && response?.success
+        ? String(responseValue("RequestMessageId", "PapssAdmissionResponse") ?? response?.data?.requestMessageId ?? response?.data?.RequestMessageId ?? "")
+        : "";
     const clearResult = () => {
         setQrError("");
         setSubmittedData(null);
         setResponse(null);
+        setPapssVerificationResult(null);
         setRequestViewerOpen(false);
         setResponseViewerOpen(false);
     };
@@ -169,7 +181,7 @@ const VerificationRequestPage: React.FC = () => {
 
     // ================= VALIDATION =================
     const isFormValid = () => {
-        if (!preset || presetErrors.length || formsError || formsLoading || (rail === "PAPSS" && !papssReady)) return false;
+        if (!preset || presetErrors.length || formsError || formsLoading || (rail === "PAPSS" && !papssSelectionReady)) return false;
         try {
             buildVerificationPayload(presetId, preset, Object.fromEntries(preset.fields.map(field =>
                 [field.internalField, field.internalField === "Code" ? qrCode : fieldValue(field.userField)])), adapterMappings);
@@ -222,6 +234,7 @@ const VerificationRequestPage: React.FC = () => {
             throw new Error("The adapter did not return valid field mappings. Try reloading again.");
         }
         setRefreshedEndpoints(data);
+        resetDiscovery();
         clearResult();
     };
 
@@ -251,8 +264,7 @@ const VerificationRequestPage: React.FC = () => {
             return;
         }
 
-      setSubmittedData(null);
-      setResponse(null);
+        clearResult();
 
         const payload = buildVerificationPayload(presetId, preset, Object.fromEntries(preset.fields.map(field =>
             [field.internalField, field.internalField === "Code" ? qrCode : fieldValue(field.userField)])), adapterMappings);
@@ -309,11 +321,15 @@ const VerificationRequestPage: React.FC = () => {
                 const bic = row.bic ?? row.Bic;
                 const name = row.name ?? row.Name;
                 const country = row.countryCode ?? row.CountryCode;
+                const rawCurrencies = row.currencies ?? row.Currencies;
+                const currencies = Array.isArray(rawCurrencies)
+                    ? rawCurrencies.filter((value): value is string => typeof value === "string").map(value => value.trim().toUpperCase()).filter(Boolean)
+                    : [];
                 if (typeof bic !== "string" || typeof country !== "string" ||
                     !/^[A-Z]{2}$/.test(country.trim().toUpperCase()) ||
                     !/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(bic.trim().toUpperCase()) ||
                     (row.online ?? row.Online) === false) return [];
-                return [{value: bic.trim().toUpperCase(), label: `${typeof name === "string" ? name : bic} — ${bic.trim().toUpperCase()}`, country: country.trim().toUpperCase()}];
+                return [{value: bic.trim().toUpperCase(), label: `${typeof name === "string" ? name : bic} — ${bic.trim().toUpperCase()}`, country: country.trim().toUpperCase(), currencies}];
             });
             const banks = [...new Map(options.map((option) => [`${option.country}:${option.value}`, option])).values()];
             setParticipants(banks); setDiscoveryLoaded(true);
@@ -468,6 +484,54 @@ const VerificationRequestPage: React.FC = () => {
         }
     };
 
+    const handleProceedToPapssPayment = async () => {
+        if (rail !== "PAPSS" || !response?.success || !papssVerificationResult || !endpoints) return;
+        const status = String(papssVerificationResult.status ?? papssVerificationResult.Status ?? "").toUpperCase();
+        const verified = papssVerificationResult.verified === true || papssVerificationResult.Verified === true;
+        if (status !== "COMPLETED" || !verified) return;
+
+        const value = (...keys: string[]) => {
+            for (const key of keys) {
+                const candidate = papssVerificationResult[key] ?? papssVerificationResult[key.charAt(0).toLowerCase() + key.slice(1)];
+                if (candidate !== undefined && candidate !== null && String(candidate).trim()) return String(candidate).trim();
+            }
+            return undefined;
+        };
+
+        try {
+            setProcessingPayment(true);
+            const draftData: Record<string, string> = {
+                PaymentType: "papss",
+                Rail: "PAPSS",
+                ReceiverCountry: destinationCountry,
+                ReceiverCurrency: destinationCurrency,
+                Currency: destinationCurrency,
+                ToBIC: destinationBic,
+                CreditorAgentBIC: value("counterpartyBic") ?? destinationBic,
+            };
+            const fields: Array<[string, string[]]> = [
+                ["CreditorName", ["accountName"]],
+                ["CreditorAccount", ["accountNumber"]],
+                ["CreditorAccountType", ["accountType"]],
+            ];
+            for (const [internal, keys] of fields) {
+                const fieldValue = value(...keys);
+                if (fieldValue) draftData[internal] = fieldValue;
+            }
+            const draftId = Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, "0")).join("");
+            sessionStorage.setItem(PAYMENT_DRAFT_KEY, JSON.stringify({id: draftId, createdAt: Date.now(), data: draftData}));
+            await router.push({pathname: "/api-tester/payment", query: {draft: draftId}});
+        } catch (error) {
+            setModal({show: true, title: "Error", message: extractErrorMessage(error, "Failed to prepare PAPSS payment")});
+        } finally {
+            setProcessingPayment(false);
+        }
+    };
+
+    const handlePapssCompleted = useCallback((data: Record<string, unknown>) => {
+        setPapssVerificationResult(data);
+    }, []);
+
     const isVerified = (() => {
         const field = getUserFieldFromEndpoint(
             endpoints,
@@ -505,6 +569,70 @@ const VerificationRequestPage: React.FC = () => {
         setResponseViewerOpen(false);
     };
 
+    const verificationForm = rail === "PAPSS" && !papssSelectionReady ? null : endpointsLoading || formsLoading ? (
+        <div className={styles.loadingContainer}>
+            <SpinLoading />
+            <p className={styles.loadingText}>Loading endpoint configurations...</p>
+        </div>
+    ) : mode === "form" ? (
+        <div className={`${styles.formContainer} ${rail === "PAPSS" ? styles.fullWidthForm : ""}`}>
+            {preset?.fields.filter(m => rail !== "PAPSS" || m.internalField !== "ToBIC").map((m) => (
+                <div key={m.internalField} className={styles.formField}>
+                    {(m.input === "select" || m.input === "bankSelect") ? (
+                        <SelectInput
+                            label={m.label}
+                            value={fieldValue(m.userField)}
+                            onChange={(e) => handleInputChange(m.userField, e.target.value)}
+                            options={
+                                m.internalField === "Type"
+                                    ? (m.options ?? []).map(value => ({value, label: verificationMethods.find(option => option.value === value)?.label ?? value}))
+                                    : [
+                                        ...(m.defaultValue && !(rail === "PAPSS" ? participants : bicOptionsDev).some(bank => bank.value === m.defaultValue)
+                                            ? [{value: m.defaultValue, label: m.defaultValue}] : []),
+                                        ...(rail === "PAPSS" ? participants : bicOptionsDev),
+                                    ]
+                            }
+                            required
+                        />
+                    ) : (
+                        <Input
+                            label={m.label}
+                            value={fieldValue(m.userField)}
+                            onChange={(e) => handleInputChange(m.userField, e.target.value)}
+                            type="text"
+                            required
+                        />
+                    )}
+                </div>
+            ))}
+        </div>
+    ) : (
+        <div className={styles.qrSection}>
+            {preset?.fields[0]?.input === "text" ? <Input label={preset.fields[0].label} value={qrCode} type="text" required
+                onChange={event => {clearResult(); setQrCode(event.target.value);}}/> : <>
+            <UploadQRScanner
+                key={presetId + formsRevision}
+                onScanSuccess={handleQRSuccess}
+                onClear={() => {setQrCode(""); clearResult();}}
+                onManualChange={data => {setQrCode(data); clearResult();}}
+                validationError={qrError}
+                disabled={loading || discovering || processingPayment || settingsOpen || formsLoading}
+            /></>}
+            {preset?.fields[0]?.input === "text" && qrError && <p role="alert">{qrError}</p>}
+        </div>
+    );
+
+    const sendVerificationButton = (rail === "SIPS" || papssSelectionReady) && <ActionButton
+        onClick={handleSubmit}
+        className={styles.submitButton}
+        disabled={
+            loading || discovering || papssPolling || endpointsLoading || !!endpointsError ||
+            (rail === "PAPSS" && !mappedField("VerificationRequest", "Rail")) || !isFormValid()
+        }
+    >
+        {loading ? "Sending..." : "Send Verification Request"}
+    </ActionButton>;
+
     if (activeProfile === "prod") return null;
 
     return (
@@ -517,12 +645,12 @@ const VerificationRequestPage: React.FC = () => {
                     </div>
                     <div className={styles.headerActions}>
                         <span title="Reload shared settings">
-                            <ActionButton className={styles.headerIconButton} onClick={() => void loadForms()} disabled={loading || discovering || processingPayment || formsLoading || settingsOpen || resetting}>
+                            <ActionButton className={styles.headerIconButton} onClick={() => void loadForms()} disabled={loading || discovering || papssPolling || processingPayment || formsLoading || settingsOpen || resetting}>
                                 <MdRefresh size={22} aria-hidden="true"/><span className={styles.srOnly}>Reload shared settings</span>
                             </ActionButton>
                         </span>
                         {roles.includes("configuration") && <span title={`Configure ${presetLabels[presetId]}`}>
-                            <ActionButton className={styles.headerIconButton} onClick={() => {setSettingsOpen(true); setSettingsNotice("");}} disabled={!preset || formsLoading || !!formsError || endpointsLoading || !!endpointsError || loading || discovering || processingPayment || settingsOpen}>
+                            <ActionButton className={styles.headerIconButton} onClick={() => {setSettingsOpen(true); setSettingsNotice("");}} disabled={!preset || formsLoading || !!formsError || endpointsLoading || !!endpointsError || loading || discovering || papssPolling || processingPayment || settingsOpen}>
                                 <MdSettings size={22} aria-hidden="true"/><span className={styles.srOnly}>{`Configure ${presetLabels[presetId]}`}</span>
                             </ActionButton>
                         </span>}
@@ -537,7 +665,7 @@ const VerificationRequestPage: React.FC = () => {
                 {settingsNotice && <p role="status">{settingsNotice}</p>}
                 {settingsOpen && preset && <VerificationFormSettings key={presetId + formsRevision}
                     id={presetId} preset={preset} mappings={adapterMappings} participantOptions={participants} onSave={savePreset} onReloadAdapter={reloadAdapter} onClose={() => setSettingsOpen(false)}/>}
-                <fieldset disabled={loading || discovering || processingPayment || settingsOpen || formsLoading} style={{border: 0, padding: 0, margin: 0, minWidth: 0}}>
+                <fieldset disabled={loading || discovering || papssPolling || processingPayment || settingsOpen || formsLoading} style={{border: 0, padding: 0, margin: 0, minWidth: 0}}>
 
                 <Input
                     label="Verification API Endpoint"
@@ -575,10 +703,17 @@ const VerificationRequestPage: React.FC = () => {
                         {discoveryLoaded && !participants.length && <p role="status">No eligible participants with a country and destination BIC were returned. Reload to try again.</p>}
                         {discoveryLoaded && participants.length > 0 && <SelectInput label="Destination Country" value={destinationCountry}
                             options={countryOptions} required onChange={event => {
-                                setDestinationCountry(event.target.value); setDestinationBic(""); clearResult();
+                                setDestinationCountry(event.target.value); setDestinationBic(""); setDestinationCurrency(""); clearResult();
                             }}/>}
                         {destinationCountry && <SelectInput label="Destination Bank" value={destinationBic} options={destinationBanks}
-                            required onChange={event => {setDestinationBic(event.target.value); clearResult();}}/>}
+                            required onChange={event => {setDestinationBic(event.target.value); setDestinationCurrency(""); clearResult();}}/>}
+                        {destinationBic && <SelectInput label="Destination Currency" value={destinationCurrency} options={destinationCurrencyOptions}
+                            required onChange={event => {setDestinationCurrency(event.target.value); clearResult();}}/>}
+                        {destinationCurrency && destinationCurrency !== "USD" && <p className={styles.discoveryError} role="alert">
+                            SPS currently supports USD only for PAPSS. Please select USD to continue.
+                        </p>}
+                        {verificationForm}
+                        {sendVerificationButton}
                     </div>
                 )}
 
@@ -590,79 +725,9 @@ const VerificationRequestPage: React.FC = () => {
                     </ActionButton>)}
                 </div>}
 
-                {/* FORM */}
-              {rail === "PAPSS" && !papssReady ? null : endpointsLoading || formsLoading ? (
-                  <div className={styles.loadingContainer}>
-                    <SpinLoading />
-                    <p className={styles.loadingText}>Loading endpoint configurations...</p>
-                  </div>
-              ) : mode === "form" ? (
-                    <div className={styles.formContainer}>
-                        {preset?.fields.filter(m => rail !== "PAPSS" || m.internalField !== "ToBIC").map((m) => (
-                            <div key={m.internalField} className={styles.formField}>
-                                {(m.input === "select" || m.input === "bankSelect") ? (
-                                    <SelectInput
-                                        label={m.label}
-                                        value={fieldValue(m.userField)}
-                                        onChange={(e) =>
-                                            handleInputChange(m.userField, e.target.value)
-                                        }
-                                        options={
-                                            m.internalField === "Type"
-                                                ? (m.options ?? []).map(value => ({value, label: verificationMethods.find(option => option.value === value)?.label ?? value}))
-                                                : [
-                                                    ...(m.defaultValue && !(rail === "PAPSS" ? participants : bicOptionsDev).some(bank => bank.value === m.defaultValue)
-                                                        ? [{value: m.defaultValue, label: m.defaultValue}] : []),
-                                                    ...(rail === "PAPSS" ? participants : bicOptionsDev),
-                                                ]
-                                        }
-                                        required
-                                    />
-                                ) : (
-                                    <Input
-                                        label={m.label}
-                                        value={fieldValue(m.userField)}
-                                        onChange={(e) =>
-                                            handleInputChange(m.userField, e.target.value)
-                                        }
-                                        type="text"
-                                        required
-                                    />
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className={styles.qrSection}>
-                        {preset?.fields[0]?.input === "text" ? <Input label={preset.fields[0].label} value={qrCode} type="text" required
-                            onChange={event => {clearResult(); setQrCode(event.target.value);}}/> : <>
-                        <UploadQRScanner
-                            key={presetId + formsRevision}
-                            onScanSuccess={handleQRSuccess}
-                            onClear={() => {setQrCode(""); clearResult();}}
-                            onManualChange={data => {setQrCode(data); clearResult();}}
-                            validationError={qrError}
-                            disabled={loading || discovering || processingPayment || settingsOpen || formsLoading}
-                        /></>}
-                        {preset?.fields[0]?.input === "text" && qrError && <p role="alert">{qrError}</p>}
-                    </div>
-                )}
-
-                {/* SUBMIT */}
-                {(rail === "SIPS" || papssReady) && <ActionButton
-                    onClick={handleSubmit}
-                    className={styles.submitButton}
-                    disabled={
-                        loading ||
-                        discovering ||
-                        endpointsLoading ||
-                        !!endpointsError ||
-                        (rail === "PAPSS" && !mappedField("VerificationRequest", "Rail")) ||
-                        !isFormValid()
-                    }
-                >
-                    {loading ? "Sending..." : "Send Verification Request"}
-                </ActionButton>}
+                {/* DOMESTIC FORM */}
+                {rail === "SIPS" && verificationForm}
+                {rail === "SIPS" && sendVerificationButton}
                 </fieldset>
 
                 {loading && (
@@ -701,16 +766,24 @@ const VerificationRequestPage: React.FC = () => {
                             <p>PAPSS is unavailable for this deployment or participant. Domestic SIPS has not been selected.</p>}
                     </div>
                 )}
-                {rail === "PAPSS" && response?.success && (
-                    <div className={styles.qrPreview} role="status">
-                        <h2>PAPSS Admission</h2>
-                        <p>Request message ID: {String(responseValue("RequestMessageId", "PapssAdmissionResponse") ?? "Not returned")}</p>
-                        <p>Code: {String(responseValue("Code", "PapssAdmissionResponse") ?? "Not returned")}</p>
-                        <p>{responseValue("DurablyAdmitted", "PapssAdmissionResponse") === true
-                            ? "Request durably accepted. Account verification is not yet confirmed."
-                            : "Durable acceptance was not confirmed."}</p>
-                    </div>
+                {rail === "PAPSS" && response?.success && papssVerificationId && (
+                    <PapssVerificationStatus
+                        endpoint={apiUrl}
+                        requestMessageId={papssVerificationId}
+                        axiosPrivate={axiosPrivate}
+                        onPollingChange={setPapssPolling}
+                        onCompleted={handlePapssCompleted}
+                    />
                 )}
+                {rail === "PAPSS" && papssVerificationResult &&
+                    String(papssVerificationResult.status ?? papssVerificationResult.Status ?? "").toUpperCase() === "COMPLETED" &&
+                    (papssVerificationResult.verified === true || papssVerificationResult.Verified === true) && <ActionButton
+                        onClick={handleProceedToPapssPayment}
+                        className={styles.paymentButton}
+                        disabled={processingPayment}
+                    >
+                        {processingPayment ? "Processing Payment..." : "Proceed to Payment"}
+                    </ActionButton>}
                 {rail === "SIPS" && response?.success && isP2G && isVerified && <ActionButton
                     onClick={handleSendPaymentRequest}
                     className={styles.paymentButton}
@@ -732,7 +805,7 @@ const VerificationRequestPage: React.FC = () => {
             </div>
 
             {/* MODALS */}
-            <QRDataViewer data={discoveryViewer === "request" ? discoveryRequest?.body : discoveryResponse?.data}
+            <QRDataViewer data={discoveryViewer === "request" ? discoveryRequest : discoveryResponse?.data}
                 isOpen={discoveryViewer !== null} onClose={() => setDiscoveryViewer(null)}
                 rawResponse
                 title={discoveryViewer === "request" ? "PAPSS Discovery Request" : "PAPSS Discovery Response"}/>
@@ -740,7 +813,7 @@ const VerificationRequestPage: React.FC = () => {
                 message="The original file will be backed up before all four verification methods are reset to built-in defaults. If the backup fails, the file will not be replaced. Continue?"
                 buttonText="Back up & Reset" warning onConfirm={() => void resetForms()} onClose={() => setConfirmReset(false)}/>}
             <QRDataViewer
-                data={submittedData}
+                data={submittedData ? {method: "POST", url: apiUrl, body: submittedData} : null}
                 isOpen={requestViewerOpen}
                 onClose={() => setRequestViewerOpen(false)}
                 title="Verification Request"

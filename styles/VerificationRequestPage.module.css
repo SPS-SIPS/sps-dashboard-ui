@@ -86,6 +86,10 @@
     width: 100%;
 }
 
+.fullWidthForm {
+    max-width: none;
+}
+
 /* QR Section */
 .qrSection {
     margin:  0 auto;

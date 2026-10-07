@@ -17,7 +17,7 @@ export const presetLabels: Record<PresetId, string> = {
     domesticP2g: "P2G Verification", papssAccount: "PAPSS Account Verification",
 };
 export const typeChoices = (id: PresetId) => id === "domesticP2g"
-    ? ["BILL", "INVOICE", "UPR"] : ["ACCT", "IBAN", "MSIS", "EWLT"];
+    ? ["BILL", "INVOICE", "UPR"] : ["ACCT", "BBAN", "IBAN", "MSIS", "EWLT"];
 
 export function createDefaultVerificationForms(): RequestForms {
     const account = (papss = false): VerificationPreset => ({fields: [
