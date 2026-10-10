@@ -27,6 +27,8 @@ const allColumns = [
   { id: "messageType", label: "Type" },
   { id: "status", label: "Status" },
   { id: "date", label: "Date" },
+  { id: "recordedAtUtc", label: "Recorded At (UTC)" },
+  { id: "messageCreatedAtUtc", label: "Message Created At (UTC)" },
   { id: "fromBIC", label: "From BIC" },
   { id: "toBIC", label: "To BIC" },
   { id: "txId", label: "Transaction ID" },
@@ -50,6 +52,8 @@ const EMPTY_FILTERS = {
   fromDate: "",
   toDate: "",
   transactionId: "",
+  debtorAccount: "",
+  creditorAccount: "",
 };
 
 const PAGE_SIZE_OPTIONS = [
@@ -150,6 +154,8 @@ const ISOMessagesList = () => {
       msgDefIdr: undefined,
       fromDate: undefined,
       toDate: undefined,
+      debtorAccount: undefined,
+      creditorAccount: undefined,
     });
   };
 
@@ -216,6 +222,12 @@ const ISOMessagesList = () => {
         );
       case "date":
         return formatDate(message.date);
+      case "recordedAtUtc":
+        return message.recordedAtUtc ? formatDate(message.recordedAtUtc) : "-";
+      case "messageCreatedAtUtc":
+        return message.messageCreatedAtUtc
+          ? formatDate(message.messageCreatedAtUtc)
+          : "-";
       case "request":
         return (
           <button
@@ -311,6 +323,23 @@ const ISOMessagesList = () => {
                   handleFilterChange("endToEndId", e.target.value)
                 }
                 placeholder="End To End ID"
+              />
+            </div>
+
+            <div className={styles.searchInputRow}>
+              <SearchInput
+                value={filters.debtorAccount}
+                onChange={(e) =>
+                  handleFilterChange("debtorAccount", e.target.value)
+                }
+                placeholder="Debtor Account"
+              />
+              <SearchInput
+                value={filters.creditorAccount}
+                onChange={(e) =>
+                  handleFilterChange("creditorAccount", e.target.value)
+                }
+                placeholder="Creditor Account"
               />
             </div>
 
@@ -420,12 +449,21 @@ const ISOMessagesList = () => {
                           "From Date": filters.fromDate,
                         }),
                         ...(filters.toDate && { "To Date": filters.toDate }),
+                        ...(filters.debtorAccount && {
+                          "Debtor Account": filters.debtorAccount,
+                        }),
+                        ...(filters.creditorAccount && {
+                          "Creditor Account": filters.creditorAccount,
+                        }),
                       },
                     }}
                     formatters={{
                       messageType: getISOMessageTypeText,
                       status: getTransactionStatusText,
                       date: (value) => new Date(value).toLocaleString(),
+                      recordedAtUtc: (value) => new Date(value).toLocaleString(),
+                      messageCreatedAtUtc: (value) =>
+                        value ? new Date(value).toLocaleString() : "",
                     }}
                     cellStylers={{
                       status: (cell, message: ISOMessage) => {

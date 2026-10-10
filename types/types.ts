@@ -46,11 +46,13 @@ export interface Transaction {
   currency?: string;
   debtorName?: string;
   debtorAccount?: string;
+  debtorAddress?: string;
   debtorAccountType?: string;
   debtorAgentBIC?: string;
   debtorIssuer: string;
   creditorName?: string;
   creditorAccount?: string;
+  creditorAddress?: string;
   creditorAccountType?: string;
   creditorAgentBIC?: string;
   creditorIssuer?: string;
@@ -70,6 +72,8 @@ export interface ISOMessage {
   reason?: string;
   additionalInfo?: string;
   date: string;
+  recordedAtUtc?: string;
+  messageCreatedAtUtc?: string;
   fromBIC: string;
   toBIC: string;
   request: string;
