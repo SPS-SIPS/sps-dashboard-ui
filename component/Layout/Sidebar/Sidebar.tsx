@@ -10,7 +10,7 @@ import {
 
 import styles from './Sidebar.module.css'
 import {
-    FaCogs, FaEnvelopeOpenText,
+    FaCogs, FaEnvelopeOpenText, FaGlobeAfrica,
     FaFileAlt, FaFolderOpen,
     FaLock,
     FaPlusCircle,
@@ -245,6 +245,29 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             path: '/iso-messages',
             icon: <FaEnvelopeOpenText className={styles.icon}/>,
             roles: ['iso_messages']
+        },
+        {
+            title: 'PAPSS',
+            path: '/papss/operations',
+            icon: <FaGlobeAfrica className={styles.icon}/>,
+            roles: ['gateway', 'recon'],
+            items: [
+                {
+                    title: 'Operations',
+                    path: '/papss/operations',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+                {
+                    title: 'Positions',
+                    path: '/papss/positions',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+                {
+                    title: 'Unresolved Events',
+                    path: '/papss/unresolved',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+            ]
         },
         ...(activeProfile !== 'prod' ? [{
             title: 'API Tester',

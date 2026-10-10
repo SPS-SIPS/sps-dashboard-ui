@@ -1,0 +1,60 @@
+.compactActions {
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.positionInput {
+    flex: 1 1 auto;
+    min-width: 220px;
+}
+
+.positionControls {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--spacing-lg);
+    width: 100%;
+}
+
+.unresolvedControls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--spacing-lg);
+    align-items: end;
+}
+
+.unresolvedFilters {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.unresolvedActions {
+    align-self: end;
+    padding-bottom: 2px;
+}
+
+.unresolvedFilterRow > *::before {
+    display: none !important;
+}
+
+@media (max-width: 700px) {
+    .positionControls { flex-direction: column; align-items: stretch; }
+    .unresolvedControls { grid-template-columns: 1fr; }
+    .unresolvedActions { justify-content: flex-start; }
+    .compactActions { justify-content: flex-start; }
+}
+
+.compactActions :global(button) {
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    white-space: nowrap;
+}
+
+.loadButton {
+    background: linear-gradient(135deg, #73b344 0%, #5c9d2f 100%) !important;
+    color: #fff !important;
+}
+

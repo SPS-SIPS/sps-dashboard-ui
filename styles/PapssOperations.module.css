@@ -1,0 +1,24 @@
+.page { max-width: 980px; }
+.header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--color-border); padding-bottom: var(--spacing-xl); }
+.card, .result { background: var(--color-background-secondary, #f8fafb); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--spacing-xl); }
+.card h2, .result h2 { margin: 0 0 var(--spacing-lg); color: var(--color-text-primary); font-size: var(--font-size-lg); }
+.card form:not(.inlineForm) { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center; }
+.inlineForm { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--spacing-lg); }
+.inlineForm > div:first-child { flex: 1 1 260px; }
+.summary { margin: 0 0 var(--spacing-lg); padding: var(--spacing-lg); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-background); }
+.summary h3 { margin: 0 0 var(--spacing-md); font-size: var(--font-size-md); color: var(--color-text-primary); }
+.summaryGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--spacing-md); }
+.summaryItem { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.summaryItem span { color: var(--color-text-secondary); font-size: 12px; }
+.summaryItem strong { overflow-wrap: anywhere; color: var(--color-text-primary); font-weight: 600; }
+.filterGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-lg); }
+.secondary { background: var(--color-background) !important; color: var(--color-text-primary) !important; border: 1px solid var(--color-border); }
+.error { margin: var(--spacing-lg) 0 0; color: var(--color-error, #a32323); }
+.resultHeader { display: flex; justify-content: space-between; align-items: center; gap: var(--spacing-md); }
+.resultHeader span { padding: 5px 9px; border-radius: 999px; background: #e5f3ea; color: #17613b; font-size: 12px; font-weight: 700; }
+.tableWrap { overflow-x: auto; margin-bottom: var(--spacing-lg); }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th, .table td { padding: 10px 12px; border-bottom: 1px solid var(--color-border); text-align: left; white-space: nowrap; }
+.table th { color: var(--color-text-secondary); font-weight: 700; }
+@media (max-width: 700px) { .page { padding: var(--spacing-lg); } .header { flex-direction: column; gap: var(--spacing-md); } }
