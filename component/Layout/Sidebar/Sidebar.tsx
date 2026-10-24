@@ -238,13 +238,37 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
             title: 'Transactions',
             path: '/transactions',
             icon: <FiCreditCard className={styles.icon}/>,
-            roles: ['transactions']
+            roles: ['transactions'],
+            items: [
+                {
+                    title: 'SIPS Transactions',
+                    path: '/transactions/sips',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+                {
+                    title: 'PAPSS Transactions',
+                    path: '/transactions/papss',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+            ]
         },
         {
             title: 'ISO Messages',
             path: '/iso-messages',
             icon: <FaEnvelopeOpenText className={styles.icon}/>,
-            roles: ['iso_messages']
+            roles: ['iso_messages'],
+            items: [
+                {
+                    title: 'SIPS ISO Messages',
+                    path: '/iso-messages/sips',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+                {
+                    title: 'PAPSS ISO Messages',
+                    path: '/iso-messages/papss',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+            ]
         },
         {
             title: 'PAPSS',

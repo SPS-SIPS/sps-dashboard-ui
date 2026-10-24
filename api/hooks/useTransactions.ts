@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import useAxiosPrivate from './useAxiosPrivate';
 import { Transaction, TransactionQuery } from '../../types/types';
+
+const pendingTransactionRequests = new Map<string, Promise<Transaction[]>>();
 
 export const useTransactions = (initialQuery: TransactionQuery = { page: 0, pageSize: 10 }) => {
     const axiosPrivate = useAxiosPrivate();
@@ -8,8 +10,16 @@ export const useTransactions = (initialQuery: TransactionQuery = { page: 0, page
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const loadedQueryKey = useRef<string | null>(null);
+    const inFlightQueryKey = useRef<string | null>(null);
 
-    const fetchTransactions = async () => {
+    const fetchTransactions = async (force = false) => {
+        const queryKey = JSON.stringify(query);
+        if (!force && (queryKey === loadedQueryKey.current || queryKey === inFlightQueryKey.current)) {
+            return;
+        }
+
+        inFlightQueryKey.current = queryKey;
         setLoading(true);
         setError(null);
 
@@ -17,6 +27,9 @@ export const useTransactions = (initialQuery: TransactionQuery = { page: 0, page
             const params: Record<string, string> = {
                 page: query.page.toString(),
                 pageSize: query.pageSize.toString(),
+                ...(query.Rail && { Rail: query.Rail }),
+                ...(query.OperationType && { OperationType: query.OperationType }),
+                ...(query.Direction && { Direction: query.Direction }),
                 ...(query.Status !== undefined && { Status: query.Status.toString() }),
                 ...(query.TransactionId && { TransactionId: query.TransactionId }),
                 ...(query.EndToEndId && { EndToEndId: query.EndToEndId }),
@@ -30,15 +43,26 @@ export const useTransactions = (initialQuery: TransactionQuery = { page: 0, page
                 ...(query.RelatedToISOMessageId !== undefined && { RelatedToISOMessageId: query.RelatedToISOMessageId.toString() })
             };
 
-            const response = await axiosPrivate.get<Transaction[]>('/api/v1/Transactions/transactions', {
-                params,
-                paramsSerializer: { indexes: null }
-            });
+            let request = pendingTransactionRequests.get(queryKey);
+            if (!request) {
+                request = axiosPrivate
+                    .get<Transaction[]>('/api/v1/Transactions/transactions', {
+                        params,
+                        paramsSerializer: { indexes: null }
+                    })
+                    .then(response => response.data)
+                    .finally(() => pendingTransactionRequests.delete(queryKey));
+                pendingTransactionRequests.set(queryKey, request);
+            }
 
-            setTransactions(response.data);
+            setTransactions(await request);
+            loadedQueryKey.current = queryKey;
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch transactions');
         } finally {
+            if (inFlightQueryKey.current === queryKey) {
+                inFlightQueryKey.current = null;
+            }
             setLoading(false);
         }
     };
@@ -57,6 +81,6 @@ export const useTransactions = (initialQuery: TransactionQuery = { page: 0, page
         error,
         query,
         setQuery: updateQuery,
-        refetch: fetchTransactions,
+        refetch: () => fetchTransactions(true),
     };
 };

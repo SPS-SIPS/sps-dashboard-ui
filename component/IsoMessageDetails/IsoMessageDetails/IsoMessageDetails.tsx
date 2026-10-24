@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import {getMessageTypeTitle, MESSAGE_TYPE_BREADCRUMB_LABELS} from "../../../utils/isoMessage";
 import UnderConstructionTab from "./NavigationTabs/UnderConstructionTab/UnderConstructionTab";
 import Breadcrumb from "../../common/Breadcrumb/Breadcrumb";
-import {FiArrowRight, FiCornerUpLeft, FiEye, FiInfo, FiRefreshCw, FiX} from "react-icons/fi";
+import {FiArrowLeft, FiArrowRight, FiCornerUpLeft, FiEye, FiInfo, FiRefreshCw} from "react-icons/fi";
 
 import styles from "./IsoMessageDetails.module.css"
 import XmlViewerModal from "../../XmlViewerModal/XmlViewerModal";
@@ -19,9 +19,10 @@ import {bicOptionsDev, bicOptionsProd} from "../../../constants/gatewayFormOptio
 interface Props {
     isoMessage: ISOMessage;
     onClose?: () => void;
+    rail?: "SIPS" | "PAPSS";
 }
 
-const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
+const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose, rail = "SIPS"}) => {
     const [selectedXml, setSelectedXml] = useState<{
         content: string;
         title: string;
@@ -39,11 +40,13 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
     };
 
 
+    const railLabel = `${rail} ISO Messages`;
+    const railPath = rail === "PAPSS" ? "/iso-messages/papss" : "/iso-messages/sips";
     const breadcrumbs = [
         {label: "Home", link: "/"},
-        {label: "ISO Messages", link: "/iso-messages"},
+        {label: railLabel, link: railPath},
         {
-            label: `ISO 20022 ${MESSAGE_TYPE_BREADCRUMB_LABELS[isoMessage.messageType]}`, link: `/iso-messages`,
+            label: `ISO 20022 ${MESSAGE_TYPE_BREADCRUMB_LABELS[isoMessage.messageType]}`, link: railPath,
         },
     ];
 
@@ -94,19 +97,30 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
         }
     };
 
-    const tabs = [
-        {id: "related-transactions", label: "Related Transactions", count: 0},
-        {id: "status-history", label: "Status History", count: 0},
-    ];
+    const supportsRelatedData = [
+        ISOMessageType.TransactionRequest,
+        ISOMessageType.ReturnRequest,
+        ISOMessageType.TransactionResponse,
+        ISOMessageType.ReturnResponse,
+    ].includes(isoMessage.messageType);
+
+    const tabs = supportsRelatedData
+        ? [
+            {id: "related-transactions", label: "Related Transactions", count: 0},
+            {id: "status-history", label: "Status History", count: 0},
+        ]
+        : [];
 
     const [activeTab, setActiveTab] = useState("related-transactions");
 
     const renderTabContent = () => {
         switch (activeTab) {
             case "related-transactions":
+                if (!supportsRelatedData) return null;
                 return <SummaryTab txId={isoMessage.txId}/>;
 
             case "status-history":
+                if (!supportsRelatedData) return null;
                 return <StatusTab isoMessageIds={[isoMessage.id]}/>;
 
             default:
@@ -190,10 +204,10 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
                         className={`${styles.actionButton} ${styles.close}`}
                         onClick={onClose}
                         type="button"
-                        title="Close"
+                        title={`Back to ${railLabel}`}
                     >
-                        <FiX size={16}/>
-                        <span>Close</span>
+                        <FiArrowLeft size={16}/>
+                        <span>Back to {railLabel}</span>
                     </button>
                 </div>
             </div>
@@ -307,25 +321,29 @@ const IsoMessageDetails: React.FC<Props> = ({isoMessage, onClose}) => {
 
             </div>
 
-            {/* Tabs Navigation at Bottom */}
-            <nav className={styles.tabsContainer}>
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        className={`${styles.tabButton} ${
-                            activeTab === tab.id ? styles.active : ""
-                        }`}
-                        onClick={() => setActiveTab(tab.id)}
-                        type="button"
-                    >
-                        {tab.label}
-                        {tab.count !== null && tab.count > 0 ? ` (${tab.count})` : ""}
-                    </button>
-                ))}
-            </nav>
+            {supportsRelatedData && (
+                <>
+                    {/* Tabs Navigation at Bottom */}
+                    <nav className={styles.tabsContainer}>
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                className={`${styles.tabButton} ${
+                                    activeTab === tab.id ? styles.active : ""
+                                }`}
+                                onClick={() => setActiveTab(tab.id)}
+                                type="button"
+                            >
+                                {tab.label}
+                                {tab.count !== null && tab.count > 0 ? ` (${tab.count})` : ""}
+                            </button>
+                        ))}
+                    </nav>
 
-            {/* Render selected tab content */}
-            <div className={styles.tabContentContainer}>{renderTabContent()}</div>
+                    {/* Render selected tab content */}
+                    <div className={styles.tabContentContainer}>{renderTabContent()}</div>
+                </>
+            )}
 
             {selectedXml && (
                 <XmlViewerModal

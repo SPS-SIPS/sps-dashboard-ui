@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import useAxiosPrivate from "./useAxiosPrivate";
 import {ISOMessage, MessageQuery} from "../../types/types";
+
+const pendingMessageRequests = new Map<string, Promise<ISOMessage[]>>();
 
 export const useISOMessages = (initialQuery: MessageQuery = { page: 0, pageSize: 10 }) => {
     const axiosPrivate = useAxiosPrivate();
@@ -8,8 +10,13 @@ export const useISOMessages = (initialQuery: MessageQuery = { page: 0, pageSize:
     const [messages, setMessages] = useState<ISOMessage[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const loadedQueryKey = useRef<string | null>(null);
+    const inFlightQueryKey = useRef<string | null>(null);
 
-    const fetchMessages = async () => {
+    const fetchMessages = async (force = false) => {
+        const queryKey = JSON.stringify(query);
+        if (!force && (queryKey === loadedQueryKey.current || queryKey === inFlightQueryKey.current)) return;
+        inFlightQueryKey.current = queryKey;
         setLoading(true);
         setError(null);
 
@@ -20,14 +27,21 @@ export const useISOMessages = (initialQuery: MessageQuery = { page: 0, pageSize:
                 type: query.type?.toString(),
             };
 
-            const response = await axiosPrivate.get<ISOMessage[]>('/api/v1/Transactions/iso-messages', {
-                params,
-                paramsSerializer: { indexes: null }
-            });
-            setMessages(response.data);
+            let request = pendingMessageRequests.get(queryKey);
+            if (!request) {
+                request = axiosPrivate.get<ISOMessage[]>('/api/v1/Transactions/iso-messages', {
+                    params,
+                    paramsSerializer: { indexes: null }
+                }).then(response => response.data)
+                    .finally(() => pendingMessageRequests.delete(queryKey));
+                pendingMessageRequests.set(queryKey, request);
+            }
+            setMessages(await request);
+            loadedQueryKey.current = queryKey;
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch messages');
         } finally {
+            if (inFlightQueryKey.current === queryKey) inFlightQueryKey.current = null;
             setLoading(false);
         }
     };
@@ -47,6 +61,6 @@ export const useISOMessages = (initialQuery: MessageQuery = { page: 0, pageSize:
         error,
         query,
         setQuery: updateQuery,
-        refetch: fetchMessages,
+        refetch: () => fetchMessages(true),
     };
 };

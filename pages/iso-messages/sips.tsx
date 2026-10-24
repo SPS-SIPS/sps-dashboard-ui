@@ -1,27 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { FiSettings, FiX, FiCheck, FiEye } from "react-icons/fi";
+import { FiX, FiEye } from "react-icons/fi";
 
-import { useISOMessages } from "../api/hooks/useISOMessages";
+import { useISOMessages } from "../../api/hooks/useISOMessages";
 import {
   getISOMessageTypeText,
   getTransactionStatusText,
   ISOMessage,
   ISOMessageType,
   TransactionStatus,
-} from "../types/types";
-import SelectInput from "../component/common/SelectInput/SelectInput";
-import SearchInput from "../component/common/SearchInput/SearchInput";
-import ActionButton from "../component/common/ActionButton/ActionButton";
+} from "../../types/types";
+import SelectInput from "../../component/common/SelectInput/SelectInput";
+import SearchInput from "../../component/common/SearchInput/SearchInput";
+import ActionButton from "../../component/common/ActionButton/ActionButton";
 
-import styles from "../styles/ISOMessagesList.module.css";
-import RoleGuard from "../auth/RoleGuard";
-import XmlViewerModal from "../component/XmlViewerModal/XmlViewerModal";
-import AlertModal from "../component/common/AlertModal/AlertModal";
-import { useAuthentication } from "../auth/AuthProvider";
-import IsoMessageDetails from "../component/IsoMessageDetails/IsoMessageDetails/IsoMessageDetails";
-import ExcelExport from "../component/ExcelExport/excel-export";
+import styles from "../../styles/ISOMessagesList.module.css";
+import RoleGuard from "../../auth/RoleGuard";
+import XmlViewerModal from "../../component/XmlViewerModal/XmlViewerModal";
+import AlertModal from "../../component/common/AlertModal/AlertModal";
+import { useAuthentication } from "../../auth/AuthProvider";
+import IsoMessageDetails from "../../component/IsoMessageDetails/IsoMessageDetails/IsoMessageDetails";
+import ExcelExport from "../../component/ExcelExport/excel-export";
+import ColumnVisibilityModal from "../../component/common/ColumnVisibilityModal/ColumnVisibilityModal";
 
 const allColumns = [
+  { id: "listItemId", label: "List Item ID" },
+  { id: "operationType", label: "Operation Type" },
+  { id: "direction", label: "Direction" },
+  { id: "rail", label: "Rail" },
   { id: "id", label: "ID" },
   { id: "msgId", label: "Message ID" },
   { id: "messageType", label: "Type" },
@@ -47,6 +52,8 @@ const EMPTY_FILTERS = {
   bizMsgIdr: "",
   msgDefIdr: "",
   status: "",
+  OperationType: "",
+  Direction: "",
   type: "",
   endToEndId: "",
   fromDate: "",
@@ -65,8 +72,13 @@ const PAGE_SIZE_OPTIONS = [
 
 const VISIBLE_COLUMNS_KEY = "iso_messages_visible_columns";
 const PAGE_SIZE_KEY = "iso_messages_page_size"; // New localStorage key for page size
+const MESSAGE_RAIL = "SIPS" as const;
 
 const ISOMessagesList = () => {
+  const initialPageSize =
+    typeof window !== "undefined"
+      ? Number(localStorage.getItem(PAGE_SIZE_KEY)) || 10
+      : 10;
   const [selectedMessage, setSelectedMessage] = useState<ISOMessage | null>(
     null
   );
@@ -80,7 +92,7 @@ const ISOMessagesList = () => {
   };
 
   const { messages, loading, error, query, setQuery, refetch } =
-    useISOMessages();
+    useISOMessages({ page: 0, pageSize: initialPageSize, Rail: MESSAGE_RAIL });
 
   const [alertModal, setAlertModal] = useState<{
     title: string;
@@ -89,12 +101,16 @@ const ISOMessagesList = () => {
   } | null>(null);
 
   const [showColumnSettings, setShowColumnSettings] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [selectedXml, setSelectedXml] = useState<{
     content: string;
     title: string;
   } | null>(null);
 
   const DEFAULT_VISIBLE_COLUMNS = [
+    "listItemId",
+    "operationType",
+    "direction",
     "messageType",
     "status",
     "msgDefIdr",
@@ -117,11 +133,9 @@ const ISOMessagesList = () => {
   });
 
   useEffect(() => {
-    setQuery({
-      ...query,
-      page: 0,
-      pageSize: selectedPageSize,
-    });
+    if (query.page !== 0 || query.pageSize !== selectedPageSize) {
+      setQuery({ page: 0, pageSize: selectedPageSize, Rail: MESSAGE_RAIL });
+    }
   }, [selectedPageSize]);
 
   const toggleColumnVisibility = (columnId: string) => {
@@ -140,12 +154,28 @@ const ISOMessagesList = () => {
     ...EMPTY_FILTERS,
   });
 
+  const advancedFilterCount = [
+    filters.msgId,
+    filters.bizMsgIdr,
+    filters.msgDefIdr,
+    filters.RelatedToISOMessageId,
+    filters.type,
+    filters.debtorAccount,
+    filters.creditorAccount,
+    filters.OperationType,
+    filters.Direction,
+  ].filter(Boolean).length;
+  const hasActiveFilters = Object.values(filters).some(Boolean);
+
   const clearFilters = () => {
     setFilters({ ...EMPTY_FILTERS });
     setQuery({
       page: 0,
+      Rail: MESSAGE_RAIL,
       status: undefined,
       type: undefined,
+      OperationType: undefined,
+      Direction: undefined,
       RelatedToISOMessageId: undefined,
       msgId: undefined,
       bizMsgIdr: undefined,
@@ -177,11 +207,18 @@ const ISOMessagesList = () => {
       type: newFilters.type
         ? (newFilters.type as unknown as ISOMessageType)
         : undefined,
+      OperationType: newFilters.OperationType
+        ? (newFilters.OperationType as "PAYMENT" | "VERIFICATION" | "RETURN" | "STATUS_ENQUIRY" | "RECALL")
+        : undefined,
+      Direction: newFilters.Direction
+        ? (newFilters.Direction as "INBOUND" | "OUTBOUND")
+        : undefined,
       RelatedToISOMessageId: newFilters.RelatedToISOMessageId
         ? Number(newFilters.RelatedToISOMessageId)
         : undefined,
       transactionId: newFilters.transactionId || undefined,
       page: 0,
+      Rail: MESSAGE_RAIL,
     });
   };
 
@@ -266,15 +303,7 @@ const ISOMessagesList = () => {
       {!selectedMessage ? (
         <div className={styles.container}>
           <div className={styles.header}>
-            <h2 className={styles.title}>ISO Messages</h2>
-            <div className={styles.headerButtons}>
-              <button
-                onClick={() => setShowColumnSettings(!showColumnSettings)}
-                className={styles.settingsButton}
-              >
-                <FiSettings />
-              </button>
-            </div>
+            <h2 className={styles.title}>SIPS ISO Messages</h2>
           </div>
 
           {error && <div className={styles.errorMessage}>{error}</div>}
@@ -282,104 +311,62 @@ const ISOMessagesList = () => {
           <div className={styles.searchContainer}>
             <div className={styles.searchInputRow}>
               <SearchInput
+                label="Transaction ID"
                 value={filters.transactionId}
                 onChange={(e) =>
                   handleFilterChange("transactionId", e.target.value)
                 }
-                placeholder="Transaction ID"
+                placeholder="Search by Transaction ID"
               />
               <SearchInput
-                value={filters.msgId}
-                onChange={(e) => handleFilterChange("msgId", e.target.value)}
-                placeholder="Message ID"
-              />
-              <SearchInput
-                value={filters.bizMsgIdr}
-                onChange={(e) =>
-                  handleFilterChange("bizMsgIdr", e.target.value)
-                }
-                placeholder="Business Msg ID"
-              />
-            </div>
-
-            <div className={styles.searchInputRow}>
-              <SearchInput
-                value={filters.RelatedToISOMessageId}
-                onChange={(e) =>
-                  handleFilterChange("RelatedToISOMessageId", e.target.value)
-                }
-                placeholder="Related ISO Message ID"
-              />
-              <SearchInput
-                value={filters.msgDefIdr}
-                onChange={(e) =>
-                  handleFilterChange("msgDefIdr", e.target.value)
-                }
-                placeholder="Msg Definition ID"
-              />
-              <SearchInput
+                label="End-to-End ID"
                 value={filters.endToEndId}
-                onChange={(e) =>
-                  handleFilterChange("endToEndId", e.target.value)
-                }
-                placeholder="End To End ID"
+                onChange={(e) => handleFilterChange("endToEndId", e.target.value)}
+                placeholder="Search by End-to-End ID"
+              />
+              <SelectInput
+                label="Status"
+                value={filters.status}
+                onChange={(e) => handleFilterChange("status", e.target.value)}
+                options={Object.entries(TransactionStatus)
+                  .filter(([key]) => isNaN(Number(key)))
+                  .map(([key, value]) => ({ value: String(value), label: key }))}
+                placeholder="-- Select a Status --"
               />
             </div>
 
-            <div className={styles.searchInputRow}>
-              <SearchInput
-                value={filters.debtorAccount}
-                onChange={(e) =>
-                  handleFilterChange("debtorAccount", e.target.value)
-                }
-                placeholder="Debtor Account"
-              />
-              <SearchInput
-                value={filters.creditorAccount}
-                onChange={(e) =>
-                  handleFilterChange("creditorAccount", e.target.value)
-                }
-                placeholder="Creditor Account"
-              />
-            </div>
+            {showAdvancedFilters && (
+              <div className={styles.advancedFiltersBackdrop} role="presentation" onClick={() => setShowAdvancedFilters(false)}>
+                <section className={styles.advancedFiltersModal} role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
+                  <div className={styles.advancedFiltersHeader}>
+                    <h3>Advanced filters</h3>
+                    <button type="button" className={styles.advancedFiltersClose} aria-label="Close advanced filters" onClick={() => setShowAdvancedFilters(false)}>
+                      <FiX />
+                    </button>
+                  </div>
+                  <div className={styles.advancedFiltersGrid}>
+                    <SearchInput label="Message ID" value={filters.msgId} onChange={(e) => handleFilterChange("msgId", e.target.value)} placeholder="Search by Message ID" />
+                    <SearchInput label="Business Message ID" value={filters.bizMsgIdr} onChange={(e) => handleFilterChange("bizMsgIdr", e.target.value)} placeholder="Search by Business Message ID" />
+                    <SearchInput label="Related ISO Message ID" value={filters.RelatedToISOMessageId} onChange={(e) => handleFilterChange("RelatedToISOMessageId", e.target.value)} placeholder="Search by Related ISO Message ID" />
+                    <SearchInput label="Message Definition ID" value={filters.msgDefIdr} onChange={(e) => handleFilterChange("msgDefIdr", e.target.value)} placeholder="Search by Message Definition ID" />
+                    <SearchInput label="Debtor Account" value={filters.debtorAccount} onChange={(e) => handleFilterChange("debtorAccount", e.target.value)} placeholder="Search by Debtor Account" />
+                    <SearchInput label="Creditor Account" value={filters.creditorAccount} onChange={(e) => handleFilterChange("creditorAccount", e.target.value)} placeholder="Search by Creditor Account" />
+                    <SelectInput label="Message Type" value={filters.type} onChange={(e) => handleFilterChange("type", e.target.value)} options={Object.entries(ISOMessageType).filter(([key]) => isNaN(Number(key))).map(([key, value]) => ({ value: String(value), label: key }))} placeholder="-- Select a Message Type --" />
+                    <SelectInput label="Operation Type" value={filters.OperationType} onChange={(e) => handleFilterChange("OperationType", e.target.value)} options={[{ value: "PAYMENT", label: "Payment" }, { value: "VERIFICATION", label: "Verification" }, { value: "RETURN", label: "Return" }, { value: "STATUS_ENQUIRY", label: "Status Enquiry" }, { value: "RECALL", label: "Recall" }]} placeholder="-- Select an Operation Type --" />
+                    <SelectInput label="Direction" value={filters.Direction} onChange={(e) => handleFilterChange("Direction", e.target.value)} options={[{ value: "INBOUND", label: "Inbound" }, { value: "OUTBOUND", label: "Outbound" }]} placeholder="-- Select a Direction --" />
+                  </div>
+                  <div className={styles.advancedFiltersFooter}>
+                    <ActionButton onClick={clearFilters} disabled={loading || !hasActiveFilters} type="button" className={styles.clearButton}>Clear filters</ActionButton>
+                    <ActionButton onClick={() => setShowAdvancedFilters(false)} type="button" className={styles.refreshButton}>Apply</ActionButton>
+                  </div>
+                </section>
+              </div>
+            )}
 
             <div className={styles.filterControlsRow}>
-              <div className={styles.selectGroup}>
-                <SelectInput
-                  label=""
-                  value={filters.status}
-                  onChange={(e) => handleFilterChange("status", e.target.value)}
-                  options={[
-                    { value: "", label: "All Statuses" },
-                    ...Object.entries(TransactionStatus)
-                      .filter(([key]) => isNaN(Number(key)))
-                      .map(([key, value]) => ({
-                        value: String(value),
-                        label: key,
-                      })),
-                  ]}
-                  placeholder="-- Select a Status --"
-                />
-                <SelectInput
-                  label=""
-                  value={filters.type}
-                  onChange={(e) => handleFilterChange("type", e.target.value)}
-                  options={[
-                    { value: "", label: "All Types" },
-                    ...Object.entries(ISOMessageType)
-                      .filter(([key]) => isNaN(Number(key)))
-                      .map(([key, value]) => ({
-                        value: String(value),
-                        label: key,
-                      })),
-                  ]}
-                  placeholder="-- Select a Type --"
-                />
-              </div>
-
               <div className={styles.dateGroup}>
                 <div className={styles.dateInput}>
-                  <label>From:</label>
+                  <label>From date</label>
                   <input
                     type="date"
                     value={filters.fromDate}
@@ -389,7 +376,7 @@ const ISOMessagesList = () => {
                   />
                 </div>
                 <div className={styles.dateInput}>
-                  <label>To:</label>
+                  <label>To date</label>
                   <input
                     type="date"
                     value={filters.toDate}
@@ -400,7 +387,7 @@ const ISOMessagesList = () => {
                 </div>
               </div>
 
-              <div className={styles.tableControls}>
+              <div className={styles.displayControls}>
                 <div className={styles.pageSizeControl}>
                   <SelectInput
                     label=""
@@ -411,9 +398,29 @@ const ISOMessagesList = () => {
                   />
                 </div>
                 <div className={styles.actionButtons}>
+                  <button
+                    type="button"
+                    className={styles.advancedFilterButton}
+                    onClick={() => setShowAdvancedFilters(true)}
+                  >
+                    Advanced filters
+                    {advancedFilterCount > 0 && <span className={styles.filterCount}>{advancedFilterCount}</span>}
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.visibleColumnsButton}
+                    onClick={() => setShowColumnSettings(true)}
+                  >
+                    Visible columns
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.tableActionsRow}>
+                <div className={styles.actionButtons}>
                   <ActionButton
                     onClick={clearFilters}
-                    disabled={loading}
+                    disabled={loading || !hasActiveFilters}
                     type="button"
                     className={styles.clearButton}
                   >
@@ -432,10 +439,10 @@ const ISOMessagesList = () => {
                     data={messages}
                     columns={allColumns}
                     visibleColumns={visibleColumns}
-                    fileName="iso_messages"
+                    fileName="sips_iso_messages"
                     disabled={loading}
                     metadata={{
-                      title: "ISO Messages Export",
+                      title: "SIPS ISO Messages Export",
                       totalRecords: messages.length,
                       page: query.page + 1,
                       filters: {
@@ -496,34 +503,24 @@ const ISOMessagesList = () => {
           </div>
 
           {showColumnSettings && (
-            <div className={styles.columnSettings}>
-              <h3>Visible Columns</h3>
-              <div className={styles.columnOptions}>
-                {allColumns.map((column) => (
-                  <label key={column.id} className={styles.columnOption}>
-                    <span>{column.label}</span>
-                    <button
-                      onClick={() => toggleColumnVisibility(column.id)}
-                      className={`${styles.toggleButton} ${
-                        visibleColumns.includes(column.id) ? styles.active : ""
-                      }`}
-                    >
-                      {visibleColumns.includes(column.id) ? (
-                        <FiCheck />
-                      ) : (
-                        <FiX />
-                      )}
-                    </button>
-                  </label>
-                ))}
-              </div>
-            </div>
+            <ColumnVisibilityModal
+              columns={allColumns}
+              visibleColumns={visibleColumns}
+              onToggle={toggleColumnVisibility}
+              onChange={(columnIds) => {
+                setVisibleColumns(columnIds);
+                localStorage.setItem(VISIBLE_COLUMNS_KEY, JSON.stringify(columnIds));
+              }}
+              defaultVisibleColumns={DEFAULT_VISIBLE_COLUMNS}
+              onClose={() => setShowColumnSettings(false)}
+            />
           )}
 
-          {loading && query.page === 0 ? (
-            <div className={styles.loadingMessage}>Loading messages...</div>
-          ) : (
-            <>
+          <div className={styles.resultsPanel}>
+            {loading && query.page === 0 ? (
+              <div className={styles.loadingMessage}>Loading messages...</div>
+            ) : (
+              <>
               <div className={styles.tableWrapper}>
                 <table className={styles.table}>
                   <thead className={styles.tableHeader}>
@@ -583,8 +580,9 @@ const ISOMessagesList = () => {
                   Next
                 </button>
               </div>
-            </>
-          )}
+              </>
+            )}
+          </div>
           {loading && query.page > 0 && (
             <div className={styles.loadingOverlay}>
               <div className={styles.spinner}></div>
@@ -612,6 +610,7 @@ const ISOMessagesList = () => {
         <IsoMessageDetails
           isoMessage={selectedMessage}
           onClose={handleCloseDetails}
+          rail="SIPS"
         />
       )}
     </RoleGuard>

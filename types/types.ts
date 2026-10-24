@@ -5,6 +5,9 @@ export interface BaseQuery {
 
 // Query types
 export interface TransactionQuery extends BaseQuery {
+  Rail?: "SIPS" | "PAPSS";
+  OperationType?: "PAYMENT" | "VERIFICATION" | "RETURN" | "STATUS_ENQUIRY" | "RECALL";
+  Direction?: "INBOUND" | "OUTBOUND";
   ISOMessageId?: number;
   TransactionId?: string;
   EndToEndId?: string;
@@ -19,6 +22,9 @@ export interface TransactionQuery extends BaseQuery {
 }
 
 export interface MessageQuery extends BaseQuery {
+  Rail?: "SIPS" | "PAPSS";
+  OperationType?: "PAYMENT" | "VERIFICATION" | "RETURN" | "STATUS_ENQUIRY" | "RECALL";
+  Direction?: "INBOUND" | "OUTBOUND";
   msgId?: string;
   bizMsgIdr?: string;
   msgDefIdr?: string;
@@ -35,6 +41,23 @@ export interface MessageQuery extends BaseQuery {
 
 export interface Transaction {
   id: number;
+  status: TransactionStatus;
+  listItemId?: string;
+  rail?: "SIPS" | "PAPSS";
+  operationType?: "PAYMENT" | "VERIFICATION" | "RETURN" | "STATUS_ENQUIRY" | "RECALL";
+  direction?: "INBOUND" | "OUTBOUND" | "UNKNOWN";
+  recordedAtUtc?: string;
+  papssOperationId?: string;
+  requestMessageId?: string;
+  verificationId?: string;
+  returnId?: string;
+  accountId?: string;
+  accountType?: string;
+  verified?: boolean;
+  paymentStatus?: string;
+  papssOutcome?: string;
+  gatewayState?: string;
+  bankDeliveryState?: string;
   type: TransactionType;
   isoMessageId: number;
   fromBIC?: string;
@@ -61,6 +84,10 @@ export interface Transaction {
 
 export interface ISOMessage {
   id: number;
+  listItemId?: string;
+  rail?: "SIPS" | "PAPSS";
+  operationType?: "PAYMENT" | "VERIFICATION" | "RETURN" | "STATUS_ENQUIRY" | "RECALL";
+  direction?: "INBOUND" | "OUTBOUND" | "UNKNOWN";
   messageType: ISOMessageType;
   status: TransactionStatus;
   msgId: string;

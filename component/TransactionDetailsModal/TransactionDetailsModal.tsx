@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./TransactionDetailsModal.module.css";
-import { Transaction, TransactionType } from "../../types/types";
+import { getTransactionStatusText, Transaction, TransactionType } from "../../types/types";
 import { AiOutlineClose } from "react-icons/ai";
 import {useAuthentication} from "../../auth/AuthProvider";
 import {bicOptionsDev, bicOptionsProd} from "../../constants/gatewayFormOptions";
@@ -60,13 +60,23 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
     {
       title: "Overview",
       fields: [
+        { label: "List Item ID", value: transaction.listItemId },
         { label: "ID", value: transaction.id },
         { label: "Type", value: getTransactionTypeLabel(transaction.type) },
+        { label: "Operation Type", value: transaction.operationType },
+        { label: "Direction", value: transaction.direction },
+        { label: "Status", value: getTransactionStatusText(transaction.status) },
         {
           label: "Amount",
           value: `${transaction.amount ?? "-"} ${transaction.currency ?? ""}`,
         },
         { label: "ISO Message ID", value: transaction.isoMessageId },
+        {
+          label: "Recorded At",
+          value: transaction.recordedAtUtc
+            ? new Date(transaction.recordedAtUtc).toLocaleString()
+            : undefined,
+        },
       ],
     },
     {
@@ -75,6 +85,7 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
         { label: "Name", value: transaction.debtorName },
         { label: "Account", value: transaction.debtorAccount },
         { label: "Account Type", value: transaction.debtorAccountType },
+        { label: "Address", value: transaction.debtorAddress },
         {
           label: "Agent BIC",
           value: transaction.debtorAgentBIC,
@@ -88,6 +99,7 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
         { label: "Name", value: transaction.creditorName },
         { label: "Account", value: transaction.creditorAccount },
         { label: "Account Type", value: transaction.creditorAccountType },
+        { label: "Address", value: transaction.creditorAddress },
         {
           label: "Agent BIC",
           value: transaction.creditorAgentBIC,
@@ -120,6 +132,10 @@ const TransactionDetailsModal: React.FC<Props> = ({ transaction, onClose }) => {
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
         <div className={styles.modalHeader}>
+          <div className={styles.modalTitleGroup}>
+            <h3>Transaction details</h3>
+            <span>{transaction.listItemId || transaction.txId || `#${transaction.id}`}</span>
+          </div>
           <button
             onClick={onClose}
             className={styles.closeButton}

@@ -138,8 +138,8 @@ const GuestDashboard = () => {
                             <div className={styles.subCard}>
                                 <h3>Transactions & Monitoring</h3>
                                 <ul className={styles.featureList}>
-                                    <li><Link href="/transactions"><FiChevronRight /> Transaction List</Link></li>
-                                    <li><Link href="/iso-messages"><FiChevronRight /> ISO Messages</Link></li>
+                                    <li><Link href="/transactions/sips"><FiChevronRight /> Transaction List</Link></li>
+                                    <li><Link href="/iso-messages/sips"><FiChevronRight /> ISO Messages</Link></li>
                                     <li><Link href="/participants"><FiChevronRight /> Live Participants</Link></li>
                                     <li><Link href="/health"><FiChevronRight /> System Health</Link></li>
                                 </ul>

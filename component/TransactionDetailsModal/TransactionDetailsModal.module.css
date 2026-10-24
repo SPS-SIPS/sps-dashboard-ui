@@ -35,9 +35,28 @@
 /* Header & Close Button */
 .modalHeader {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     padding: var(--spacing-md) var(--spacing-lg);
     background: var(--color-background-accent);
+}
+
+.modalTitleGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.modalTitleGroup h3 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+}
+
+.modalTitleGroup span {
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
 }
 
 .closeButton {

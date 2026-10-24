@@ -4,6 +4,12 @@
     gap: 0.5rem;
 }
 
+.label {
+    color: var(--color-text-label);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
 .inputWrapper {
     position: relative;
     display: flex;

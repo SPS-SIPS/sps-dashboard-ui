@@ -5,6 +5,7 @@ import {FiSearch} from "react-icons/fi";
 interface SearchInputProps {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    label?: string;
     placeholder?: string;
     required?: boolean;
 }
@@ -12,11 +13,13 @@ interface SearchInputProps {
 const SearchInput: React.FC<SearchInputProps> = ({
                                                      value,
                                                      onChange,
+                                                     label,
                                                      placeholder = "Search...",
                                                      required = false,
                                                  }) => {
     return (
         <div className={styles.inputContainer}>
+            {label && <label className={styles.label}>{label}</label>}
             <div className={styles.inputWrapper}>
                 <input
                     className={styles.inputField}
