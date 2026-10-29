@@ -35,8 +35,7 @@ export default function PaymentPage() {
     const [response, setResponse] = useState<{status: number | null; data: unknown; error?: string} | null>(null);
     const [viewer, setViewer] = useState<'request' | 'response' | null>(null);
     const [accountSubmission, setAccountSubmission] = useState(false);
-    const [papssRequestMessageId, setPapssRequestMessageId] = useState('');
-    const [papssStatusBody, setPapssStatusBody] = useState<Record<string, unknown> | null>(null);
+    const [papssTxId, setPapssTxId] = useState('');
     useEffect(() => {
         if (!router.isReady) return;
         setReady(false); setDraftError(''); setPrefill(null);
@@ -63,16 +62,16 @@ export default function PaymentPage() {
             catch {setDraftError('Payment draft has expired or is unavailable. Verify the recipient again.'); return;}
         }
         if (!validateUrl(url, {allowLocalhost: true})) {setUrlError('Enter a valid payment endpoint URL.'); return;}
-        pending.current = true; setBusy(true); setUrlError(''); setResponse(null); setViewer(null); setPapssRequestMessageId('');
+        pending.current = true; setBusy(true); setUrlError(''); setResponse(null); setViewer(null); setPapssTxId('');
         setSent({url, method: 'POST', body: structuredClone(payload)});
         setAccountSubmission(paymentType === 'account');
         try {
             const result = await axios.post(url, payload);
             setResponse({status: result.status, data: result.data});
             if (paymentType === 'papss') {
-                const data = result.data as Record<string, unknown> | null;
-                const id = data && (data.requestMessageId ?? data.RequestMessageId);
-                if (typeof id === 'string' && id.trim()) setPapssRequestMessageId(id.trim());
+                const submittedTxId = [payload.txId, payload.TxId, payload.transactionId]
+                    .find(value => typeof value === 'string' && value.trim());
+                if (typeof submittedTxId === 'string') setPapssTxId(submittedTxId.trim());
             }
         } catch (error) {
             setResponse({status: isAxiosError(error) ? error.response?.status ?? null : null,
@@ -80,6 +79,7 @@ export default function PaymentPage() {
                 error: error instanceof Error ? error.message : 'Payment request failed.'});
         } finally {pending.current = false; setBusy(false);}
     };
+    const submittedPapssTxId = papssTxId || (typeof sent?.body.txId === 'string' ? sent.body.txId : typeof sent?.body.TxId === 'string' ? sent.body.TxId : '');
     if (config?.profile === 'prod') return null;
     return <RoleGuard allowedRoles={['gateway']}><div className={sharedStyles.container}>
         <header className={headerStyles.pageHeader}>
@@ -89,7 +89,7 @@ export default function PaymentPage() {
             </div>
             <div className={headerStyles.headerActions}>
                 <span title="Reload payment adapter and reset editable fields">
-                    <ActionButton className={headerStyles.headerIconButton} disabled={busy} onClick={() => {setRevision(value => value + 1); setSent(null); setResponse(null); setPapssRequestMessageId(''); setPapssStatusBody(null); setViewer(null);}}>
+                    <ActionButton className={headerStyles.headerIconButton} disabled={busy} onClick={() => {setRevision(value => value + 1); setSent(null); setResponse(null); setPapssTxId(''); setViewer(null);}}>
                         <MdRefresh size={22} aria-hidden="true"/><span className={headerStyles.srOnly}>Reload payment adapter and reset editable fields</span>
                     </ActionButton>
                 </span>
@@ -98,19 +98,21 @@ export default function PaymentPage() {
         </header>
         <Input label="Payment API Endpoint" value={url} type="url" required disabled={busy} errorMessage={urlError} onChange={event => setUrlOverride(event.target.value)}/>
         <div className={headerStyles.modeSwitch} role="group" aria-label="Payment family">
-            {(['domestic', 'p2g', 'papss'] as const).map(value => <button key={value} type="button" className={`${headerStyles.modeButton} ${family === value ? headerStyles.activeMode : ''}`} aria-pressed={family === value} disabled={busy || Boolean(prefill)} onClick={() => {setFamily(value); setSent(null); setResponse(null); setPapssRequestMessageId(''); setPapssStatusBody(null); setViewer(null);}}>{value === 'domestic' ? 'Domestic SIPS' : value.toUpperCase()}</button>)}
+            {(['domestic', 'p2g', 'papss'] as const).map(value => <button key={value} type="button" className={`${headerStyles.modeButton} ${family === value ? headerStyles.activeMode : ''}`} aria-pressed={family === value} disabled={busy || Boolean(prefill)} onClick={() => {setFamily(value); setSent(null); setResponse(null); setPapssTxId(''); setViewer(null);}}>{value === 'domestic' ? 'Domestic SIPS' : value.toUpperCase()}</button>)}
         </div>
         {(prefill || draftError) && <div className={styles.actions}><ActionButton disabled={busy} onClick={() => void router.push('/api-tester/verify')}>Back to Verification</ActionButton>
             {prefill && <span className={styles.note}>Recipient and payment type came from verification.</span>}</div>}
         {draftError && <p role="alert" className={styles.status}>{draftError}</p>}
         {!ready && <p role="status">Loading payment draft…</p>}
-        {ready && !draftError && <PaymentRequest key={`${revision}-${family}`} family={family} paymentEndpoint={url} prefilledValues={prefill} busy={busy} paymentSent={Boolean(sent)} onSubmit={submit} onPapssStatusRequest={setPapssStatusBody} settingsContainerId="payment-settings-action" onPaymentTypeChange={() => {setSent(null); setResponse(null); setPapssRequestMessageId(''); setPapssStatusBody(null); setViewer(null);}} onStartNewPayment={() => {setSent(null); setResponse(null); setPapssRequestMessageId(''); setPapssStatusBody(null); setViewer(null);}}/>}
+        {ready && !draftError && <PaymentRequest key={`${revision}-${family}`} family={family} paymentEndpoint={url} prefilledValues={prefill} busy={busy} paymentSent={Boolean(sent)} onSubmit={submit} onPapssPaymentTxId={setPapssTxId} settingsContainerId="payment-settings-action" onPaymentTypeChange={() => {setSent(null); setResponse(null); setPapssTxId(''); setViewer(null);}} onStartNewPayment={() => {setSent(null); setResponse(null); setPapssTxId(''); setViewer(null);}}/>}
         {busy && <p role="status">Sending payment request…</p>}
         {response && <p className={styles.status} role="status">{response.status === null ? 'No HTTP response received' : `HTTP ${response.status}`}{response.error ? ` — ${response.error}` : ''}</p>}
-        {family === 'papss' && papssRequestMessageId && papssStatusBody && !response?.error && <PapssPaymentStatus endpoint={url} requestMessageId={papssRequestMessageId} statusBody={papssStatusBody} axiosPrivate={axios}/>}
-        {sent && <div className={styles.actions}>
-            <ActionButton className={styles.requestViewer} onClick={() => setViewer('request')}>View Sent Request</ActionButton>
-            {response && <ActionButton className={response.error ? styles.responseError : styles.responseViewer} onClick={() => setViewer('response')}>View Response</ActionButton>}
+        {(sent || (family === 'papss' && submittedPapssTxId && response && !response.error)) && <div className={styles.paymentResultStack}>
+            {sent && <div className={styles.actions}>
+                <ActionButton className={styles.requestViewer} onClick={() => setViewer('request')}>View Sent Request</ActionButton>
+                {response && <ActionButton className={response.error ? styles.responseError : styles.responseViewer} onClick={() => setViewer('response')}>View Response</ActionButton>}
+            </div>}
+            {family === 'papss' && submittedPapssTxId && response && !response.error && <PapssPaymentStatus endpoint={url} txId={submittedPapssTxId} axiosPrivate={axios}/>} 
         </div>}
         <QRDataViewer isOpen={viewer !== null} data={accountSubmission ? (viewer === 'request' ? sent?.body : response?.data) : (viewer === 'request' ? sent : response)} rawResponse={accountSubmission} title={viewer === 'request' ? 'Sent Payment Request' : 'Payment Response'} onClose={() => setViewer(null)}/>
     </div></RoleGuard>;

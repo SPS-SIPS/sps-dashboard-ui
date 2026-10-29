@@ -15,7 +15,6 @@ export function createDefaultPaymentForms(): PaymentForms {
         label: internalField,
         visible: !(id === 'papss' && ['DebtorAgentBIC', 'CreditorAgentBIC', 'SenderCountry', 'SenderCurrency'].includes(internalField)),
         ...(id === 'papss' && internalField === 'LocalInstrument' ? {defaultValue: 'USDP'} : {}),
-        ...(id === 'papss' && internalField === 'CategoryPurpose' ? {defaultValue: 'CASH'} : {}),
         ...(id === 'papss' && internalField === 'SenderCountry' ? {defaultValue: 'SO'} : {}),
         ...(id === 'papss' && internalField === 'SenderCurrency' ? {defaultValue: 'USD'} : {}),
         ...(id === 'papss' && internalField === 'ReceiverCurrency' ? {defaultValue: 'USD'} : {}),

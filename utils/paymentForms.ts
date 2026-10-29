@@ -1,4 +1,5 @@
 import type {FieldMapping} from '../api/hooks/useEndpoints';
+import {PAPSS_PURPOSE_CODES} from '../constants/papssPurposeCodes';
 export type PaymentType = 'account' | 'staticQr' | 'dynamicQr' | 'p2g' | 'papss';
 export const paymentTypes = [{value: 'account', label: 'Account Transfer'}, {value: 'staticQr', label: 'P2M Static SOMQR'}, {value: 'dynamicQr', label: 'P2M Dynamic SOMQR'}];
 export const purposes: Record<PaymentType, string> = {account: 'C2CCRT', staticQr: 'C2BSQR', dynamicQr: 'C2BDQR', p2g: '', papss: ''};
@@ -18,7 +19,7 @@ export function isOptional(field: string, type: PaymentType) {
     if (type === 'papss' && field === 'DebtorAgentBIC') return true;
     return type === 'papss' && ['Rail', 'TxId'].includes(field) ? false : optionalFields.has(field);
 }
-export function paymentDefaults(type: PaymentType): Record<string, string> {return type === 'papss' ? {Rail: 'PAPSS', LocalInstrument: 'USDP', CategoryPurpose: 'CASH'} : type === 'p2g' ? {Rail: 'SIPS', LocalInstrument: 'CRTRM', CategoryPurpose: 'C2GCRT'} : {Rail: 'SIPS', LocalInstrument: 'CRTRM', CategoryPurpose: purposes[type]};}
+export function paymentDefaults(type: PaymentType): Record<string, string> {return type === 'papss' ? {Rail: 'PAPSS', LocalInstrument: 'USDP'} : type === 'p2g' ? {Rail: 'SIPS', LocalInstrument: 'CRTRM', CategoryPurpose: 'C2GCRT'} : {Rail: 'SIPS', LocalInstrument: 'CRTRM', CategoryPurpose: purposes[type]};}
 export function paymentMappings(mappings: FieldMapping[], paymentType: PaymentType = 'account') {
     return fieldsFor(paymentType).flatMap(field => {const mapping = mappings.find(m => m.internalField === field); return mapping ? [mapping] : [];});
 }
@@ -59,6 +60,7 @@ export function buildPaymentPayload(values: Record<string, string>, mappings: Fi
         if (values.AmountPayable?.trim() && Number(values.AmountPayable) !== Number(values.Amount)) errors.push('Amount and AmountPayable must match; the backend uses AmountPayable when supplied.');
     }
     if (paymentType === 'papss') {
+        if (!PAPSS_PURPOSE_CODES.some(option => option.value === values.CategoryPurpose?.trim())) errors.push('Select a valid PAPSS payment purpose.');
         for (const field of ['SenderCountry', 'ReceiverCountry', 'SenderCurrency', 'ReceiverCurrency', 'Currency']) {
             const value = values[field]?.trim();
             if (value && !(field.endsWith('Country') ? /^[A-Z]{2}$/ : /^[A-Z]{3}$/).test(value)) errors.push(`${field} must be an uppercase ${field.endsWith('Country') ? 'two-letter country' : 'three-letter currency'} code.`);

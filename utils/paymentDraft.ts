@@ -12,7 +12,7 @@ export function paymentPrefill(data: Record<string, unknown>): Record<string, st
         ToBIC: 'ToBIC', CreditorAgentBIC: 'CreditorAgentBIC', CreditorAccount: 'CreditorAccount',
         CreditorAccountType: 'CreditorAccountType', CreditorName: 'CreditorName', CreditorAddress: 'CreditorAddress',
         Currency: 'Currency', ReceiverCountry: 'ReceiverCountry', ReceiverCurrency: 'ReceiverCurrency',
-        SenderCountry: 'SenderCountry', SenderCurrency: 'SenderCurrency', CategoryPurpose: 'CategoryPurpose',
+        SenderCountry: 'SenderCountry', SenderCurrency: 'SenderCurrency', CategoryPurpose: 'CategoryPurpose', PAPSSReceiverCurrencies: 'PAPSSReceiverCurrencies',
     } : paymentType === 'p2g' ? {
         ToBIC: 'ToBIC', CreditorAgentBIC: 'ToBIC', CreditorAccount: 'CreditorAccount',
         CreditorAccountType: 'CreditorAccountType', CreditorName: 'CreditorName', CreditorAddress: 'CreditorAddress',

@@ -44,7 +44,7 @@
     animation: fadeIn var(--transition-normal) ease-in;
 }
 
-@media (max-width: var(--breakpoint-mobile)) {
+@media (max-width: 768px) {
     .loadingContainer {
         padding: var(--spacing-lg);
         margin: var(--spacing-lg) 0;
