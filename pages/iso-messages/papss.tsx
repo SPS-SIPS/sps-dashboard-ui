@@ -538,10 +538,11 @@ const ISOMessagesList = () => {
                   </thead>
 
                   <tbody>
-                    {messages.map((message) => (
-                      <tr key={message.id} className={styles.tableRow}>
+                    {messages.map((message, index) => {
+                      const messageKey = String(message.id ?? message.listItemId ?? message.msgId ?? message.bizMsgIdr ?? `message-${index}`);
+                      return <tr key={messageKey} className={styles.tableRow}>
                         {visibleColumns.map((columnId) => (
-                          <td key={`${message.id}-${columnId}`}>
+                          <td key={`${messageKey}-${columnId}`}>
                             {renderCellContent(message, columnId)}
                           </td>
                         ))}
@@ -557,8 +558,8 @@ const ISOMessagesList = () => {
                             </button>
                           </td>
                         ) : null}
-                      </tr>
-                    ))}
+                      </tr>;
+                    })}
                   </tbody>
                 </table>
               </div>

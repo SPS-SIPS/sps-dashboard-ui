@@ -72,7 +72,6 @@ const VerificationRequestPage: React.FC = () => {
     const [discoveryViewer, setDiscoveryViewer] = useState<"request" | "response" | null>(null);
     const [destinationCountry, setDestinationCountry] = useState("");
     const [destinationBic, setDestinationBic] = useState("");
-    const [destinationCurrency, setDestinationCurrency] = useState("");
     const [discovering, setDiscovering] = useState(false);
     const countryNames = new Intl.DisplayNames(["en"], {type: "region"});
     const countryOptions = [...new Set(participants.map(bank => bank.country))]
@@ -80,13 +79,10 @@ const VerificationRequestPage: React.FC = () => {
         .sort((a, b) => a.label.localeCompare(b.label));
     const destinationBanks = participants.filter(bank => bank.country === destinationCountry);
     const selectedDestinationBank = participants.find(bank => bank.value === destinationBic);
-    const destinationCurrencyOptions = (selectedDestinationBank?.currencies?.length ? selectedDestinationBank.currencies : ["USD"])
-        .map(value => ({value, label: value === "USD" ? "USD - US Dollar" : value}));
     const papssReady = discoveryLoaded && destinationBanks.some(bank => bank.value === destinationBic);
-    const papssSelectionReady = papssReady && destinationCurrency === "USD";
     const resetDiscovery = () => {
         setParticipants([]); setDiscoveryLoaded(false); setDiscoveryError("");
-        setDestinationCountry(""); setDestinationBic(""); setDestinationCurrency("");
+        setDestinationCountry(""); setDestinationBic("");
         setDiscoveryRequest(null); setDiscoveryResponse(null); setDiscoveryViewer(null);
     };
 
@@ -181,7 +177,7 @@ const VerificationRequestPage: React.FC = () => {
 
     // ================= VALIDATION =================
     const isFormValid = () => {
-        if (!preset || presetErrors.length || formsError || formsLoading || (rail === "PAPSS" && !papssSelectionReady)) return false;
+        if (!preset || presetErrors.length || formsError || formsLoading || (rail === "PAPSS" && !papssReady)) return false;
         try {
             buildVerificationPayload(presetId, preset, Object.fromEntries(preset.fields.map(field =>
                 [field.internalField, field.internalField === "Code" ? qrCode : fieldValue(field.userField)])), adapterMappings);
@@ -500,14 +496,18 @@ const VerificationRequestPage: React.FC = () => {
 
         try {
             setProcessingPayment(true);
+            const supportedReceiverCurrencies = (selectedDestinationBank?.currencies ?? []).map(currency => currency.trim().toUpperCase()).filter(Boolean);
+            const verifiedReceiverCurrency = value("account_currency", "currency")?.toUpperCase();
             const draftData: Record<string, string> = {
                 PaymentType: "papss",
                 Rail: "PAPSS",
                 ReceiverCountry: destinationCountry,
-                ReceiverCurrency: destinationCurrency,
-                Currency: destinationCurrency,
+                Currency: "USD",
+                SenderCurrency: "USD",
                 ToBIC: destinationBic,
                 CreditorAgentBIC: value("counterpartyBic") ?? destinationBic,
+                PAPSSReceiverCurrencies: supportedReceiverCurrencies.join(",") || "USD",
+                ...(verifiedReceiverCurrency && supportedReceiverCurrencies.includes(verifiedReceiverCurrency) ? {ReceiverCurrency: verifiedReceiverCurrency} : {}),
             };
             const fields: Array<[string, string[]]> = [
                 ["CreditorName", ["accountName"]],
@@ -569,7 +569,7 @@ const VerificationRequestPage: React.FC = () => {
         setResponseViewerOpen(false);
     };
 
-    const verificationForm = rail === "PAPSS" && !papssSelectionReady ? null : endpointsLoading || formsLoading ? (
+    const verificationForm = rail === "PAPSS" && !discoveryLoaded ? null : endpointsLoading || formsLoading ? (
         <div className={styles.loadingContainer}>
             <SpinLoading />
             <p className={styles.loadingText}>Loading endpoint configurations...</p>
@@ -622,7 +622,7 @@ const VerificationRequestPage: React.FC = () => {
         </div>
     );
 
-    const sendVerificationButton = (rail === "SIPS" || papssSelectionReady) && <ActionButton
+    const sendVerificationButton = (rail === "SIPS" || papssReady) && <ActionButton
         onClick={handleSubmit}
         className={styles.submitButton}
         disabled={
@@ -703,15 +703,10 @@ const VerificationRequestPage: React.FC = () => {
                         {discoveryLoaded && !participants.length && <p role="status">No eligible participants with a country and destination BIC were returned. Reload to try again.</p>}
                         {discoveryLoaded && participants.length > 0 && <SelectInput label="Destination Country" value={destinationCountry}
                             options={countryOptions} required onChange={event => {
-                                setDestinationCountry(event.target.value); setDestinationBic(""); setDestinationCurrency(""); clearResult();
+                                setDestinationCountry(event.target.value); setDestinationBic(""); clearResult();
                             }}/>}
-                        {destinationCountry && <SelectInput label="Destination Bank" value={destinationBic} options={destinationBanks}
-                            required onChange={event => {setDestinationBic(event.target.value); setDestinationCurrency(""); clearResult();}}/>}
-                        {destinationBic && <SelectInput label="Destination Currency" value={destinationCurrency} options={destinationCurrencyOptions}
-                            required onChange={event => {setDestinationCurrency(event.target.value); clearResult();}}/>}
-                        {destinationCurrency && destinationCurrency !== "USD" && <p className={styles.discoveryError} role="alert">
-                            SPS currently supports USD only for PAPSS. Please select USD to continue.
-                        </p>}
+                        {discoveryLoaded && participants.length > 0 && <SelectInput label="Destination Bank" value={destinationBic} options={destinationBanks}
+                            required disabled={!destinationCountry} onChange={event => {setDestinationBic(event.target.value); clearResult();}}/>}
                         {verificationForm}
                         {sendVerificationButton}
                     </div>
