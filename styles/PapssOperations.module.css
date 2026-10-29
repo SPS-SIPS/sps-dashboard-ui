@@ -2,6 +2,16 @@
 .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--color-border); padding-bottom: var(--spacing-xl); }
 .card, .result { background: var(--color-background-secondary, #f8fafb); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--spacing-xl); }
 .card h2, .result h2 { margin: 0 0 var(--spacing-lg); color: var(--color-text-primary); font-size: var(--font-size-lg); }
+.cardHeader { margin-bottom: var(--spacing-lg); }
+.cardHeader h2 { margin-bottom: 6px; }
+.cardHeader p { margin: 0; color: var(--color-text-secondary); }
+.panelChooser { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-lg); }
+.panelChoice { border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-background-secondary, #f8fafb); color: var(--color-text-primary); padding: var(--spacing-lg); text-align: left; cursor: pointer; transition: border-color .2s ease, background .2s ease, box-shadow .2s ease; }
+.panelChoice strong { display: block; margin-bottom: 4px; font-size: var(--font-size-md); }
+.panelChoice span { color: var(--color-text-secondary); font-size: 13px; }
+.panelChoice:hover { border-color: var(--color-primary, #69b342); }
+.panelChoiceActive { border-color: var(--color-primary, #69b342); background: #eef8e9; box-shadow: 0 2px 8px rgb(43 92 22 / 12%); }
+@media (max-width: 600px) { .panelChooser { grid-template-columns: 1fr; } }
 .card form:not(.inlineForm) { display: flex; flex-direction: column; gap: var(--spacing-lg); }
 .actions { display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center; }
 .inlineForm { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--spacing-lg); }
@@ -13,6 +23,16 @@
 .summaryItem span { color: var(--color-text-secondary); font-size: 12px; }
 .summaryItem strong { overflow-wrap: anywhere; color: var(--color-text-primary); font-weight: 600; }
 .filterGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-lg); }
+.returnFormGrid { grid-template-columns: 1fr; gap: var(--spacing-lg); }
+.endpointBlock { margin-bottom: var(--spacing-xl); }
+.endpointLabel { display: block; margin-bottom: 8px; color: var(--color-text-primary); font-weight: 600; }
+.requiredAsterisk { margin-left: 4px; color: var(--color-error, #d22); }
+.endpointValue { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-background); overflow-x: auto; }
+.endpointMethod { flex: 0 0 auto; padding: 5px 9px; border-radius: 5px; background: #e5f3ea; color: #17613b; font-size: 12px; font-weight: 700; }
+.endpointValue code { color: var(--color-text-primary); font-size: 13px; white-space: nowrap; }
+.fieldWithAction { display: flex; flex-direction: column; gap: 6px; }
+.textAction { align-self: flex-start; border: 0; padding: 0; background: transparent; color: var(--color-primary, #2876c7); text-decoration: underline; cursor: pointer; font: inherit; font-size: 13px; }
+.textAction:hover { color: var(--color-primary-dark, #17518e); }
 .secondary { background: var(--color-background) !important; color: var(--color-text-primary) !important; border: 1px solid var(--color-border); }
 .error { margin: var(--spacing-lg) 0 0; color: var(--color-error, #a32323); }
 .resultHeader { display: flex; justify-content: space-between; align-items: center; gap: var(--spacing-md); }

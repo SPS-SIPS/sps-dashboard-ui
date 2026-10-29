@@ -272,7 +272,7 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
         },
         {
             title: 'PAPSS',
-            path: '/papss/operations',
+            path: '/papss',
             icon: <FaGlobeAfrica className={styles.icon}/>,
             roles: ['gateway', 'recon'],
             items: [
@@ -289,6 +289,16 @@ const Sidebar: React.FC<SideNavProps> = ({isOpen, onClose, isMobile}) => {
                 {
                     title: 'Unresolved Events',
                     path: '/papss/unresolved',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+                {
+                    title: 'Returns',
+                    path: '/papss/returns',
+                    icon: <FiChevronRight className={styles.icon}/>,
+                },
+                {
+                    title: 'Recalls',
+                    path: '/papss/recalls',
                     icon: <FiChevronRight className={styles.icon}/>,
                 },
             ]

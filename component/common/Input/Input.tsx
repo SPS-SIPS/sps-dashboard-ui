@@ -14,6 +14,7 @@ interface InputProps {
     maxLength?: number;
     disabled?: boolean;
     min?: number;
+    list?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -29,6 +30,7 @@ const Input: React.FC<InputProps> = ({
                                          maxLength,
                                          disabled = false,
                                          min,
+                                         list,
                                      }) => {
     return (
         <div className={styles.inputContainer}>
@@ -51,6 +53,7 @@ const Input: React.FC<InputProps> = ({
                     maxLength={maxLength}
                     disabled={disabled}
                     min={type === 'number' ? min : undefined}
+                    list={list}
                 />
             </div>
             {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
